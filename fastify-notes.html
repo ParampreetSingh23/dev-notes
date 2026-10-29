@@ -1,0 +1,2526 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fastify Crash Course</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+<style>
+:root{
+  --bg:#ffffff; --bg-side:#f6f7f9; --text:#1f2328; --muted:#59636e; --border:#d8dee4;
+  --accent:#0b7a5c; --accent-soft:#e3f4ee; --code-bg:#eef0f3; --pre-bg:#0f172a; --pre-text:#e2e8f0;
+  --info:#2f6fd6; --info-bg:#e7f1ff; --tip:#0b8a5c; --tip-bg:#e3f6ee; --warn:#c98a00; --warn-bg:#fff6e0;
+  --danger:#d13c3c; --danger-bg:#fdecec; --imp:#7c4dcc; --imp-bg:#f1eafd;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0d1117; --bg-side:#11161d; --text:#e6edf3; --muted:#9aa5b1; --border:#262f3a;
+    --accent:#3ddc97; --accent-soft:#11291f; --code-bg:#1c232c; --pre-bg:#070b11; --pre-text:#d6deeb;
+    --info:#5b9bf5; --info-bg:#0f1e33; --tip:#3ddc97; --tip-bg:#0f261c; --warn:#e6b030; --warn-bg:#2b2310;
+    --danger:#f06a6a; --danger-bg:#2c1414; --imp:#b18cf2; --imp-bg:#1f1630;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0d1117; --bg-side:#11161d; --text:#e6edf3; --muted:#9aa5b1; --border:#262f3a;
+  --accent:#3ddc97; --accent-soft:#11291f; --code-bg:#1c232c; --pre-bg:#070b11; --pre-text:#d6deeb;
+  --info:#5b9bf5; --info-bg:#0f1e33; --tip:#3ddc97; --tip-bg:#0f261c; --warn:#e6b030; --warn-bg:#2b2310;
+  --danger:#f06a6a; --danger-bg:#2c1414; --imp:#b18cf2; --imp-bg:#1f1630;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.7 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--bg)}
+header .logo{font-weight:700;color:var(--accent)}
+header .spacer{flex:1}
+#progress{position:absolute;left:0;bottom:-1px;height:2px;background:var(--accent);width:0}
+button{font:inherit;cursor:pointer;border:1px solid var(--border);background:var(--bg-side);color:var(--text);border-radius:6px;padding:4px 10px}
+#menuBtn{display:none}
+.layout{display:flex}
+nav{width:290px;flex-shrink:0;position:sticky;top:53px;height:calc(100vh - 53px);overflow-y:auto;background:var(--bg-side);border-right:1px solid var(--border);padding:16px 12px}
+nav input{width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);margin-bottom:12px}
+nav a{display:block;padding:5px 10px;border-radius:6px;color:var(--muted);text-decoration:none;font-size:14.5px;line-height:1.4}
+nav a:hover{color:var(--text);background:var(--code-bg)}
+nav a.active{color:var(--accent);background:var(--accent-soft);font-weight:600}
+main{flex:1;min-width:0;max-width:900px;padding:24px 36px 100px}
+h1{font-size:2.1rem;margin:.2em 0 .4em}
+h2{font-size:1.55rem;margin-top:2.6em;padding-top:.5em;border-top:1px solid var(--border)}
+h3{font-size:1.15rem;margin-top:1.8em}
+hr{display:none}
+p,li{max-width:75ch}
+a{color:var(--accent)}
+code{font:0.88em ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--code-bg);padding:.12em .35em;border-radius:4px}
+pre{position:relative;background:var(--pre-bg);color:var(--pre-text);padding:14px 16px;border-radius:8px;overflow-x:auto;font-size:13.5px;line-height:1.55}
+pre code,pre code.hljs{background:none;padding:0;color:inherit;font-size:inherit}
+pre .copy{position:absolute;top:8px;right:8px;font-size:12px;padding:2px 8px;background:#ffffff14;color:#cbd5e1;border-color:#ffffff22}
+.tw{overflow-x:auto;margin:14px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{border:1px solid var(--border);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--bg-side)}
+.callout{--c:var(--info);--cb:var(--info-bg);border-left:4px solid var(--c);background:var(--cb);border-radius:6px;padding:10px 14px;margin:16px 0}
+.callout>:last-child{margin-bottom:0}
+.callout .ctitle,.callout summary{font-weight:700;color:var(--c)}
+.callout summary{cursor:pointer}
+.callout.tip{--c:var(--tip);--cb:var(--tip-bg)}
+.callout.warning{--c:var(--warn);--cb:var(--warn-bg)}
+.callout.danger{--c:var(--danger);--cb:var(--danger-bg)}
+.callout.important{--c:var(--imp);--cb:var(--imp-bg)}
+.callout.question{--c:var(--accent);--cb:var(--accent-soft)}
+.callout.question{margin:8px 0}
+.callout.question summary{color:var(--text)}
+@media (max-width:860px){
+  #menuBtn{display:inline-block}
+  nav{position:fixed;left:0;top:53px;z-index:9;transform:translateX(-100%);transition:transform .2s}
+  nav.open{transform:none;box-shadow:0 0 40px #0005}
+  main{padding:20px 16px 80px}
+}
+</style>
+</head>
+<body>
+<header>
+  <button id="menuBtn" aria-label="Toggle menu">☰</button>
+  <span class="logo">⚡ Fastify Notes</span>
+  <span class="spacer"></span>
+  <button id="themeBtn" aria-label="Toggle theme">◐ Theme</button>
+  <div id="progress"></div>
+</header>
+<div class="layout">
+<nav id="nav">
+<input id="search" type="search" placeholder="Filter topics…" aria-label="Filter topics">
+<a href="#1-what-is-fastify">1. What is Fastify?</a>
+<a href="#2-project-setup">2. Project setup</a>
+<a href="#3-creating-the-server">3. Creating the server</a>
+<a href="#4-dev-workflow-nodemon-and-env">4. Dev workflow: nodemon and .env</a>
+<a href="#5-routes-handlers">5. Routes &amp; handlers</a>
+<a href="#6-plugins-organising-your-code">6. Plugins: organising your code</a>
+<a href="#7-request-validation-json-schema">7. Request validation (JSON Schema)</a>
+<a href="#8-response-schema-status-codes">8. Response schema &amp; status codes</a>
+<a href="#9-reading-request-data">9. Reading request data</a>
+<a href="#10-mongodb-integration">10. MongoDB integration</a>
+<a href="#11-create-a-user-insertone">11. Create a user (insertOne)</a>
+<a href="#12-list-users-search-with-a-query-param">12. List users + search with a query param</a>
+<a href="#13-route-params-get-a-single-user-by-id">13. Route params: get a single user by id</a>
+<a href="#14-update-and-delete-beyond-the-video">14. Update and delete (Beyond the video)</a>
+<a href="#15-hooks-fastify39s-middleware">15. Hooks: Fastify&#39;s middleware</a>
+<a href="#16-hook-scopes-global-plugin-route">16. Hook scopes: global, plugin, route</a>
+<a href="#17-async-hooks-authentication">17. Async hooks &amp; authentication</a>
+<a href="#18-file-upload-multipart">18. File upload (multipart)</a>
+<a href="#19-ecosystem-express-compatibility">19. Ecosystem &amp; Express compatibility</a>
+<a href="#20-postman-requests-used">20. Postman requests used</a>
+<a href="#21-common-errors-and-fixes">21. Common errors and fixes</a>
+<a href="#22-full-project-code">22. Full project code</a>
+<a href="#23-cheat-sheet">23. Cheat sheet</a>
+<a href="#24-fastify-vs-express">24. Fastify vs Express</a>
+<a href="#25-self-check-quiz">25. Self-check quiz</a>
+</nav>
+<main>
+<h1>Fastify Crash Course</h1>
+<p>Detailed English study notes from a Hindi video tutorial. We build a small <strong>auth-service</strong> REST API step by step: server setup, routes, plugins, validation, MongoDB, hooks (middleware), and file upload.</p>
+<div class="callout info"><div class="ctitle">How to read these notes</div>
+<ul>
+<li>Sections follow the order of the video.</li>
+<li>Each section explains the <strong>concept</strong> first, then the <strong>code</strong>, then <strong>common mistakes</strong>.</li>
+<li>Parts marked <strong>Beyond the video</strong> are extra material that wasn&#39;t in the video but that you&#39;ll need in real projects.</li>
+<li>The full finished project code is in <a href="#22-full-project-code">22. Full project code</a>.</li>
+<li>A styled version with a sidebar is in the same folder: <code>fastify-notes.html</code>.</li>
+</ul>
+</div>
+<hr>
+<h2 id="1-what-is-fastify">1. What is Fastify?</h2>
+<p><strong>Fastify</strong> is a web framework for Node.js. A web framework handles the low-level HTTP work for you (parsing requests, matching URLs to code, sending responses), so you only write your app&#39;s logic.</p>
+<p>The official tagline is <em>&quot;Fast and low overhead web framework for Node.js&quot;</em>. &quot;Low overhead&quot; means the framework adds very little extra work on top of Node&#39;s own HTTP server.</p>
+<h3 id="how-fast">How fast?</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Framework</th>
+<th>Requests / second (benchmark shown in video)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Fastify</td>
+<td>~45,000</td>
+</tr>
+<tr>
+<td>Express</td>
+<td>~9,900</td>
+</tr>
+</tbody></table></div>
+<p>That is roughly <strong>4–5× more requests</strong> on the same machine. The benchmark page is on the Fastify website (<em>fastify.dev → Benchmarks</em>).</p>
+<h3 id="why-is-it-fast">Why is it fast?</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Reason</th>
+<th>What it means</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Fast router</td>
+<td>Fastify uses <code>find-my-way</code>, a radix-tree router, so matching a URL to a route is very quick even with many routes.</td>
+</tr>
+<tr>
+<td>Schema-based serialization</td>
+<td>If you give a response schema, Fastify uses <code>fast-json-stringify</code> to build JSON much faster than <code>JSON.stringify</code>.</td>
+</tr>
+<tr>
+<td>Compiled validation</td>
+<td>Request schemas are compiled once (with Ajv) into fast validation functions at startup.</td>
+</tr>
+<tr>
+<td>Fast logger</td>
+<td>The built-in logger is <strong>pino</strong>, one of the fastest Node.js loggers.</td>
+</tr>
+<tr>
+<td>Encapsulated plugins</td>
+<td>Plugins keep code isolated, so the framework does less work per request.</td>
+</tr>
+</tbody></table></div>
+<h3 id="when-to-choose-fastify">When to choose Fastify</h3>
+<ul>
+<li>You want an Express-like API but better performance.</li>
+<li>You want <strong>built-in</strong> validation and logging instead of adding extra libraries.</li>
+<li>You are building JSON APIs or microservices (like our auth service).</li>
+</ul>
+<h3 id="key-terms-used-in-these-notes">Key terms used in these notes</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Instance</strong></td>
+<td>The <code>fastify</code> object you create. Routes, plugins and hooks are added to it.</td>
+</tr>
+<tr>
+<td><strong>Route</strong></td>
+<td>A method + URL pair (e.g. <code>GET /api/users</code>) linked to a function.</td>
+</tr>
+<tr>
+<td><strong>Handler</strong></td>
+<td>The function that runs for a route and produces the response.</td>
+</tr>
+<tr>
+<td><strong>Plugin</strong></td>
+<td>A function that adds routes, hooks or features to an instance.</td>
+</tr>
+<tr>
+<td><strong>Hook</strong></td>
+<td>A function that runs at a specific stage of a request&#39;s life (like Express middleware).</td>
+</tr>
+<tr>
+<td><strong>Schema</strong></td>
+<td>A JSON description of what data should look like, used to validate input and shape output.</td>
+</tr>
+<tr>
+<td><strong>Serialization</strong></td>
+<td>Turning a JavaScript object into a JSON string to send to the client.</td>
+</tr>
+</tbody></table></div>
+<hr>
+<h2 id="2-project-setup">2. Project setup</h2>
+<h3 id="prerequisites">Prerequisites</h3>
+<ul>
+<li><strong>Node.js 20+</strong> (the video uses Node 22). Check with <code>node -v</code>.</li>
+<li><strong>npm</strong> (comes with Node).</li>
+<li>A code editor, <strong>Postman</strong> (to send test requests), and <strong>MongoDB</strong> (used later).</li>
+</ul>
+<h3 id="create-the-project">Create the project</h3>
+<pre><code class="language-bash">mkdir auth-service
+cd auth-service
+npm init -y
+npm install fastify
+</code></pre>
+<p>What each command does:</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>mkdir auth-service</code></td>
+<td>Creates the project folder. We are pretending to build an authentication service.</td>
+</tr>
+<tr>
+<td><code>npm init -y</code></td>
+<td>Creates <code>package.json</code> with default values (<code>-y</code> answers &quot;yes&quot; to every question).</td>
+</tr>
+<tr>
+<td><code>npm install fastify</code></td>
+<td>Downloads Fastify into <code>node_modules/</code> and adds it to <code>dependencies</code> in <code>package.json</code>.</td>
+</tr>
+</tbody></table></div>
+<p>The installation guide is in the docs at <em>fastify.dev → Docs → Guides → Getting Started</em>. You can also use <code>yarn add fastify</code>.</p>
+<h3 id="enable-es-modules">Enable ES modules</h3>
+<p>Node supports two module systems:</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th></th>
+<th>CommonJS (old default)</th>
+<th>ES Modules (modern)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Import</td>
+<td><code>const Fastify = require(&#39;fastify&#39;)</code></td>
+<td><code>import Fastify from &#39;fastify&#39;</code></td>
+</tr>
+<tr>
+<td>Export</td>
+<td><code>module.exports = fn</code></td>
+<td><code>export default fn</code></td>
+</tr>
+<tr>
+<td>How to enable</td>
+<td>Default</td>
+<td><code>&quot;type&quot;: &quot;module&quot;</code> in <code>package.json</code></td>
+</tr>
+</tbody></table></div>
+<p>The video uses ES modules, so add this to <code>package.json</code>:</p>
+<pre><code class="language-json">{
+  &quot;name&quot;: &quot;auth-service&quot;,
+  &quot;type&quot;: &quot;module&quot;,
+  &quot;dependencies&quot;: {
+    &quot;fastify&quot;: &quot;^5.0.0&quot;
+  }
+}
+</code></pre>
+<div class="callout warning"><div class="ctitle">ESM needs file extensions</div><p>With ES modules, local imports <strong>must include the <code>.js</code> extension</strong>: <code>import userRouter from &#39;./src/routes/user.js&#39;</code>. Without <code>.js</code>, Node throws <code>ERR_MODULE_NOT_FOUND</code>.</p>
+</div>
+<hr>
+<h2 id="3-creating-the-server">3. Creating the server</h2>
+<p>Create <code>server.js</code> in the project root.</p>
+<pre><code class="language-js">// server.js
+import Fastify from &#39;fastify&#39;;
+
+// 1. Create the instance
+const fastify = Fastify({ logger: true });
+
+// 2. Choose the port
+const PORT = Number(process.env.PORT) || 4000;
+
+// 3. Start the server
+const start = async () =&gt; {
+  try {
+    await fastify.listen({ port: PORT });
+    console.log(`Server listening on port ${PORT}`);
+  } catch (err) {
+    fastify.log.error(err);
+    process.exit(1);
+  }
+};
+
+start();
+</code></pre>
+<h3 id="line-by-line-explanation">Line-by-line explanation</h3>
+<ol>
+<li><strong><code>import Fastify from &#39;fastify&#39;</code></strong>: loads the framework. <code>Fastify</code> is a factory function.</li>
+<li><strong><code>Fastify({ logger: true })</code></strong>: creates a new app instance. The options object configures it. <code>logger: true</code> turns on the built-in pino logger, so every request is logged as structured JSON.</li>
+<li><strong><code>process.env.PORT || 4000</code></strong>: uses the <code>PORT</code> environment variable if one is set (for example on a hosting platform), otherwise 4000.</li>
+<li><strong><code>fastify.listen({ port })</code></strong>: starts the HTTP server. It returns a promise, so we <code>await</code> it inside an <code>async</code> function.</li>
+<li><strong><code>try / catch</code></strong>: if the server can&#39;t start (for example, the port is already in use), we log the error with <code>fastify.log.error</code> and stop the process with <code>process.exit(1)</code>. Exit code <code>1</code> means &quot;failed&quot;.</li>
+</ol>
+<p><code>listen()</code> also accepts a callback (<code>fastify.listen({ port }, (err, address) =&gt; {...})</code>), but async/await is cleaner.</p>
+<h3 id="what-you-see-in-the-terminal">What you see in the terminal</h3>
+<pre><code class="language-json">{&quot;level&quot;:30,&quot;time&quot;:1730000000000,&quot;pid&quot;:1234,&quot;hostname&quot;:&quot;mac&quot;,&quot;msg&quot;:&quot;Server listening at http://[::1]:4000&quot;}
+{&quot;level&quot;:30,&quot;time&quot;:1730000000000,&quot;pid&quot;:1234,&quot;hostname&quot;:&quot;mac&quot;,&quot;msg&quot;:&quot;Server listening at http://127.0.0.1:4000&quot;}
+</code></pre>
+<ul>
+<li>Two lines appear because <code>localhost</code> resolves to both <strong>IPv6</strong> (<code>[::1]</code>) and <strong>IPv4</strong> (<code>127.0.0.1</code>), and Fastify listens on both.</li>
+<li><code>level: 30</code> means &quot;info&quot;. Pino levels: 10 trace, 20 debug, 30 info, 40 warn, 50 error, 60 fatal.</li>
+</ul>
+<p>Opening <code>http://localhost:4000</code> in the browser returns:</p>
+<pre><code class="language-json">{ &quot;message&quot;: &quot;Route GET:/ not found&quot;, &quot;error&quot;: &quot;Not Found&quot;, &quot;statusCode&quot;: 404 }
+</code></pre>
+<p>That&#39;s expected: we haven&#39;t declared any routes yet. Fastify sends a JSON 404 automatically.</p>
+<h3 id="useful-options-beyond-the-video">Useful options (Beyond the video)</h3>
+<pre><code class="language-js">const fastify = Fastify({
+  logger: {
+    level: &#39;info&#39;,
+    transport: { target: &#39;pino-pretty&#39; }, // readable, coloured logs in development (npm i -D pino-pretty)
+  },
+});
+
+await fastify.listen({
+  port: PORT,
+  host: &#39;0.0.0.0&#39;, // listen on all network interfaces: needed inside Docker or on a server
+});
+</code></pre>
+<div class="callout warning"><div class="ctitle">Docker gotcha</div><p>The default host is <code>localhost</code>, which only accepts connections from the same machine. Inside a Docker container you must use <code>host: &#39;0.0.0.0&#39;</code>, or the app can&#39;t be reached from outside the container.</p>
+</div>
+<hr>
+<h2 id="4-dev-workflow-nodemon-and-env">4. Dev workflow: nodemon and .env</h2>
+<h3 id="nodemon">nodemon</h3>
+<p>Without a tool, you have to stop and restart the server after every code change. <strong>nodemon</strong> watches your files and restarts automatically.</p>
+<pre><code class="language-bash">npm install -D nodemon
+</code></pre>
+<p><code>-D</code> (same as <code>--save-dev</code>) puts it in <code>devDependencies</code>. These are tools needed only while developing, not in production.</p>
+<pre><code class="language-json">{
+  &quot;type&quot;: &quot;module&quot;,
+  &quot;scripts&quot;: {
+    &quot;dev&quot;: &quot;nodemon server.js&quot;
+  },
+  &quot;dependencies&quot;: { &quot;fastify&quot;: &quot;^5.0.0&quot; },
+  &quot;devDependencies&quot;: { &quot;nodemon&quot;: &quot;^3.1.0&quot; }
+}
+</code></pre>
+<pre><code class="language-bash">npm run dev
+</code></pre>
+<h3 id="environment-variables-with-env">Environment variables with <code>.env</code></h3>
+<p>Secrets and settings that change between machines (database URL, port, JWT secret) belong in a <code>.env</code> file, not in code:</p>
+<pre><code class="language-bash"># .env
+PORT=4000
+DB_URL=mongodb://localhost:27017/fastify-auth-service
+</code></pre>
+<p><strong>Node 20.6+ (and Node 22, used in the video) can read <code>.env</code> files natively</strong> with the <code>--env-file</code> flag, so you don&#39;t need the <code>dotenv</code> package:</p>
+<pre><code class="language-json">&quot;scripts&quot;: {
+  &quot;dev&quot;: &quot;nodemon --exec \&quot;node --env-file=.env\&quot; server.js&quot;
+}
+</code></pre>
+<p>Alternative with no nodemon at all, using Node&#39;s built-in watch mode:</p>
+<pre><code class="language-json">&quot;scripts&quot;: {
+  &quot;dev&quot;: &quot;node --watch --env-file=.env server.js&quot;
+}
+</code></pre>
+<div class="callout danger"><div class="ctitle">Never commit <code>.env</code></div><p>Add <code>.env</code> to <code>.gitignore</code>. It contains secrets. Commit a <code>.env.example</code> with dummy values instead, so teammates know which variables to set.</p>
+</div>
+<hr>
+<h2 id="5-routes-handlers">5. Routes &amp; handlers</h2>
+<p>A <strong>route</strong> connects an HTTP method + URL to a <strong>handler</strong> function.</p>
+<h3 id="shorthand-methods">Shorthand methods</h3>
+<pre><code class="language-js">fastify.get(&#39;/&#39;, async (request, reply) =&gt; {
+  return { message: &#39;Welcome to auth service&#39; };
+});
+</code></pre>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Typical use</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>fastify.get(url, handler)</code></td>
+<td>Read data</td>
+</tr>
+<tr>
+<td><code>fastify.post(url, handler)</code></td>
+<td>Create data</td>
+</tr>
+<tr>
+<td><code>fastify.put(url, handler)</code></td>
+<td>Replace a whole resource</td>
+</tr>
+<tr>
+<td><code>fastify.patch(url, handler)</code></td>
+<td>Update part of a resource</td>
+</tr>
+<tr>
+<td><code>fastify.delete(url, handler)</code></td>
+<td>Delete data</td>
+</tr>
+</tbody></table></div>
+<p>All of them accept an optional <strong>options object</strong> as the second argument (<code>fastify.post(url, options, handler)</code>). That&#39;s where schemas and route-level hooks go (sections 7, 8 and 15).</p>
+<h3 id="full-declaration-beyond-the-video">Full declaration (Beyond the video)</h3>
+<p>The shorthand methods are sugar for <code>fastify.route()</code>:</p>
+<pre><code class="language-js">fastify.route({
+  method: &#39;GET&#39;,
+  url: &#39;/&#39;,
+  schema: { /* ... */ },
+  preHandler: someHook,
+  handler: async (request, reply) =&gt; ({ message: &#39;Welcome&#39; }),
+});
+</code></pre>
+<h3 id="request-and-reply"><code>request</code> and <code>reply</code></h3>
+<p>The handler receives two objects, the same idea as <code>req</code> and <code>res</code> in Express. By convention Fastify calls the second one <strong><code>reply</code></strong>.</p>
+<p><strong>Useful <code>request</code> properties:</strong></p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Contains</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>request.body</code></td>
+<td>Parsed JSON body (POST/PUT/PATCH)</td>
+</tr>
+<tr>
+<td><code>request.query</code></td>
+<td>Query string as an object (<code>?q=john</code> → <code>{ q: &#39;john&#39; }</code>)</td>
+</tr>
+<tr>
+<td><code>request.params</code></td>
+<td>URL params (<code>/users/:id</code> → <code>{ id: &#39;...&#39; }</code>)</td>
+</tr>
+<tr>
+<td><code>request.headers</code></td>
+<td>Request headers (lowercase keys, e.g. <code>authorization</code>)</td>
+</tr>
+<tr>
+<td><code>request.method</code> / <code>request.url</code></td>
+<td>HTTP method and URL</td>
+</tr>
+<tr>
+<td><code>request.ip</code></td>
+<td>Client IP address</td>
+</tr>
+<tr>
+<td><code>request.id</code></td>
+<td>Unique request id (also shown in logs)</td>
+</tr>
+<tr>
+<td><code>request.log</code></td>
+<td>Logger bound to this request (log lines include the request id)</td>
+</tr>
+</tbody></table></div>
+<p><strong>Useful <code>reply</code> methods:</strong></p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Does</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>reply.code(201)</code> / <code>reply.status(201)</code></td>
+<td>Set the status code</td>
+</tr>
+<tr>
+<td><code>reply.send(data)</code></td>
+<td>Send the response</td>
+</tr>
+<tr>
+<td><code>reply.header(&#39;key&#39;, &#39;value&#39;)</code></td>
+<td>Set a response header</td>
+</tr>
+<tr>
+<td><code>reply.type(&#39;text/html&#39;)</code></td>
+<td>Set <code>Content-Type</code></td>
+</tr>
+<tr>
+<td><code>reply.redirect(&#39;/login&#39;)</code></td>
+<td>Redirect</td>
+</tr>
+</tbody></table></div>
+<h3 id="returning-vs-replysend">Returning vs <code>reply.send()</code></h3>
+<p>In an <code>async</code> handler you can <strong>just return a value</strong>. Fastify serializes it to JSON and sends it, so you don&#39;t need <code>reply.send()</code>:</p>
+<pre><code class="language-js">// Option 1: return (preferred in async handlers)
+fastify.get(&#39;/a&#39;, async (request, reply) =&gt; {
+  return { ok: true };
+});
+
+// Option 2: reply.send
+fastify.get(&#39;/b&#39;, (request, reply) =&gt; {
+  reply.send({ ok: true });
+});
+</code></pre>
+<div class="callout warning"><div class="ctitle">Don&#39;t mix both</div><p>In an <code>async</code> handler, use <strong>either</strong> <code>return data</code> <strong>or</strong> <code>return reply.send(data)</code>. If you call <code>reply.send()</code> and also return a value, Fastify logs a <code>Reply was already sent</code> error.</p>
+</div>
+<hr>
+<h2 id="6-plugins-organising-your-code">6. Plugins: organising your code</h2>
+<div class="callout important"><div class="ctitle">Key idea</div><p>&quot;In JavaScript everything is an object; in Fastify <strong>everything is a plugin</strong>.&quot; Routes, database connections, hooks and decorators are all added with <code>fastify.register()</code>.</p>
+</div>
+<h3 id="why-plugins">Why plugins?</h3>
+<p>Putting every route in <code>server.js</code> quickly becomes messy. Plugins let you split code into files by feature (users, auth, uploads), much like <code>express.Router()</code>, but with more power (isolation, options, prefixes).</p>
+<h3 id="what-a-plugin-looks-like">What a plugin looks like</h3>
+<p>A plugin is a function that receives:</p>
+<ol>
+<li><strong><code>fastify</code></strong>: an instance you can add routes or hooks to.</li>
+<li><strong><code>options</code></strong>: whatever you passed to <code>register()</code>.</li>
+</ol>
+<p>Folder structure for our project:</p>
+<pre><code>auth-service/
+├── package.json
+├── server.js            # creates app, registers plugins, starts server
+├── .env
+├── static/              # uploaded files land here
+└── src/
+    ├── routes/
+    │   └── user.js      # user routes plugin
+    └── hooks/
+        └── auth.js      # auth hook (middleware)
+</code></pre>
+<pre><code class="language-js">// src/routes/user.js
+async function userRouter(fastify, options) {
+  fastify.post(&#39;/api/users&#39;, async (request, reply) =&gt; {
+    return { message: &#39;User created&#39; };
+  });
+}
+
+export default userRouter;
+</code></pre>
+<pre><code class="language-js">// server.js
+import userRouter from &#39;./src/routes/user.js&#39;;
+
+fastify.register(userRouter);
+</code></pre>
+<h3 id="testing-in-postman">Testing in Postman</h3>
+<ol>
+<li>Create a <strong>collection</strong> named &quot;Auth Service&quot;.</li>
+<li>Add a request named <strong>Create User</strong>, method <strong>POST</strong>, URL <code>http://localhost:4000/api/users</code>.</li>
+<li>Click <strong>Send</strong> and you should get <code>{ &quot;message&quot;: &quot;User created&quot; }</code>.</li>
+</ol>
+<h3 id="register-options-prefix-beyond-the-video">Register options: prefix (Beyond the video)</h3>
+<p>Instead of writing <code>/api/users</code> in every route, pass a prefix:</p>
+<pre><code class="language-js">fastify.register(userRouter, { prefix: &#39;/api/users&#39; });
+
+// inside userRouter:
+fastify.post(&#39;/&#39;, handler);     // → POST /api/users
+fastify.get(&#39;/:id&#39;, handler);   // → GET  /api/users/:id
+</code></pre>
+<h3 id="encapsulation-plugins-are-isolated-beyond-the-video">Encapsulation: plugins are isolated (Beyond the video)</h3>
+<p>Each registered plugin gets its <strong>own child context</strong>. Anything added inside a plugin (hooks, decorators, other plugins) is visible <strong>only inside that plugin and its children</strong>, not to its parent or siblings.</p>
+<pre><code>root instance (server.js)
+├── userRouter plugin      ← hooks added here affect only user routes
+└── uploadRouter plugin    ← can&#39;t see userRouter&#39;s hooks
+</code></pre>
+<p>That&#39;s why section 15 can apply a hook &quot;only to user routes&quot;.</p>
+<p>To <strong>share</strong> something with the whole app (for example a database connection), wrap the plugin with <code>fastify-plugin</code>, which removes the isolation:</p>
+<pre><code class="language-js">import fp from &#39;fastify-plugin&#39;;
+
+export default fp(async function dbPlugin(fastify) {
+  fastify.decorate(&#39;db&#39;, someConnection); // now fastify.db works everywhere
+});
+</code></pre>
+<div class="callout note"><div class="ctitle">Note</div><p>Official plugins like <code>@fastify/mongodb</code> are already wrapped with <code>fastify-plugin</code>. That&#39;s why <code>fastify.mongo</code> registered in <code>server.js</code> is available inside the user routes plugin.</p>
+</div>
+<h3 id="decorators-beyond-the-video">Decorators (Beyond the video)</h3>
+<p>A <strong>decorator</strong> adds a custom property or method to the instance, request or reply:</p>
+<pre><code class="language-js">fastify.decorate(&#39;config&#39;, { appName: &#39;auth&#39; });  // fastify.config
+fastify.decorateRequest(&#39;userId&#39;, null);           // request.userId (set later in a hook)
+fastify.decorateReply(&#39;ok&#39;, function (data) {      // reply.ok(data)
+  return this.code(200).send({ success: true, data });
+});
+</code></pre>
+<hr>
+<h2 id="7-request-validation-json-schema">7. Request validation (JSON Schema)</h2>
+<h3 id="why-validate">Why validate?</h3>
+<p>Never trust client input. Without validation, a client could send a missing email, a number instead of a string, or a huge payload, and your code or database would break. Validation rejects bad requests <strong>before</strong> your handler runs.</p>
+<p>Fastify has validation <strong>built in</strong> using <strong>JSON Schema</strong> (powered by the Ajv library). You don&#39;t need Joi, Zod, or any other library.</p>
+<h3 id="json-schema-basics">JSON Schema basics</h3>
+<p>JSON Schema is a standard way to describe the shape of JSON data.</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Keyword</th>
+<th>Example</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>type</code></td>
+<td><code>&#39;string&#39;</code>, <code>&#39;number&#39;</code>, <code>&#39;integer&#39;</code>, <code>&#39;boolean&#39;</code>, <code>&#39;object&#39;</code>, <code>&#39;array&#39;</code></td>
+<td>Data type</td>
+</tr>
+<tr>
+<td><code>properties</code></td>
+<td><code>{ name: { type: &#39;string&#39; } }</code></td>
+<td>Fields of an object</td>
+</tr>
+<tr>
+<td><code>required</code></td>
+<td><code>[&#39;name&#39;, &#39;email&#39;]</code></td>
+<td>Fields that must be present</td>
+</tr>
+<tr>
+<td><code>minLength</code> / <code>maxLength</code></td>
+<td><code>{ type: &#39;string&#39;, minLength: 8 }</code></td>
+<td>String length</td>
+</tr>
+<tr>
+<td><code>minimum</code> / <code>maximum</code></td>
+<td><code>{ type: &#39;number&#39;, minimum: 18 }</code></td>
+<td>Number range</td>
+</tr>
+<tr>
+<td><code>format</code></td>
+<td><code>{ type: &#39;string&#39;, format: &#39;email&#39; }</code></td>
+<td>Built-in formats: <code>email</code>, <code>uri</code>, <code>date</code>, <code>date-time</code>, …</td>
+</tr>
+<tr>
+<td><code>pattern</code></td>
+<td><code>{ type: &#39;string&#39;, pattern: &#39;^[a-z]+{{BODY}}#39; }</code></td>
+<td>Regex the string must match</td>
+</tr>
+<tr>
+<td><code>enum</code></td>
+<td><code>{ enum: [&#39;user&#39;, &#39;admin&#39;] }</code></td>
+<td>Allowed values</td>
+</tr>
+<tr>
+<td><code>items</code></td>
+<td><code>{ type: &#39;array&#39;, items: { type: &#39;string&#39; } }</code></td>
+<td>Type of array elements</td>
+</tr>
+<tr>
+<td><code>additionalProperties</code></td>
+<td><code>false</code></td>
+<td>Reject or strip fields not listed in <code>properties</code></td>
+</tr>
+<tr>
+<td><code>default</code></td>
+<td><code>{ type: &#39;integer&#39;, default: 10 }</code></td>
+<td>Value used if the field is missing</td>
+</tr>
+</tbody></table></div>
+<h3 id="the-schema-from-the-video">The schema from the video</h3>
+<p>The body we send from Postman (Body → raw → JSON):</p>
+<pre><code class="language-json">{
+  &quot;name&quot;: &quot;Coder&quot;,
+  &quot;email&quot;: &quot;coder@example.com&quot;,
+  &quot;password&quot;: &quot;password&quot;
+}
+</code></pre>
+<pre><code class="language-js">const createUserSchema = {
+  body: {
+    type: &#39;object&#39;,
+    required: [&#39;name&#39;, &#39;email&#39;, &#39;password&#39;],
+    properties: {
+      name:     { type: &#39;string&#39; },
+      email:    { type: &#39;string&#39; },
+      password: { type: &#39;string&#39; },
+    },
+  },
+};
+
+fastify.post(&#39;/api/users&#39;, { schema: createUserSchema }, async (request, reply) =&gt; {
+  return { message: &#39;User created&#39; };
+});
+</code></pre>
+<p>The schema goes in the <strong>route options</strong> (second argument) under the <code>schema</code> key. Inside <code>schema</code>, the <code>body</code> key says &quot;this part validates the request body&quot;.</p>
+<h3 id="what-a-validation-error-looks-like">What a validation error looks like</h3>
+<p>In the video, <code>password</code> was changed to <code>{ type: &#39;number&#39; }</code> and a string was sent. Fastify replied automatically with <strong>400 Bad Request</strong>, and the handler never ran:</p>
+<pre><code class="language-json">{
+  &quot;statusCode&quot;: 400,
+  &quot;code&quot;: &quot;FST_ERR_VALIDATION&quot;,
+  &quot;error&quot;: &quot;Bad Request&quot;,
+  &quot;message&quot;: &quot;body/password must be number&quot;
+}
+</code></pre>
+<h3 id="what-you-can-validate">What you can validate</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Schema key</th>
+<th>Validates</th>
+<th>Example URL / source</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>body</code></td>
+<td>Request body</td>
+<td>JSON in POST/PUT/PATCH</td>
+</tr>
+<tr>
+<td><code>querystring</code></td>
+<td>Query params</td>
+<td><code>/api/users?q=john&amp;limit=10</code></td>
+</tr>
+<tr>
+<td><code>params</code></td>
+<td>Route params</td>
+<td><code>/api/users/:id</code></td>
+</tr>
+<tr>
+<td><code>headers</code></td>
+<td>Request headers</td>
+<td><code>authorization</code>, <code>content-type</code></td>
+</tr>
+<tr>
+<td><code>response</code></td>
+<td>Output, per status code</td>
+<td>Section 8</td>
+</tr>
+</tbody></table></div>
+<h3 id="a-stronger-production-style-schema-beyond-the-video">A stronger, production-style schema (Beyond the video)</h3>
+<pre><code class="language-js">const createUserSchema = {
+  body: {
+    type: &#39;object&#39;,
+    required: [&#39;name&#39;, &#39;email&#39;, &#39;password&#39;],
+    additionalProperties: false,               // strip unknown fields
+    properties: {
+      name:     { type: &#39;string&#39;, minLength: 2, maxLength: 50 },
+      email:    { type: &#39;string&#39;, format: &#39;email&#39; },
+      password: { type: &#39;string&#39;, minLength: 8 },
+    },
+  },
+};
+
+const listUsersSchema = {
+  querystring: {
+    type: &#39;object&#39;,
+    properties: {
+      q:     { type: &#39;string&#39; },
+      limit: { type: &#39;integer&#39;, minimum: 1, maximum: 100, default: 20 },
+    },
+  },
+};
+
+const getUserSchema = {
+  params: {
+    type: &#39;object&#39;,
+    required: [&#39;id&#39;],
+    properties: { id: { type: &#39;string&#39;, pattern: &#39;^[a-f0-9]{24}{{BODY}}#39; } }, // MongoDB ObjectId format
+  },
+};
+</code></pre>
+<h3 id="fastify39s-default-ajv-settings-good-to-know">Fastify&#39;s default Ajv settings (good to know)</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Default</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>coerceTypes</code></td>
+<td><code>&#39;array&#39;</code></td>
+<td>Converts types where possible: <code>?limit=10</code> arrives as the string <code>&quot;10&quot;</code> but becomes the number <code>10</code> if the schema says <code>integer</code>.</td>
+</tr>
+<tr>
+<td><code>useDefaults</code></td>
+<td><code>true</code></td>
+<td>Fills in <code>default</code> values for missing fields.</td>
+</tr>
+<tr>
+<td><code>removeAdditional</code></td>
+<td><code>true</code></td>
+<td>Removes unknown fields, <strong>but only when the schema has <code>additionalProperties: false</code></strong>.</td>
+</tr>
+<tr>
+<td><code>allErrors</code></td>
+<td><code>false</code></td>
+<td>Stops at the first error (faster, and safer against attack payloads).</td>
+</tr>
+</tbody></table></div>
+<div class="callout warning"><div class="ctitle">Remember</div>
+<ul>
+<li>If you leave out <code>required</code>, <strong>every field is optional</strong>, even ones listed in <code>properties</code>.</li>
+<li>The schema checks types but <strong>does not strip unknown fields by default</strong>. In the video, an extra <code>&quot;age&quot;: 30</code> was sent and still showed up in <code>request.body</code>. Add <code>additionalProperties: false</code> to remove such fields.</li>
+<li>Validation happens <strong>before</strong> the handler, so the handler can trust <code>request.body</code>.</li>
+</ul>
+</div>
+<hr>
+<h2 id="8-response-schema-status-codes">8. Response schema &amp; status codes</h2>
+<h3 id="why-a-response-schema">Why a response schema?</h3>
+<ol>
+<li><strong>Security</strong>: only the fields you list are sent. You can never accidentally leak <code>password</code> or internal fields.</li>
+<li><strong>Speed</strong>: Fastify uses the schema to build JSON with <code>fast-json-stringify</code>, which is much faster than <code>JSON.stringify</code>.</li>
+<li><strong>Documentation</strong>: the schema describes exactly what the API returns (tools like <code>@fastify/swagger</code> can turn it into docs).</li>
+</ol>
+<h3 id="example-from-the-video">Example from the video</h3>
+<pre><code class="language-js">const createUserSchema = {
+  body: { /* ...same as before... */ },
+  response: {
+    201: {
+      type: &#39;object&#39;,
+      properties: {
+        id: { type: &#39;string&#39; },
+      },
+    },
+  },
+};
+
+fastify.post(&#39;/api/users&#39;, { schema: createUserSchema }, async (request, reply) =&gt; {
+  reply.code(201);                          // must match the schema key!
+  return { id: &#39;some-id&#39;, name: &#39;Coder&#39; };  // &quot;name&quot; is NOT sent; only &quot;id&quot;
+});
+</code></pre>
+<h3 id="what-happened-step-by-step-in-the-video">What happened step by step in the video</h3>
+<ol>
+<li>A response schema for <strong><code>200</code></strong> with only <code>id</code> was added, but the handler returned <code>{ message }</code>. The response came back <strong>empty</strong> (<code>{}</code>), because <code>message</code> isn&#39;t in the schema.</li>
+<li>The handler then returned <code>{ id: &#39;some-id&#39; }</code>, and <code>id</code> appeared.</li>
+<li>The schema was changed to <strong><code>201</code></strong> (the correct code for &quot;created&quot;), but the reply still used the default <strong>200</strong>, so the 201 schema wasn&#39;t used.</li>
+<li><code>reply.code(201)</code> was added, so the status became 201 and the schema applied again.</li>
+<li><code>name</code> was added to the returned object. It <strong>didn&#39;t appear</strong>, because it&#39;s not in the schema.</li>
+</ol>
+<div class="callout important"><div class="ctitle">Rules</div>
+<ul>
+<li>A response schema only applies when the <strong>status code matches</strong> its key.</li>
+<li>Fields not in <code>properties</code> are <strong>silently removed</strong> from the output.</li>
+<li>Set the status with <code>reply.code(n)</code> (or <code>reply.status(n)</code>).</li>
+<li>You can use ranges as keys: <code>&#39;2xx&#39;</code>, <code>&#39;4xx&#39;</code>.</li>
+</ul>
+</div>
+<h3 id="array-response-for-list-users">Array response (for &quot;list users&quot;)</h3>
+<pre><code class="language-js">const userListResponse = {
+  200: {
+    type: &#39;array&#39;,
+    items: {
+      type: &#39;object&#39;,
+      properties: {
+        _id:   { type: &#39;string&#39; },
+        name:  { type: &#39;string&#39; },
+        email: { type: &#39;string&#39; },
+        // no password → it is never sent
+      },
+    },
+  },
+};
+</code></pre>
+<h3 id="status-codes-you39ll-use-in-a-rest-api">Status codes you&#39;ll use in a REST API</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Name</th>
+<th>Use when</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>200</td>
+<td>OK</td>
+<td>Successful read or update</td>
+</tr>
+<tr>
+<td>201</td>
+<td>Created</td>
+<td>A new resource was created (POST)</td>
+</tr>
+<tr>
+<td>204</td>
+<td>No Content</td>
+<td>Success with no body (often DELETE)</td>
+</tr>
+<tr>
+<td>400</td>
+<td>Bad Request</td>
+<td>Invalid input (Fastify sends this on validation errors)</td>
+</tr>
+<tr>
+<td>401</td>
+<td>Unauthorized</td>
+<td>Missing or invalid token</td>
+</tr>
+<tr>
+<td>403</td>
+<td>Forbidden</td>
+<td>Logged in, but not allowed</td>
+</tr>
+<tr>
+<td>404</td>
+<td>Not Found</td>
+<td>Resource or route doesn&#39;t exist</td>
+</tr>
+<tr>
+<td>409</td>
+<td>Conflict</td>
+<td>Duplicate, e.g. email already registered</td>
+</tr>
+<tr>
+<td>413</td>
+<td>Payload Too Large</td>
+<td>Upload or body over the limit</td>
+</tr>
+<tr>
+<td>415</td>
+<td>Unsupported Media Type</td>
+<td>Content type not supported (e.g. multipart without the plugin)</td>
+</tr>
+<tr>
+<td>500</td>
+<td>Internal Server Error</td>
+<td>Unexpected server error</td>
+</tr>
+</tbody></table></div>
+<hr>
+<h2 id="9-reading-request-data">9. Reading request data</h2>
+<h3 id="body">Body</h3>
+<pre><code class="language-js">const { name, email, password } = request.body;
+</code></pre>
+<p>In the video, <code>console.log(request.body)</code> printed:</p>
+<pre><code class="language-js">{ name: &#39;Coder&#39;, email: &#39;coder@example.com&#39;, password: &#39;password&#39; }
+</code></pre>
+<p>Fastify parses JSON bodies <strong>automatically</strong>; there&#39;s no <code>express.json()</code> equivalent to add. The default body size limit is <strong>1 MB</strong> (change it with <code>Fastify({ bodyLimit: ... })</code>).</p>
+<h3 id="query-vs-params-vs-body">Query vs params vs body</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Source</th>
+<th>URL / request example</th>
+<th>Access</th>
+<th>Typical use</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Body</td>
+<td>JSON in a POST</td>
+<td><code>request.body</code></td>
+<td>Data to create or update</td>
+</tr>
+<tr>
+<td>Query</td>
+<td><code>/api/users?q=john</code></td>
+<td><code>request.query.q</code></td>
+<td>Filtering, search, pagination</td>
+</tr>
+<tr>
+<td>Params</td>
+<td><code>/api/users/652f…</code></td>
+<td><code>request.params.id</code></td>
+<td>Identifying one resource</td>
+</tr>
+<tr>
+<td>Headers</td>
+<td><code>Authorization: Bearer …</code></td>
+<td><code>request.headers.authorization</code></td>
+<td>Tokens, metadata</td>
+</tr>
+</tbody></table></div>
+<hr>
+<h2 id="10-mongodb-integration">10. MongoDB integration</h2>
+<h3 id="mongodb-in-30-seconds">MongoDB in 30 seconds</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>SQL term</th>
+<th>MongoDB term</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Database</td>
+<td>Database</td>
+</tr>
+<tr>
+<td>Table</td>
+<td><strong>Collection</strong> (e.g. <code>users</code>)</td>
+</tr>
+<tr>
+<td>Row</td>
+<td><strong>Document</strong> (a JSON-like object)</td>
+</tr>
+<tr>
+<td>Primary key</td>
+<td><strong><code>_id</code></strong> (an <code>ObjectId</code>, created automatically)</td>
+</tr>
+</tbody></table></div>
+<p>An <code>ObjectId</code> is a 12-byte id shown as a 24-character hex string, e.g. <code>652f1c9e8b3e4a1d2c3b4a5f</code>.</p>
+<h3 id="running-mongodb-locally">Running MongoDB locally</h3>
+<p>The video uses a local MongoDB inside <strong>Docker</strong>:</p>
+<pre><code class="language-bash">docker run -d --name mongo -p 27017:27017 mongo:7
+</code></pre>
+<p><strong>MongoDB Compass</strong> (a free GUI) is used to see the database and documents.</p>
+<h3 id="install-the-official-plugin">Install the official plugin</h3>
+<p>Fastify has official plugins for many databases (<em>Docs → Guides → Database</em>: MySQL, Postgres, MongoDB, Redis, …).</p>
+<pre><code class="language-bash">npm install @fastify/mongodb
+</code></pre>
+<h3 id="connection-string">Connection string</h3>
+<pre><code class="language-bash"># .env
+DB_URL=mongodb://localhost:27017/fastify-auth-service
+</code></pre>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Part</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>mongodb://</code></td>
+<td>Protocol</td>
+</tr>
+<tr>
+<td><code>localhost:27017</code></td>
+<td>Host and port (27017 is MongoDB&#39;s default port)</td>
+</tr>
+<tr>
+<td><code>/fastify-auth-service</code></td>
+<td>Database name (created automatically on first insert)</td>
+</tr>
+</tbody></table></div>
+<p>For MongoDB Atlas (cloud), the URL looks like <code>mongodb+srv://user:pass@cluster.mongodb.net/dbname</code>.</p>
+<h3 id="register-the-plugin">Register the plugin</h3>
+<pre><code class="language-js">// server.js
+import fastifyMongo from &#39;@fastify/mongodb&#39;;
+
+fastify.register(fastifyMongo, {
+  forceClose: true,           // close the DB connection when the server shuts down
+  url: process.env.DB_URL,
+});
+</code></pre>
+<ul>
+<li><code>register(plugin, options)</code> is the same pattern as for routes. Plugins, hooks and decorators are all registered this way.</li>
+<li><code>forceClose: true</code> makes sure the connection doesn&#39;t stay open after the server stops.</li>
+<li>Start the server with <code>--env-file=.env</code> (section 4), or <code>process.env.DB_URL</code> will be <code>undefined</code>.</li>
+<li>If the server starts with no errors, the connection worked.</li>
+</ul>
+<h3 id="what-the-plugin-gives-you">What the plugin gives you</h3>
+<p>After registration, <code>fastify.mongo</code> is available (in <code>server.js</code> <strong>and</strong> in route plugins):</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Property</th>
+<th>What it is</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>fastify.mongo.db</code></td>
+<td>The database from the URL</td>
+</tr>
+<tr>
+<td><code>fastify.mongo.client</code></td>
+<td>The raw <code>MongoClient</code></td>
+</tr>
+<tr>
+<td><code>fastify.mongo.ObjectId</code></td>
+<td>The <code>ObjectId</code> class (to convert string ids)</td>
+</tr>
+</tbody></table></div>
+<p>Get a collection. This is similar to a &quot;model&quot; in Express + Mongoose:</p>
+<pre><code class="language-js">const userCollection = fastify.mongo.db.collection(&#39;users&#39;);
+</code></pre>
+<h3 id="mongodb-driver-methods-you39ll-use">MongoDB driver methods you&#39;ll use</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Does</th>
+<th>Returns</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>insertOne(doc)</code></td>
+<td>Insert one document</td>
+<td><code>{ acknowledged, insertedId }</code></td>
+</tr>
+<tr>
+<td><code>insertMany(docs)</code></td>
+<td>Insert several</td>
+<td><code>{ insertedIds }</code></td>
+</tr>
+<tr>
+<td><code>find(filter)</code></td>
+<td>Find many (lazy cursor)</td>
+<td>Cursor → call <code>.toArray()</code></td>
+</tr>
+<tr>
+<td><code>findOne(filter)</code></td>
+<td>Find the first match</td>
+<td>Document or <code>null</code></td>
+</tr>
+<tr>
+<td><code>updateOne(filter, { $set })</code></td>
+<td>Update one</td>
+<td><code>{ matchedCount, modifiedCount }</code></td>
+</tr>
+<tr>
+<td><code>deleteOne(filter)</code></td>
+<td>Delete one</td>
+<td><code>{ deletedCount }</code></td>
+</tr>
+<tr>
+<td><code>countDocuments(filter)</code></td>
+<td>Count matches</td>
+<td>Number</td>
+</tr>
+</tbody></table></div>
+<hr>
+<h2 id="11-create-a-user-insertone">11. Create a user (insertOne)</h2>
+<h3 id="code-from-the-video">Code from the video</h3>
+<pre><code class="language-js">// src/routes/user.js
+fastify.post(&#39;/api/users&#39;, { schema: createUserSchema }, async (request, reply) =&gt; {
+  const userCollection = fastify.mongo.db.collection(&#39;users&#39;);
+  const { name, email, password } = request.body;
+
+  // TODO: hash the password before storing
+  const result = await userCollection.insertOne({ name, email, password });
+  const insertedId = result.insertedId;
+
+  fastify.log.info(`User created: ${insertedId}`);
+
+  reply.code(201);
+  return { id: insertedId.toString() };
+});
+</code></pre>
+<h3 id="step-by-step">Step by step</h3>
+<ol>
+<li>Get the <code>users</code> collection from the Mongo plugin.</li>
+<li>Destructure the validated body.</li>
+<li><code>insertOne</code> saves the document. MongoDB adds <code>_id</code> automatically.</li>
+<li><code>result.insertedId</code> is the new document&#39;s <code>ObjectId</code>.</li>
+<li>Log it, which helps later when monitoring logs.</li>
+<li>Return <code>201</code> with the id. The response schema makes sure only <code>id</code> is sent.</li>
+</ol>
+<p>In the video, the <code>users</code> collection was created in Compass first (not strictly needed, since MongoDB creates it on first insert). After sending the request, refreshing Compass showed the new document.</p>
+<h3 id="logging-correctly">Logging correctly</h3>
+<p>Fastify&#39;s logger is <strong>pino</strong>. Its signature is <code>log.info(object, message)</code>, with the <strong>object first</strong>:</p>
+<pre><code class="language-js">fastify.log.info({ userId: insertedId }, &#39;User created&#39;);   // correct: structured
+fastify.log.info(`User created: ${insertedId}`);            // fine: plain message
+fastify.log.info(&#39;User created&#39;, insertedId);               // ✗ the id isn&#39;t logged the way you expect
+</code></pre>
+<p>The video hit exactly this problem: plain JavaScript shows no type hints, while TypeScript would show the right signature. Inside handlers, <code>request.log.info(...)</code> is even better because each line includes the request id.</p>
+<div class="callout danger"><div class="ctitle">Never store plain passwords</div><p>If your database leaks, plain passwords expose every user (and their other accounts where they reuse passwords). Always <strong>hash</strong> passwords before saving them. The video leaves this as a TODO; here&#39;s how to do it.</p>
+</div>
+<h3 id="hashing-passwords-with-node39s-built-in-crypto-beyond-the-video">Hashing passwords with Node&#39;s built-in crypto (Beyond the video)</h3>
+<p>No extra library is needed; <code>scrypt</code> is built into Node:</p>
+<pre><code class="language-js">// src/utils/password.js
+import { randomBytes, scrypt as scryptCb, timingSafeEqual } from &#39;node:crypto&#39;;
+import { promisify } from &#39;node:util&#39;;
+
+const scrypt = promisify(scryptCb);
+
+export async function hashPassword(password) {
+  const salt = randomBytes(16).toString(&#39;hex&#39;);
+  const key = await scrypt(password, salt, 64);
+  return `${salt}:${key.toString(&#39;hex&#39;)}`;      // store salt + hash together
+}
+
+export async function verifyPassword(password, stored) {
+  const [salt, hashHex] = stored.split(&#39;:&#39;);
+  const key = await scrypt(password, salt, 64);
+  return timingSafeEqual(key, Buffer.from(hashHex, &#39;hex&#39;)); // constant-time compare
+}
+</code></pre>
+<pre><code class="language-js">const hashed = await hashPassword(password);
+await userCollection.insertOne({ name, email, password: hashed });
+</code></pre>
+<p>Popular alternatives are <code>bcrypt</code> and <code>argon2</code>.</p>
+<h3 id="unique-email-beyond-the-video">Unique email (Beyond the video)</h3>
+<p>The video noticed that the same email was inserted three times. Fix it with a <strong>unique index</strong> and handle the duplicate error:</p>
+<pre><code class="language-js">// once, at startup (e.g. in server.js after register, inside fastify.ready or an onReady hook)
+await fastify.mongo.db.collection(&#39;users&#39;).createIndex({ email: 1 }, { unique: true });
+</code></pre>
+<pre><code class="language-js">try {
+  const result = await userCollection.insertOne({ name, email, password: hashed });
+  reply.code(201);
+  return { id: result.insertedId.toString() };
+} catch (err) {
+  if (err.code === 11000) {                      // MongoDB duplicate key error
+    return reply.code(409).send({ message: &#39;Email already registered&#39; });
+  }
+  throw err;                                     // let Fastify return 500
+}
+</code></pre>
+<hr>
+<h2 id="12-list-users-search-with-a-query-param">12. List users + search with a query param</h2>
+<h3 id="get-all-users">Get all users</h3>
+<pre><code class="language-js">fastify.get(&#39;/api/users&#39;, async (request, reply) =&gt; {
+  const userCollection = fastify.mongo.db.collection(&#39;users&#39;);
+  const users = await userCollection.find().toArray();
+  fastify.log.info(&#39;User list returned&#39;);
+  return users;
+});
+</code></pre>
+<ul>
+<li><code>find()</code> returns a <strong>cursor</strong>, a lazy pointer to the results. It doesn&#39;t load anything yet.</li>
+<li><code>.toArray()</code> loads all matching documents into an array.</li>
+<li>In the video, <code>findOne</code> was typed first by mistake. <code>findOne</code> returns only one document; use <code>find</code> for a list.</li>
+<li>The first attempt also failed with <code>users is not defined</code> because of a variable name typo. Make sure the name you return matches the name you declared.</li>
+</ul>
+<h3 id="search-with-q">Search with <code>?q=</code></h3>
+<p>Goal: <code>GET /api/users?q=john</code> returns only users whose name contains &quot;john&quot;.</p>
+<pre><code class="language-js">fastify.get(&#39;/api/users&#39;, async (request, reply) =&gt; {
+  const userCollection = fastify.mongo.db.collection(&#39;users&#39;);
+  const { q } = request.query;                // { q: &#39;john&#39; }
+
+  let query = {};                             // empty filter = match everything
+  if (q) {
+    query = { name: { $regex: q, $options: &#39;i&#39; } };
+  }
+
+  const users = await userCollection.find(query).toArray();
+  return users;
+});
+</code></pre>
+<p>How it works:</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Piece</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>request.query</code></td>
+<td>Object built from the query string. <code>?q=john</code> → <code>{ q: &#39;john&#39; }</code></td>
+</tr>
+<tr>
+<td><code>{}</code> filter</td>
+<td>Matches every document, so with no <code>q</code> all users are returned</td>
+</tr>
+<tr>
+<td><code>$regex: q</code></td>
+<td>MongoDB operator: field must match this regular expression</td>
+</tr>
+<tr>
+<td><code>$options: &#39;i&#39;</code></td>
+<td>Case-<strong>i</strong>nsensitive: &quot;John&quot;, &quot;JOHN&quot; and &quot;john&quot; all match</td>
+</tr>
+</tbody></table></div>
+<p>Results from the video: <code>?q=john</code> returned only &quot;John Doe&quot;; <code>?q=joh</code> (a partial name) also returned &quot;John Doe&quot;, because the regex matches anywhere in the name.</p>
+<p>In Postman, add query params in the <strong>Params</strong> tab (key <code>q</code>, value <code>john</code>). Postman adds <code>?q=john</code> to the URL for you.</p>
+<h3 id="improvements-beyond-the-video">Improvements (Beyond the video)</h3>
+<pre><code class="language-js">const escapeRegex = (s) =&gt; s.replace(/[.*+?^${}()|[\]\\]/g, &#39;\\{{BODY}}amp;&#39;);
+
+fastify.get(&#39;/api/users&#39;, { schema: listUsersSchema }, async (request, reply) =&gt; {
+  const { q, limit } = request.query;
+  const query = q ? { name: { $regex: escapeRegex(q), $options: &#39;i&#39; } } : {};
+
+  return fastify.mongo.db.collection(&#39;users&#39;)
+    .find(query, { projection: { password: 0 } })  // never return passwords
+    .limit(limit)                                   // pagination
+    .toArray();
+});
+</code></pre>
+<ul>
+<li><strong>Escape user input</strong> before putting it in a regex. Otherwise characters like <code>.*</code> change the meaning, and crafted patterns can make the database slow (ReDoS).</li>
+<li><strong><code>projection: { password: 0 }</code></strong> excludes the password field at the database level.</li>
+<li><strong><code>limit</code></strong> stops one request from loading thousands of documents.</li>
+</ul>
+<hr>
+<h2 id="13-route-params-get-a-single-user-by-id">13. Route params: get a single user by id</h2>
+<h3 id="dynamic-params">Dynamic params</h3>
+<p><code>:id</code> in a URL is a <strong>dynamic segment</strong>: it matches any value, and that value appears in <code>request.params</code>.</p>
+<pre><code class="language-js">// GET /api/users/652f1c9e8b3e4a1d2c3b4a5f
+fastify.get(&#39;/api/users/:id&#39;, async (request, reply) =&gt; {
+  const userCollection = fastify.mongo.db.collection(&#39;users&#39;);
+  const id = new fastify.mongo.ObjectId(request.params.id);  // string → ObjectId
+
+  const user = await userCollection.findOne({ _id: id });
+  return user;
+});
+</code></pre>
+<h3 id="why-convert-to-objectid">Why convert to ObjectId?</h3>
+<p>URL params always arrive as <strong>strings</strong>. MongoDB stores <code>_id</code> as an <strong>ObjectId</strong> type, and the string <code>&quot;652f…&quot;</code> is not equal to <code>ObjectId(&quot;652f…&quot;)</code>, so <code>findOne</code> would find nothing. <code>new fastify.mongo.ObjectId(str)</code> converts it.</p>
+<p>In Postman, duplicate the &quot;List Users&quot; request, rename it <strong>Get User</strong>, and use <code>http://localhost:4000/api/users/&lt;paste an _id&gt;</code>. Changing the id returns a different user.</p>
+<h3 id="params-vs-query-side-by-side">Params vs query, side by side</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th></th>
+<th>Params</th>
+<th>Query</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Declared in route?</td>
+<td>Yes: <code>/users/:id</code></td>
+<td>No</td>
+</tr>
+<tr>
+<td>URL</td>
+<td><code>/api/users/652f…</code></td>
+<td><code>/api/users?q=john</code></td>
+</tr>
+<tr>
+<td>Access</td>
+<td><code>request.params.id</code></td>
+<td><code>request.query.q</code></td>
+</tr>
+<tr>
+<td>Required?</td>
+<td>Yes, part of the path</td>
+<td>Optional</td>
+</tr>
+<tr>
+<td>Use for</td>
+<td>Identifying <strong>one</strong> resource</td>
+<td>Filtering, searching, sorting, pagination</td>
+</tr>
+</tbody></table></div>
+<h3 id="handle-invalid-and-missing-ids-beyond-the-video">Handle invalid and missing ids (Beyond the video)</h3>
+<pre><code class="language-js">fastify.get(&#39;/api/users/:id&#39;, async (request, reply) =&gt; {
+  const { id } = request.params;
+  if (!fastify.mongo.ObjectId.isValid(id)) {
+    return reply.code(400).send({ message: &#39;Invalid user id&#39; });
+  }
+
+  const user = await fastify.mongo.db.collection(&#39;users&#39;)
+    .findOne({ _id: new fastify.mongo.ObjectId(id) }, { projection: { password: 0 } });
+
+  if (!user) {
+    return reply.code(404).send({ message: &#39;User not found&#39; });
+  }
+  return user;
+});
+</code></pre>
+<div class="callout warning"><div class="ctitle">Warning</div><p><code>new ObjectId(&#39;abc&#39;)</code> <strong>throws</strong> for an invalid string, and without a check the client gets a 500. Check with <code>ObjectId.isValid()</code> (or validate with a <code>params</code> schema) and return 400 instead.</p>
+</div>
+<hr>
+<h2 id="14-update-and-delete-beyond-the-video">14. Update and delete (Beyond the video)</h2>
+<p>The video mentioned building CRUD (Create, Read, Update, Delete) but only covered create and read. Here are the other two, following the same pattern:</p>
+<pre><code class="language-js">// PATCH /api/users/:id   body: { &quot;name&quot;: &quot;New Name&quot; }
+fastify.patch(&#39;/api/users/:id&#39;, async (request, reply) =&gt; {
+  const _id = new fastify.mongo.ObjectId(request.params.id);
+  const result = await fastify.mongo.db.collection(&#39;users&#39;)
+    .updateOne({ _id }, { $set: request.body });   // $set changes only the given fields
+
+  if (result.matchedCount === 0) {
+    return reply.code(404).send({ message: &#39;User not found&#39; });
+  }
+  return { message: &#39;User updated&#39; };
+});
+
+// DELETE /api/users/:id
+fastify.delete(&#39;/api/users/:id&#39;, async (request, reply) =&gt; {
+  const _id = new fastify.mongo.ObjectId(request.params.id);
+  const result = await fastify.mongo.db.collection(&#39;users&#39;).deleteOne({ _id });
+
+  if (result.deletedCount === 0) {
+    return reply.code(404).send({ message: &#39;User not found&#39; });
+  }
+  return reply.code(204).send();                   // success, no body
+});
+</code></pre>
+<div class="callout warning"><div class="ctitle">Warning</div><p>Give the PATCH body a schema with <code>additionalProperties: false</code>, or a client could <code>$set</code> fields like <code>role: &#39;admin&#39;</code>.</p>
+</div>
+<hr>
+<h2 id="15-hooks-fastify39s-middleware">15. Hooks: Fastify&#39;s middleware</h2>
+<h3 id="the-problem">The problem</h3>
+<p>Some routes should only be available to <strong>authenticated users</strong> (users who send a valid token). We need code that runs <strong>before the handler</strong>, checks the token, and either lets the request continue or rejects it.</p>
+<p>In Express this is called <strong>middleware</strong>. In Fastify it&#39;s done with <strong>hooks</strong>.</p>
+<h3 id="the-request-lifecycle">The request lifecycle</h3>
+<p>Every request passes through fixed stages, in order. A <strong>hook</strong> is your own function that runs at one of those stages (<em>Docs → Reference → Lifecycle</em> and <em>Hooks</em>).</p>
+<pre><code>Incoming request
+  │
+  ▼
+onRequest          ← very first; body not parsed yet (good for early auth checks)
+  │
+preParsing         ← before the body is parsed (can transform the raw stream)
+  │
+  (body parsing)
+  │
+preValidation      ← body parsed, not yet validated
+  │
+  (schema validation)
+  │
+preHandler         ← validated, just before your handler  ⭐ used in the video
+  │
+  ▼
+HANDLER            ← your route function
+  │
+preSerialization   ← before the returned object is turned into JSON
+  │
+onSend             ← before the response is sent (can change the payload/headers)
+  │
+onResponse         ← after the response was sent (logging, metrics)
+</code></pre>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Hook</th>
+<th>Runs</th>
+<th>Typical use</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>onRequest</code></td>
+<td>First, before parsing</td>
+<td>Auth checks that don&#39;t need the body, rate limiting</td>
+</tr>
+<tr>
+<td><code>preParsing</code></td>
+<td>Before the body is parsed</td>
+<td>Decompress or transform the raw body</td>
+</tr>
+<tr>
+<td><code>preValidation</code></td>
+<td>After parsing, before validation</td>
+<td>Change the body before the schema checks it</td>
+</tr>
+<tr>
+<td><code>preHandler</code></td>
+<td>After validation, before the handler</td>
+<td><strong>Auth</strong>, permission checks, loading the user</td>
+</tr>
+<tr>
+<td><code>preSerialization</code></td>
+<td>After the handler, before JSON</td>
+<td>Wrap every response in <code>{ data: ... }</code></td>
+</tr>
+<tr>
+<td><code>onSend</code></td>
+<td>Before sending</td>
+<td>Add headers, compress</td>
+</tr>
+<tr>
+<td><code>onResponse</code></td>
+<td>After sending</td>
+<td>Logging, metrics</td>
+</tr>
+<tr>
+<td><code>onError</code></td>
+<td>When an error happens</td>
+<td>Custom error logging</td>
+</tr>
+<tr>
+<td><code>onTimeout</code></td>
+<td>When a request times out</td>
+<td>Monitoring</td>
+</tr>
+</tbody></table></div>
+<p>There are also <strong>application hooks</strong> that run for the app, not per request: <code>onReady</code>, <code>onListen</code>, <code>onClose</code>, <code>preClose</code>, <code>onRoute</code>, <code>onRegister</code>.</p>
+<h3 id="adding-a-hook">Adding a hook</h3>
+<pre><code class="language-js">fastify.addHook(&#39;preHandler&#39;, (request, reply, done) =&gt; {
+  console.log(&#39;Checking auth&#39;);
+  done();   // continue to the next step of the lifecycle
+});
+</code></pre>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Argument</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>request</code>, <code>reply</code></td>
+<td>Same objects the handler gets</td>
+</tr>
+<tr>
+<td><code>done</code></td>
+<td>Callback you <strong>must</strong> call to hand control to the next stage (like <code>next()</code> in Express)</td>
+</tr>
+</tbody></table></div>
+<h3 id="what-the-video-demonstrated">What the video demonstrated</h3>
+<ol>
+<li>With <code>done()</code> <strong>not</strong> called, sending &quot;Get User&quot; in Postman made the request <strong>hang</strong>: no response ever arrived.</li>
+<li>After adding <code>done()</code>, the response came back and <code>Checking auth</code> appeared in the terminal.</li>
+</ol>
+<div class="callout danger"><div class="ctitle">Forgot done()? The request hangs</div><p>In callback-style hooks, if you neither call <code>done()</code> nor send a reply, the request is stuck forever. Every code path must end in <code>done()</code>, <code>done(err)</code>, or <code>reply.send()</code>.</p>
+</div>
+<hr>
+<h2 id="16-hook-scopes-global-plugin-route">16. Hook scopes: global, plugin, route</h2>
+<p>Where you add a hook decides <strong>which routes it runs for</strong>. This comes from plugin encapsulation (section 6).</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Registered in…</th>
+<th>Applies to</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>server.js</code>, on the root instance</td>
+<td><strong>All</strong> routes in the app</td>
+<td>Request logging, CORS</td>
+</tr>
+<tr>
+<td>Inside a plugin (e.g. <code>userRouter</code>)</td>
+<td>Every route <strong>in that plugin</strong> (and its children)</td>
+<td>All user routes need auth</td>
+</tr>
+<tr>
+<td>Route options <code>{ preHandler: fn }</code></td>
+<td><strong>Only that route</strong></td>
+<td>Only &quot;get user&quot; needs auth</td>
+</tr>
+</tbody></table></div>
+<h3 id="1-global">1. Global</h3>
+<pre><code class="language-js">// server.js
+fastify.addHook(&#39;preHandler&#39;, (request, reply, done) =&gt; {
+  request.log.info(&#39;runs for every route&#39;);
+  done();
+});
+</code></pre>
+<h3 id="2-plugin-level">2. Plugin level</h3>
+<pre><code class="language-js">// src/routes/user.js
+async function userRouter(fastify) {
+  fastify.addHook(&#39;preHandler&#39;, (request, reply, done) =&gt; {
+    console.log(&#39;Checking auth&#39;);   // runs for ALL routes below
+    done();
+  });
+
+  fastify.get(&#39;/api/users&#39;, ...);      // ✓ hook runs
+  fastify.get(&#39;/api/users/:id&#39;, ...);  // ✓ hook runs
+}
+</code></pre>
+<p>In the video, both &quot;List Users&quot; and &quot;Get User&quot; printed <code>Checking auth</code>, which proved the hook applied to the whole router.</p>
+<h3 id="3-route-level-what-the-video-settled-on">3. Route level (what the video settled on)</h3>
+<p>First move the hook into its own file, which keeps routes clean and makes the hook reusable:</p>
+<pre><code class="language-js">// src/hooks/auth.js
+export const authHandler = (request, reply, done) =&gt; {
+  console.log(&#39;Checking auth&#39;);
+  done();
+};
+</code></pre>
+<p>Then attach it to just one route through the options object (the same object where <code>schema</code> goes):</p>
+<pre><code class="language-js">// src/routes/user.js
+import { authHandler } from &#39;../hooks/auth.js&#39;;   // remember .js
+
+fastify.get(&#39;/api/users/:id&#39;, { preHandler: authHandler }, async (request, reply) =&gt; {
+  // ...
+});
+</code></pre>
+<p>Result in the video: &quot;Get User&quot; printed <code>Checking auth</code>, while &quot;List Users&quot; didn&#39;t.</p>
+<div class="callout tip"><div class="ctitle">Tip</div><p><code>preHandler</code> (and other hooks in route options) also accepts an <strong>array</strong>: <code>{ preHandler: [authHandler, adminOnly] }</code>. They run in order.</p>
+</div>
+<hr>
+<h2 id="17-async-hooks-authentication">17. Async hooks &amp; authentication</h2>
+<h3 id="two-styles-of-hooks">Two styles of hooks</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th></th>
+<th>Callback style</th>
+<th>Async style</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Signature</td>
+<td><code>(request, reply, done)</code></td>
+<td><code>async (request, reply)</code></td>
+</tr>
+<tr>
+<td>Continue</td>
+<td>Call <code>done()</code></td>
+<td>Just let the function finish (the promise resolves)</td>
+</tr>
+<tr>
+<td>Fail with error</td>
+<td><code>done(err)</code></td>
+<td><code>throw err</code></td>
+</tr>
+<tr>
+<td>Reply early</td>
+<td><code>reply.send(...)</code>, don&#39;t call <code>done</code></td>
+<td><code>reply.send(...)</code> then <code>return reply</code></td>
+</tr>
+<tr>
+<td>Can use <code>done</code>?</td>
+<td>Yes, required</td>
+<td><strong>No.</strong> Mixing the two is an error</td>
+</tr>
+</tbody></table></div>
+<div class="callout warning"><div class="ctitle">Warning</div><p>If a hook is <code>async</code>, <strong>don&#39;t use <code>done</code></strong>. Fastify waits for the returned promise: if it resolves, the request continues; if it rejects (throws), the request fails.</p>
+</div>
+<h3 id="the-video39s-example-callback-hook-promise-based-token-check">The video&#39;s example: callback hook + promise-based token check</h3>
+<p>First, a fake token check that returns a promise (in a real app this would verify a JWT):</p>
+<pre><code class="language-js">// src/hooks/auth.js
+const validateToken = () =&gt; {
+  return new Promise((resolve, reject) =&gt; {
+    // token check logic here...
+    // if everything is OK:
+    resolve({ userId: &#39;123&#39; });
+    // if the token is bad:
+    // reject(new Error(&#39;User token is invalid&#39;));
+  });
+};
+</code></pre>
+<p>Then a callback-style hook that uses it with <code>.then()</code> / <code>.catch()</code>:</p>
+<pre><code class="language-js">export const authHandler = (request, reply, done) =&gt; {
+  console.log(&#39;Checking auth&#39;);
+
+  validateToken()
+    .then((user) =&gt; {
+      request.userId = user.userId;   // attach user data for the handler
+      done();                         // continue to the handler
+    })
+    .catch((err) =&gt; {
+      // Way 1: pass the error to done()
+      reply.code(401);                // without this line, the client gets 500
+      done(err);
+
+      // Way 2 (alternative): reply directly with custom data. Don&#39;t call done.
+      // reply.code(401).send({ success: false });
+    });
+};
+</code></pre>
+<p>And in the handler:</p>
+<pre><code class="language-js">fastify.get(&#39;/api/users/:id&#39;, { preHandler: authHandler }, async (request, reply) =&gt; {
+  console.log(&#39;From user handler&#39;, request.userId);   // &quot;123&quot;
+  // ...
+});
+</code></pre>
+<h3 id="what-the-video-tested">What the video tested</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Promise resolves</td>
+<td>Handler runs; <code>From user handler</code> logged; response 200</td>
+</tr>
+<tr>
+<td>Promise rejects, <code>done(err)</code></td>
+<td><strong>500</strong> <code>{ &quot;message&quot;: &quot;User token is invalid&quot; }</code>; handler <strong>not</strong> run</td>
+</tr>
+<tr>
+<td>Rejects, <code>reply.code(401)</code> + <code>done(err)</code></td>
+<td><strong>401</strong> with the same message</td>
+</tr>
+<tr>
+<td>Rejects, <code>reply.code(401).send({ success: false })</code></td>
+<td><strong>401</strong> <code>{ &quot;success&quot;: false }</code>; handler not run</td>
+</tr>
+<tr>
+<td>Resolves with <code>{ userId }</code></td>
+<td><code>request.userId</code> available in the handler (&quot;123&quot; logged)</td>
+</tr>
+</tbody></table></div>
+<h3 id="passing-data-from-a-hook-to-the-handler">Passing data from a hook to the handler</h3>
+<p>Setting <code>request.userId = ...</code> in a hook is how the logged-in user reaches the handler. Fastify recommends <strong>declaring</strong> the property first with a decorator, which keeps object shapes stable (and fast):</p>
+<pre><code class="language-js">// in server.js or the plugin, before routes
+fastify.decorateRequest(&#39;userId&#39;, null);
+</code></pre>
+<h3 id="the-same-hook-in-async-style">The same hook in async style</h3>
+<p>Cleaner, with no <code>done</code> and no <code>.then</code> chains:</p>
+<pre><code class="language-js">export const authHandler = async (request, reply) =&gt; {
+  try {
+    const user = await validateToken();
+    request.userId = user.userId;           // continue automatically
+  } catch {
+    return reply.code(401).send({ success: false, message: &#39;Invalid token&#39; });
+  }
+};
+</code></pre>
+<h3 id="real-jwt-auth-beyond-the-video">Real JWT auth (Beyond the video)</h3>
+<pre><code class="language-bash">npm install @fastify/jwt
+</code></pre>
+<pre><code class="language-js">// server.js
+import fastifyJwt from &#39;@fastify/jwt&#39;;
+fastify.register(fastifyJwt, { secret: process.env.JWT_SECRET });
+
+// login route: issue a token
+fastify.post(&#39;/api/login&#39;, async (request, reply) =&gt; {
+  // ...find the user and verifyPassword(...)
+  const token = fastify.jwt.sign({ userId: user._id.toString() }, { expiresIn: &#39;1h&#39; });
+  return { token };
+});
+
+// hook: verify the token (client sends header  Authorization: Bearer &lt;token&gt;)
+export const authHandler = async (request, reply) =&gt; {
+  try {
+    await request.jwtVerify();        // sets request.user = { userId, iat, exp }
+  } catch {
+    return reply.code(401).send({ message: &#39;Unauthorized&#39; });
+  }
+};
+</code></pre>
+<hr>
+<h2 id="18-file-upload-multipart">18. File upload (multipart)</h2>
+<h3 id="why-a-plugin-is-needed">Why a plugin is needed</h3>
+<p>Normal API requests send <strong>JSON</strong> (<code>Content-Type: application/json</code>). File uploads send <strong>multipart/form-data</strong>, a format that splits the body into parts (files and text fields).</p>
+<p><strong>Fastify only parses JSON (and plain text) by default.</strong> In the video, sending a file before installing the plugin returned:</p>
+<pre><code>415 Unsupported Media Type
+</code></pre>
+<h3 id="install-and-register-the-official-plugin">Install and register the official plugin</h3>
+<pre><code class="language-bash">npm install @fastify/multipart
+</code></pre>
+<pre><code class="language-js">// src/routes/user.js (only these routes), or server.js (the whole app)
+import multipart from &#39;@fastify/multipart&#39;;
+
+fastify.register(multipart, {
+  limits: {
+    fieldNameSize: 100,     // max length of a field name (bytes)
+    fieldSize: 100,         // max size of a text field value (bytes)
+    fields: 10,             // max number of text fields
+    fileSize: 1_000_000,    // max file size (bytes) → ~1 MB
+    files: 1,               // max number of files
+    headerPairs: 2000,      // max number of header key-value pairs
+  },
+});
+</code></pre>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Limit</th>
+<th>Protects against</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>fileSize</code></td>
+<td>Huge uploads filling your disk or memory</td>
+</tr>
+<tr>
+<td><code>files</code></td>
+<td>Someone sending hundreds of files at once</td>
+</tr>
+<tr>
+<td><code>fields</code> / <code>fieldSize</code></td>
+<td>Huge or numerous text fields</td>
+</tr>
+<tr>
+<td><code>fieldNameSize</code> / <code>headerPairs</code></td>
+<td>Malformed or abusive requests</td>
+</tr>
+</tbody></table></div>
+<p>All sizes are in <strong>bytes</strong>: 1 KB = 1,024 bytes, 1 MB ≈ 1,000,000 bytes.</p>
+<h3 id="the-upload-route">The upload route</h3>
+<pre><code class="language-js">import fs from &#39;node:fs&#39;;
+import { pipeline } from &#39;node:stream/promises&#39;;
+
+fastify.post(&#39;/api/upload&#39;, async (request, reply) =&gt; {
+  const data = await request.file();   // method added by @fastify/multipart
+
+  await pipeline(
+    data.file,                                         // source: incoming stream
+    fs.createWriteStream(`static/${data.filename}`),   // destination: file on disk
+  );
+
+  return { message: &#39;File uploaded&#39; };
+});
+</code></pre>
+<h3 id="what39s-inside-data">What&#39;s inside <code>data</code></h3>
+<p>In the video, <code>console.log(data)</code> printed a large object. The important parts:</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Example</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>data.file</code></td>
+<td>Readable stream</td>
+<td>The file&#39;s contents, arriving piece by piece</td>
+</tr>
+<tr>
+<td><code>data.filename</code></td>
+<td><code>photo.jpg</code></td>
+<td>Original file name from the client</td>
+</tr>
+<tr>
+<td><code>data.mimetype</code></td>
+<td><code>image/jpeg</code></td>
+<td>File type</td>
+</tr>
+<tr>
+<td><code>data.fieldname</code></td>
+<td><code>image</code></td>
+<td>Name of the form field</td>
+</tr>
+<tr>
+<td><code>data.encoding</code></td>
+<td><code>7bit</code></td>
+<td>Transfer encoding</td>
+</tr>
+<tr>
+<td><code>data.fields</code></td>
+<td><code>{ ... }</code></td>
+<td>Other fields in the same form</td>
+</tr>
+</tbody></table></div>
+<h3 id="streams-and-pipeline-explained">Streams and <code>pipeline</code> explained</h3>
+<p>A <strong>stream</strong> delivers data in small chunks instead of all at once. For files this matters: a 500 MB video would need 500 MB of RAM if loaded fully, but as a stream it only needs a few KB at a time.</p>
+<ul>
+<li><code>data.file</code> is a <strong>readable</strong> stream (data comes in).</li>
+<li><code>fs.createWriteStream(path)</code> creates a <strong>writable</strong> stream (data goes out to a file).</li>
+<li><code>pipeline(source, destination)</code> connects them. It moves chunks from one to the other, handles <strong>backpressure</strong> (slowing down if the disk is slower than the network), and cleans up both streams if anything fails.</li>
+<li>We import the <strong>promise</strong> version from <code>node:stream/promises</code>, so we can <code>await</code> it.</li>
+</ul>
+<h3 id="testing-in-postman">Testing in Postman</h3>
+<ol>
+<li>New request <strong>Upload</strong>, method <strong>POST</strong>, URL <code>http://localhost:4000/api/upload</code>.</li>
+<li><strong>Body</strong> tab → <strong>form-data</strong>.</li>
+<li>Add a key (e.g. <code>image</code>), change its type from <em>Text</em> to <strong>File</strong>, and pick an image from your computer.</li>
+<li><strong>Send</strong>. The file appears in the <code>static/</code> folder with its original name.</li>
+</ol>
+<div class="callout warning"><div class="ctitle">Before you test</div><p>The <code>static/</code> folder must <strong>exist</strong>, or <code>createWriteStream</code> fails with <code>ENOENT</code>. Create it by hand or in code: <code>fs.mkdirSync(&#39;static&#39;, { recursive: true })</code>.</p>
+</div>
+<h3 id="safer-production-version-beyond-the-video">Safer production version (Beyond the video)</h3>
+<p>The video mentions that real apps don&#39;t keep the original file name; they generate a <strong>UUID</strong>. Here&#39;s why and how:</p>
+<ul>
+<li>Two users uploading <code>photo.jpg</code> would overwrite each other.</li>
+<li>A malicious file name like <code>../../server.js</code> could write outside the folder (<strong>path traversal</strong>).</li>
+<li>The client can lie about the type, so check <code>mimetype</code> against an allow-list.</li>
+</ul>
+<pre><code class="language-js">import { randomUUID } from &#39;node:crypto&#39;;
+
+const ALLOWED = { &#39;image/jpeg&#39;: &#39;jpg&#39;, &#39;image/png&#39;: &#39;png&#39;, &#39;image/webp&#39;: &#39;webp&#39; };
+
+fastify.post(&#39;/api/upload&#39;, async (request, reply) =&gt; {
+  const data = await request.file();
+  if (!data) {
+    return reply.code(400).send({ message: &#39;No file sent&#39; });
+  }
+  if (data.fieldname !== &#39;image&#39;) {
+    return reply.code(400).send({ message: &#39;Field &quot;image&quot; is required&#39; });
+  }
+
+  const ext = ALLOWED[data.mimetype];
+  if (!ext) {
+    return reply.code(415).send({ message: &#39;Only JPG, PNG or WEBP allowed&#39; });
+  }
+
+  const name = `${randomUUID()}.${ext}`;
+  await pipeline(data.file, fs.createWriteStream(`static/${name}`));
+  return reply.code(201).send({ file: name });
+});
+</code></pre>
+<ul>
+<li>If a file exceeds <code>fileSize</code>, the plugin throws, and Fastify returns <strong>413 Payload Too Large</strong> by default.</li>
+<li>For <strong>multiple files</strong>, loop over <code>request.files()</code>: <code>for await (const part of request.files()) { ... }</code>.</li>
+<li>To <strong>serve</strong> uploaded files back to clients, use <code>@fastify/static</code>:</li>
+</ul>
+<pre><code class="language-js">import fastifyStatic from &#39;@fastify/static&#39;;
+import path from &#39;node:path&#39;;
+
+fastify.register(fastifyStatic, {
+  root: path.join(import.meta.dirname, &#39;static&#39;),
+  prefix: &#39;/static/&#39;,          // GET /static/&lt;name&gt;.jpg
+});
+</code></pre>
+<hr>
+<h2 id="19-ecosystem-express-compatibility">19. Ecosystem &amp; Express compatibility</h2>
+<h3 id="the-ecosystem-page">The ecosystem page</h3>
+<p><em>Docs → Guides → Ecosystem</em> lists two groups:</p>
+<ul>
+<li><strong>Core plugins</strong>: published under <code>@fastify/*</code> and maintained by the Fastify team.</li>
+<li><strong>Community plugins</strong>: third-party plugins from the community.</li>
+</ul>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Need</th>
+<th>Core plugin</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>JWT auth</td>
+<td><code>@fastify/jwt</code></td>
+</tr>
+<tr>
+<td>Basic auth</td>
+<td><code>@fastify/basic-auth</code></td>
+</tr>
+<tr>
+<td>CORS</td>
+<td><code>@fastify/cors</code></td>
+</tr>
+<tr>
+<td>Security headers</td>
+<td><code>@fastify/helmet</code></td>
+</tr>
+<tr>
+<td>Rate limiting</td>
+<td><code>@fastify/rate-limit</code></td>
+</tr>
+<tr>
+<td>File upload</td>
+<td><code>@fastify/multipart</code></td>
+</tr>
+<tr>
+<td>Serve files</td>
+<td><code>@fastify/static</code></td>
+</tr>
+<tr>
+<td>Cookies / sessions</td>
+<td><code>@fastify/cookie</code>, <code>@fastify/session</code></td>
+</tr>
+<tr>
+<td>MongoDB / Postgres / MySQL / Redis</td>
+<td><code>@fastify/mongodb</code>, <code>@fastify/postgres</code>, <code>@fastify/mysql</code>, <code>@fastify/redis</code></td>
+</tr>
+<tr>
+<td>API docs</td>
+<td><code>@fastify/swagger</code>, <code>@fastify/swagger-ui</code></td>
+</tr>
+<tr>
+<td>Env config</td>
+<td><code>@fastify/env</code></td>
+</tr>
+</tbody></table></div>
+<h3 id="using-express-middleware-in-fastify">Using Express middleware in Fastify</h3>
+<p>If a feature only exists as Express middleware, use <strong><code>@fastify/express</code></strong>, a compatibility layer:</p>
+<pre><code class="language-bash">npm install @fastify/express cors
+</code></pre>
+<pre><code class="language-js">import fastifyExpress from &#39;@fastify/express&#39;;
+import cors from &#39;cors&#39;;
+
+await fastify.register(fastifyExpress);  // 1. register the compatibility plugin first
+fastify.use(cors());                     // 2. then use Express-style middleware
+</code></pre>
+<p><code>fastify.use()</code> only exists <strong>after</strong> registering <code>@fastify/express</code> (or the lighter <code>@fastify/middie</code>). Prefer a native Fastify plugin when one exists, since it&#39;s faster.</p>
+<h3 id="reading-the-docs">Reading the docs</h3>
+<p>The video strongly recommends reading the <strong>Reference</strong> section of the docs: Server, Routes, Request, Reply, Hooks, Plugins, Validation and Serialization, Lifecycle. It explains how everything works in depth.</p>
+<hr>
+<h2 id="20-postman-requests-used">20. Postman requests used</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Method</th>
+<th>URL</th>
+<th>Body</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Create User</td>
+<td>POST</td>
+<td><code>http://localhost:4000/api/users</code></td>
+<td>raw JSON <code>{ name, email, password }</code></td>
+</tr>
+<tr>
+<td>List Users</td>
+<td>GET</td>
+<td><code>http://localhost:4000/api/users</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td>List Users (search)</td>
+<td>GET</td>
+<td><code>http://localhost:4000/api/users?q=john</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td>Get User</td>
+<td>GET</td>
+<td><code>http://localhost:4000/api/users/:id</code></td>
+<td>—</td>
+</tr>
+<tr>
+<td>Upload</td>
+<td>POST</td>
+<td><code>http://localhost:4000/api/upload</code></td>
+<td>form-data, key type <strong>File</strong></td>
+</tr>
+</tbody></table></div>
+<hr>
+<h2 id="21-common-errors-and-fixes">21. Common errors and fixes</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>SyntaxError: Cannot use import statement outside a module</code></td>
+<td>ES modules not enabled</td>
+<td>Add <code>&quot;type&quot;: &quot;module&quot;</code> to <code>package.json</code></td>
+</tr>
+<tr>
+<td><code>ERR_MODULE_NOT_FOUND</code> for a local file</td>
+<td>Missing <code>.js</code> in the import path</td>
+<td><code>import x from &#39;./src/routes/user.js&#39;</code></td>
+</tr>
+<tr>
+<td><code>Route GET:/ not found</code> (404)</td>
+<td>No route for that method + URL</td>
+<td>Declare the route; check method and spelling</td>
+</tr>
+<tr>
+<td><code>EADDRINUSE</code></td>
+<td>Port already in use</td>
+<td>Stop the other process or change <code>PORT</code></td>
+</tr>
+<tr>
+<td>Request hangs forever</td>
+<td>Callback hook never called <code>done()</code></td>
+<td>Call <code>done()</code> or <code>reply.send()</code> on every path</td>
+</tr>
+<tr>
+<td><code>400 body/x must be ...</code></td>
+<td>Input failed schema validation</td>
+<td>Fix the request, or the schema</td>
+</tr>
+<tr>
+<td>Response is <code>{}</code> or missing fields</td>
+<td>Fields not listed in the response schema</td>
+<td>Add them to <code>response[code].properties</code></td>
+</tr>
+<tr>
+<td>Response schema ignored</td>
+<td>Status code doesn&#39;t match the schema key</td>
+<td>Use <code>reply.code(201)</code> to match <code>201</code></td>
+</tr>
+<tr>
+<td><code>Reply was already sent</code></td>
+<td>Both returned a value and called <code>reply.send()</code></td>
+<td>Use only one</td>
+</tr>
+<tr>
+<td><code>process.env.DB_URL</code> is <code>undefined</code></td>
+<td><code>.env</code> not loaded</td>
+<td>Run with <code>--env-file=.env</code></td>
+</tr>
+<tr>
+<td><code>findOne</code> returns <code>null</code> for a valid id</td>
+<td>Searched with a string, not an ObjectId</td>
+<td><code>new fastify.mongo.ObjectId(id)</code></td>
+</tr>
+<tr>
+<td>500 for an id like <code>abc</code></td>
+<td><code>new ObjectId()</code> threw</td>
+<td>Check with <code>ObjectId.isValid()</code> and return 400</td>
+</tr>
+<tr>
+<td><code>415 Unsupported Media Type</code> on upload</td>
+<td>Multipart plugin not registered</td>
+<td><code>register(@fastify/multipart)</code></td>
+</tr>
+<tr>
+<td><code>ENOENT</code> when saving a file</td>
+<td><code>static/</code> folder missing</td>
+<td>Create the folder</td>
+</tr>
+<tr>
+<td><code>fastify.use is not a function</code></td>
+<td>Express compat plugin not registered</td>
+<td><code>await fastify.register(fastifyExpress)</code></td>
+</tr>
+</tbody></table></div>
+<hr>
+<h2 id="22-full-project-code">22. Full project code</h2>
+<p>Everything from the video put together (with a few small safety fixes from these notes).</p>
+<h3 id="packagejson"><code>package.json</code></h3>
+<pre><code class="language-json">{
+  &quot;name&quot;: &quot;auth-service&quot;,
+  &quot;version&quot;: &quot;1.0.0&quot;,
+  &quot;type&quot;: &quot;module&quot;,
+  &quot;scripts&quot;: {
+    &quot;dev&quot;: &quot;nodemon --exec \&quot;node --env-file=.env\&quot; server.js&quot;
+  },
+  &quot;dependencies&quot;: {
+    &quot;@fastify/mongodb&quot;: &quot;^9.0.0&quot;,
+    &quot;@fastify/multipart&quot;: &quot;^9.0.0&quot;,
+    &quot;fastify&quot;: &quot;^5.0.0&quot;
+  },
+  &quot;devDependencies&quot;: {
+    &quot;nodemon&quot;: &quot;^3.1.0&quot;
+  }
+}
+</code></pre>
+<h3 id="env"><code>.env</code></h3>
+<pre><code class="language-bash">PORT=4000
+DB_URL=mongodb://localhost:27017/fastify-auth-service
+</code></pre>
+<h3 id="serverjs"><code>server.js</code></h3>
+<pre><code class="language-js">import Fastify from &#39;fastify&#39;;
+import fastifyMongo from &#39;@fastify/mongodb&#39;;
+import userRouter from &#39;./src/routes/user.js&#39;;
+
+const fastify = Fastify({ logger: true });
+const PORT = Number(process.env.PORT) || 4000;
+
+// Plugins
+fastify.register(fastifyMongo, {
+  forceClose: true,
+  url: process.env.DB_URL,
+});
+fastify.register(userRouter);
+
+// Home route
+fastify.get(&#39;/&#39;, async () =&gt; {
+  return { message: &#39;Welcome to auth service&#39; };
+});
+
+const start = async () =&gt; {
+  try {
+    await fastify.listen({ port: PORT });
+    console.log(`Server listening on port ${PORT}`);
+  } catch (err) {
+    fastify.log.error(err);
+    process.exit(1);
+  }
+};
+
+start();
+</code></pre>
+<h3 id="srchooksauthjs"><code>src/hooks/auth.js</code></h3>
+<pre><code class="language-js">const validateToken = () =&gt; {
+  return new Promise((resolve, reject) =&gt; {
+    // token check logic here (e.g. verify a JWT)
+    resolve({ userId: &#39;123&#39; });
+    // reject(new Error(&#39;User token is invalid&#39;));
+  });
+};
+
+export const authHandler = (request, reply, done) =&gt; {
+  validateToken()
+    .then((user) =&gt; {
+      request.userId = user.userId;
+      done();
+    })
+    .catch((err) =&gt; {
+      reply.code(401);
+      done(err);
+    });
+};
+</code></pre>
+<h3 id="srcroutesuserjs"><code>src/routes/user.js</code></h3>
+<pre><code class="language-js">import fs from &#39;node:fs&#39;;
+import { pipeline } from &#39;node:stream/promises&#39;;
+import multipart from &#39;@fastify/multipart&#39;;
+import { authHandler } from &#39;../hooks/auth.js&#39;;
+
+const createUserSchema = {
+  body: {
+    type: &#39;object&#39;,
+    required: [&#39;name&#39;, &#39;email&#39;, &#39;password&#39;],
+    properties: {
+      name: { type: &#39;string&#39; },
+      email: { type: &#39;string&#39; },
+      password: { type: &#39;string&#39; },
+    },
+  },
+  response: {
+    201: {
+      type: &#39;object&#39;,
+      properties: {
+        id: { type: &#39;string&#39; },
+      },
+    },
+  },
+};
+
+async function userRouter(fastify, options) {
+  fastify.register(multipart, {
+    limits: {
+      fieldNameSize: 100,
+      fieldSize: 100,
+      fields: 10,
+      fileSize: 1_000_000,
+      files: 1,
+      headerPairs: 2000,
+    },
+  });
+
+  // Create user
+  fastify.post(&#39;/api/users&#39;, { schema: createUserSchema }, async (request, reply) =&gt; {
+    const userCollection = fastify.mongo.db.collection(&#39;users&#39;);
+    const { name, email, password } = request.body;
+
+    // TODO: hash the password before storing
+    const result = await userCollection.insertOne({ name, email, password });
+    const insertedId = result.insertedId;
+
+    fastify.log.info(`User created: ${insertedId}`);
+    reply.code(201);
+    return { id: insertedId.toString() };
+  });
+
+  // List users (optional ?q= search)
+  fastify.get(&#39;/api/users&#39;, async (request, reply) =&gt; {
+    const userCollection = fastify.mongo.db.collection(&#39;users&#39;);
+    const { q } = request.query;
+
+    let query = {};
+    if (q) {
+      query = { name: { $regex: q, $options: &#39;i&#39; } };
+    }
+
+    const users = await userCollection.find(query).toArray();
+    fastify.log.info(&#39;User list returned&#39;);
+    return users;
+  });
+
+  // Get one user (protected by authHandler)
+  fastify.get(&#39;/api/users/:id&#39;, { preHandler: authHandler }, async (request, reply) =&gt; {
+    console.log(&#39;From user handler&#39;, request.userId);
+    const userCollection = fastify.mongo.db.collection(&#39;users&#39;);
+    const id = new fastify.mongo.ObjectId(request.params.id);
+
+    const user = await userCollection.findOne({ _id: id });
+    return user;
+  });
+
+  // Upload a file
+  fastify.post(&#39;/api/upload&#39;, async (request, reply) =&gt; {
+    const data = await request.file();
+    await pipeline(data.file, fs.createWriteStream(`static/${data.filename}`));
+    return { message: &#39;File uploaded&#39; };
+  });
+}
+
+export default userRouter;
+</code></pre>
+<hr>
+<h2 id="23-cheat-sheet">23. Cheat sheet</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Code</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Create app</td>
+<td><code>Fastify({ logger: true })</code></td>
+</tr>
+<tr>
+<td>Start server</td>
+<td><code>await fastify.listen({ port, host })</code></td>
+</tr>
+<tr>
+<td>Route</td>
+<td><code>fastify.get(path, opts?, handler)</code></td>
+</tr>
+<tr>
+<td>Full route</td>
+<td><code>fastify.route({ method, url, schema, handler })</code></td>
+</tr>
+<tr>
+<td>Send JSON</td>
+<td><code>return { ... }</code> or <code>reply.send(...)</code></td>
+</tr>
+<tr>
+<td>Status code</td>
+<td><code>reply.code(201)</code></td>
+</tr>
+<tr>
+<td>Body / query / params</td>
+<td><code>request.body</code> · <code>request.query</code> · <code>request.params</code></td>
+</tr>
+<tr>
+<td>Headers</td>
+<td><code>request.headers.authorization</code></td>
+</tr>
+<tr>
+<td>Register plugin</td>
+<td><code>fastify.register(plugin, { prefix })</code></td>
+</tr>
+<tr>
+<td>Share across plugins</td>
+<td>wrap with <code>fastify-plugin</code></td>
+</tr>
+<tr>
+<td>Decorate</td>
+<td><code>fastify.decorate()</code> · <code>decorateRequest()</code> · <code>decorateReply()</code></td>
+</tr>
+<tr>
+<td>Validate</td>
+<td><code>{ schema: { body, querystring, params, headers } }</code></td>
+</tr>
+<tr>
+<td>Shape output</td>
+<td><code>{ schema: { response: { 201: {...} } } }</code></td>
+</tr>
+<tr>
+<td>Strip extra fields</td>
+<td><code>additionalProperties: false</code></td>
+</tr>
+<tr>
+<td>Log</td>
+<td><code>fastify.log.info(obj, msg)</code> / <code>request.log.info(...)</code></td>
+</tr>
+<tr>
+<td>Mongo collection</td>
+<td><code>fastify.mongo.db.collection(&#39;users&#39;)</code></td>
+</tr>
+<tr>
+<td>Insert / find</td>
+<td><code>insertOne()</code> · <code>find(q).toArray()</code> · <code>findOne()</code></td>
+</tr>
+<tr>
+<td>Update / delete</td>
+<td><code>updateOne(f, { $set })</code> · <code>deleteOne(f)</code></td>
+</tr>
+<tr>
+<td>String → ObjectId</td>
+<td><code>new fastify.mongo.ObjectId(id)</code></td>
+</tr>
+<tr>
+<td>Case-insensitive search</td>
+<td><code>{ name: { $regex: q, $options: &#39;i&#39; } }</code></td>
+</tr>
+<tr>
+<td>Global hook</td>
+<td><code>fastify.addHook(&#39;preHandler&#39;, fn)</code></td>
+</tr>
+<tr>
+<td>Route hook</td>
+<td><code>{ preHandler: fn }</code> or <code>[fn1, fn2]</code></td>
+</tr>
+<tr>
+<td>Callback hook</td>
+<td><code>(req, reply, done) =&gt; { done() }</code></td>
+</tr>
+<tr>
+<td>Async hook</td>
+<td><code>async (req, reply) =&gt; { /* throw to fail */ }</code></td>
+</tr>
+<tr>
+<td>File upload</td>
+<td><code>await request.file()</code> + <code>pipeline(data.file, fs.createWriteStream(path))</code></td>
+</tr>
+<tr>
+<td>Express middleware</td>
+<td><code>await register(@fastify/express)</code> then <code>fastify.use(mw)</code></td>
+</tr>
+</tbody></table></div>
+<hr>
+<h2 id="24-fastify-vs-express">24. Fastify vs Express</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>Express</th>
+<th>Fastify</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Speed (video benchmark)</td>
+<td>~10k req/s</td>
+<td>~45k req/s</td>
+</tr>
+<tr>
+<td>Create app</td>
+<td><code>express()</code></td>
+<td><code>Fastify({ logger: true })</code></td>
+</tr>
+<tr>
+<td>Response object</td>
+<td><code>res</code></td>
+<td><code>reply</code> (or just <code>return</code>)</td>
+</tr>
+<tr>
+<td>Send JSON</td>
+<td><code>res.json(data)</code></td>
+<td><code>return data</code></td>
+</tr>
+<tr>
+<td>Status</td>
+<td><code>res.status(201)</code></td>
+<td><code>reply.code(201)</code></td>
+</tr>
+<tr>
+<td>Middleware</td>
+<td><code>app.use()</code>, <code>next()</code></td>
+<td>Hooks, <code>done()</code> / async</td>
+</tr>
+<tr>
+<td>Lifecycle stages</td>
+<td>One middleware chain</td>
+<td>Named stages (<code>onRequest</code>, <code>preHandler</code>, …)</td>
+</tr>
+<tr>
+<td>Modular routes</td>
+<td><code>express.Router()</code></td>
+<td>Plugins + <code>register()</code></td>
+</tr>
+<tr>
+<td>Isolation</td>
+<td>Shared app</td>
+<td>Encapsulated plugin contexts</td>
+</tr>
+<tr>
+<td>Validation</td>
+<td>External (Joi, Zod)</td>
+<td>Built in (JSON Schema + Ajv)</td>
+</tr>
+<tr>
+<td>Output filtering</td>
+<td>Manual</td>
+<td>Response schema</td>
+</tr>
+<tr>
+<td>Logging</td>
+<td>External (morgan, winston)</td>
+<td>Built in (pino)</td>
+</tr>
+<tr>
+<td>JSON body parsing</td>
+<td><code>express.json()</code></td>
+<td>Built in</td>
+</tr>
+<tr>
+<td>File upload</td>
+<td><code>multer</code></td>
+<td><code>@fastify/multipart</code></td>
+</tr>
+<tr>
+<td>Async errors</td>
+<td>Need care (Express 5 improves it)</td>
+<td>Built in: throw in an async handler</td>
+</tr>
+</tbody></table></div>
+<hr>
+<h2 id="25-self-check-quiz">25. Self-check quiz</h2>
+<details class="callout question"><summary>Why is Fastify faster than Express?</summary><p>A radix-tree router (<code>find-my-way</code>), compiled schema validation (Ajv), schema-based JSON serialization (<code>fast-json-stringify</code>), the pino logger, and low overhead per request.</p>
+</details>
+<details class="callout question"><summary>What does <code>&quot;type&quot;: &quot;module&quot;</code> do?</summary><p>It lets you use <code>import</code> / <code>export</code> (ES modules) instead of <code>require</code>. Local imports then need the <code>.js</code> extension.</p>
+</details>
+<details class="callout question"><summary>Why does the server log two &quot;listening&quot; lines?</summary><p><code>localhost</code> resolves to both IPv6 (<code>::1</code>) and IPv4 (<code>127.0.0.1</code>), and Fastify listens on both.</p>
+</details>
+<details class="callout question"><summary>Do you need <code>reply.send()</code> in an async handler?</summary><p>No. Just <code>return</code> the object and Fastify serializes and sends it. Don&#39;t do both.</p>
+</details>
+<details class="callout question"><summary>What is a plugin, and how do you add one?</summary><p>A function <code>(fastify, options)</code> that adds routes, hooks or decorators. Add it with <code>fastify.register(plugin, options)</code>.</p>
+</details>
+<details class="callout question"><summary>Why is <code>fastify.mongo</code> visible inside the user routes plugin?</summary><p><code>@fastify/mongodb</code> is wrapped with <code>fastify-plugin</code>, which breaks encapsulation and shares the decorator with the whole app.</p>
+</details>
+<details class="callout question"><summary>What happens if the schema has no <code>required</code> array?</summary><p>Every field is optional.</p>
+</details>
+<details class="callout question"><summary>Does the schema remove extra body fields?</summary><p>Not by default. Add <code>additionalProperties: false</code>; Fastify&#39;s Ajv then strips them.</p>
+</details>
+<details class="callout question"><summary>What does the client get when validation fails?</summary><p>A 400 with <code>code: FST_ERR_VALIDATION</code> and a message like <code>body/password must be number</code>. The handler doesn&#39;t run.</p>
+</details>
+<details class="callout question"><summary>The response schema is for 201 but every field is sent. Why?</summary><p>The reply is still 200. Call <code>reply.code(201)</code> so the matching schema applies.</p>
+</details>
+<details class="callout question"><summary>Why must a string id be converted to ObjectId?</summary><p>MongoDB stores <code>_id</code> as an ObjectId type; a string never equals it, so <code>findOne</code> returns <code>null</code>.</p>
+</details>
+<details class="callout question"><summary>What does <code>$options: &#39;i&#39;</code> mean in a regex query?</summary><p>Case-insensitive matching.</p>
+</details>
+<details class="callout question"><summary>Params vs query?</summary><p><code>/users/:id</code> gives <code>request.params.id</code> (identifies one resource); <code>?q=x</code> gives <code>request.query.q</code> (filters or searches).</p>
+</details>
+<details class="callout question"><summary>Which hook runs right before the handler?</summary><p><code>preHandler</code>.</p>
+</details>
+<details class="callout question"><summary>Why does a callback-style hook make the request hang?</summary><p><code>done()</code> was never called and no reply was sent, so the lifecycle never continues.</p>
+</details>
+<details class="callout question"><summary>Can you use <code>done</code> inside an async hook?</summary><p>No. Resolve to continue; throw or <code>reply.send()</code> + <code>return reply</code> to stop.</p>
+</details>
+<details class="callout question"><summary>How do you apply a hook to only one route?</summary><p>Pass it in the route options: <code>{ preHandler: authHandler }</code>.</p>
+</details>
+<details class="callout question"><summary>What does <code>done(err)</code> return to the client if no status code is set?</summary><p>500, with the error message. Set <code>reply.code(401)</code> first to return 401.</p>
+</details>
+<details class="callout question"><summary>How does the handler know which user is logged in?</summary><p>The hook attaches it to the request (<code>request.userId = ...</code>), ideally declared first with <code>fastify.decorateRequest(&#39;userId&#39;, null)</code>.</p>
+</details>
+<details class="callout question"><summary>Why do you get 415 on upload?</summary><p>Fastify only parses JSON by default. Register <code>@fastify/multipart</code>.</p>
+</details>
+<details class="callout question"><summary>Why use <code>pipeline</code> instead of reading the whole file?</summary><p>Streams process the file in small chunks (low memory), <code>pipeline</code> handles backpressure, and it cleans up if something fails.</p>
+</details>
+<details class="callout question"><summary>Why not save uploads with the original file name?</summary><p>Name clashes overwrite files, and names like <code>../</code> can escape the folder (path traversal). Generate a UUID name instead.</p>
+</details>
+<details class="callout question"><summary>How do you use an Express middleware in Fastify?</summary><p><code>await fastify.register(fastifyExpress)</code> (from <code>@fastify/express</code>), then <code>fastify.use(middleware)</code>.</p>
+</details>
+
+</main>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>
+// syntax highlighting when online; plain code otherwise
+if (window.hljs) document.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
+
+document.querySelectorAll('pre').forEach(pre => {
+  const b = document.createElement('button');
+  b.className = 'copy'; b.textContent = 'Copy';
+  b.onclick = () => navigator.clipboard.writeText(pre.querySelector('code').innerText)
+    .then(() => { b.textContent = 'Copied'; setTimeout(() => b.textContent = 'Copy', 1200); });
+  pre.appendChild(b);
+});
+
+const root = document.documentElement;
+try { const t = localStorage.getItem('theme'); if (t) root.dataset.theme = t; } catch {}
+document.getElementById('themeBtn').onclick = () => {
+  const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  root.dataset.theme = dark ? 'light' : 'dark';
+  try { localStorage.setItem('theme', root.dataset.theme); } catch {}
+};
+
+const nav = document.getElementById('nav');
+document.getElementById('menuBtn').onclick = () => nav.classList.toggle('open');
+nav.addEventListener('click', e => { if (e.target.tagName === 'A') nav.classList.remove('open'); });
+
+document.getElementById('search').oninput = e => {
+  const q = e.target.value.toLowerCase();
+  nav.querySelectorAll('a').forEach(a => a.style.display = a.textContent.toLowerCase().includes(q) ? '' : 'none');
+};
+
+const links = [...nav.querySelectorAll('a')];
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(en => {
+    if (en.isIntersecting) links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + en.target.id));
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+document.querySelectorAll('main h2[id]').forEach(h => obs.observe(h));
+
+const bar = document.getElementById('progress');
+addEventListener('scroll', () => {
+  const h = document.documentElement;
+  bar.style.width = (h.scrollTop / (h.scrollHeight - h.clientHeight) * 100) + '%';
+}, { passive: true });
+</script>
+</body>
+</html>
