@@ -1,0 +1,3752 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Go: Beginner to Backend</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+<style>
+:root{
+  --bg:#ffffff; --bg-side:#f6f7f9; --text:#1f2328; --muted:#59636e; --border:#d8dee4;
+  --accent:#0b6bcb; --accent-soft:#e6f0fb; --code-bg:#eef0f3; --pre-bg:#0f172a; --pre-text:#e2e8f0;
+  --info:#2f6fd6; --info-bg:#e7f1ff; --tip:#0b8a5c; --tip-bg:#e3f6ee; --warn:#c98a00; --warn-bg:#fff6e0;
+  --danger:#d13c3c; --danger-bg:#fdecec; --imp:#7c4dcc; --imp-bg:#f1eafd;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0d1117; --bg-side:#11161d; --text:#e6edf3; --muted:#9aa5b1; --border:#262f3a;
+    --accent:#58a6ff; --accent-soft:#0f1e33; --code-bg:#1c232c; --pre-bg:#070b11; --pre-text:#d6deeb;
+    --info:#5b9bf5; --info-bg:#0f1e33; --tip:#3ddc97; --tip-bg:#0f261c; --warn:#e6b030; --warn-bg:#2b2310;
+    --danger:#f06a6a; --danger-bg:#2c1414; --imp:#b18cf2; --imp-bg:#1f1630;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0d1117; --bg-side:#11161d; --text:#e6edf3; --muted:#9aa5b1; --border:#262f3a;
+  --accent:#58a6ff; --accent-soft:#0f1e33; --code-bg:#1c232c; --pre-bg:#070b11; --pre-text:#d6deeb;
+  --info:#5b9bf5; --info-bg:#0f1e33; --tip:#3ddc97; --tip-bg:#0f261c; --warn:#e6b030; --warn-bg:#2b2310;
+  --danger:#f06a6a; --danger-bg:#2c1414; --imp:#b18cf2; --imp-bg:#1f1630;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.7 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--bg)}
+header .logo{font-weight:700;color:var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+header .spacer{flex:1}
+#progress{position:absolute;left:0;bottom:-1px;height:2px;background:var(--accent);width:0}
+button{font:inherit;cursor:pointer;border:1px solid var(--border);background:var(--bg-side);color:var(--text);border-radius:6px;padding:4px 10px}
+#menuBtn{display:none}
+.layout{display:flex}
+nav{width:290px;flex-shrink:0;position:sticky;top:53px;height:calc(100vh - 53px);overflow-y:auto;background:var(--bg-side);border-right:1px solid var(--border);padding:16px 12px}
+nav input{width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);margin-bottom:12px}
+nav a{display:block;padding:5px 10px;border-radius:6px;color:var(--muted);text-decoration:none;font-size:14.5px;line-height:1.4}
+nav a:hover{color:var(--text);background:var(--code-bg)}
+nav a.active{color:var(--accent);background:var(--accent-soft);font-weight:600}
+main{flex:1;min-width:0;max-width:900px;padding:24px 36px 100px}
+h1{font-size:2.1rem;margin:.2em 0 .4em}
+h2{font-size:1.55rem;margin-top:2.6em;padding-top:.5em;border-top:1px solid var(--border)}
+h3{font-size:1.15rem;margin-top:1.8em}
+h4{font-size:1rem;margin-top:1.4em}
+hr{display:none}
+p,li{max-width:75ch}
+a{color:var(--accent)}
+code{font:0.88em ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--code-bg);padding:.12em .35em;border-radius:4px}
+pre{position:relative;background:var(--pre-bg);color:var(--pre-text);padding:14px 16px;border-radius:8px;overflow-x:auto;font-size:13.5px;line-height:1.55}
+pre code,pre code.hljs{background:none;padding:0;color:inherit;font-size:inherit}
+pre .copy{position:absolute;top:8px;right:8px;font-size:12px;padding:2px 8px;background:#ffffff14;color:#cbd5e1;border-color:#ffffff22}
+.tw{overflow-x:auto;margin:14px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{border:1px solid var(--border);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--bg-side)}
+.callout{--c:var(--info);--cb:var(--info-bg);border-left:4px solid var(--c);background:var(--cb);border-radius:6px;padding:10px 14px;margin:16px 0}
+.callout>:last-child{margin-bottom:0}
+.callout .ctitle,.callout summary{font-weight:700;color:var(--c)}
+.callout summary{cursor:pointer}
+.callout.tip{--c:var(--tip);--cb:var(--tip-bg)}
+.callout.warning{--c:var(--warn);--cb:var(--warn-bg)}
+.callout.danger{--c:var(--danger);--cb:var(--danger-bg)}
+.callout.important{--c:var(--imp);--cb:var(--imp-bg)}
+.callout.question{--c:var(--accent);--cb:var(--accent-soft);margin:8px 0}
+.callout.question summary{color:var(--text)}
+@media (max-width:860px){
+  #menuBtn{display:inline-block}
+  nav{position:fixed;left:0;top:53px;z-index:9;transform:translateX(-100%);transition:transform .2s}
+  nav.open{transform:none;box-shadow:0 0 40px #0005}
+  main{padding:20px 16px 80px}
+}
+</style>
+</head>
+<body>
+<header>
+  <button id="menuBtn" aria-label="Toggle menu">☰</button>
+  <span class="logo">Go: Beginner to Backend</span>
+  <span class="spacer"></span>
+  <button id="themeBtn" aria-label="Toggle theme">◐ Theme</button>
+  <div id="progress"></div>
+</header>
+<div class="layout">
+<nav id="nav">
+<input id="search" type="search" placeholder="Filter topics…" aria-label="Filter topics">
+<a href="#1-why-go">1. Why Go?</a>
+<a href="#2-setup-and-your-first-program">2. Setup and your first program</a>
+<a href="#3-variables-and-types">3. Variables and types</a>
+<a href="#4-constants">4. Constants</a>
+<a href="#5-formatting-strings">5. Formatting strings</a>
+<a href="#6-conditionals">6. Conditionals</a>
+<a href="#7-functions">7. Functions</a>
+<a href="#8-structs">8. Structs</a>
+<a href="#9-interfaces">9. Interfaces</a>
+<a href="#10-errors">10. Errors</a>
+<a href="#11-loops">11. Loops</a>
+<a href="#12-arrays-and-slices">12. Arrays and slices</a>
+<a href="#13-maps">13. Maps</a>
+<a href="#14-advanced-functions">14. Advanced functions</a>
+<a href="#15-pointers">15. Pointers</a>
+<a href="#16-packages-and-modules">16. Packages and modules</a>
+<a href="#17-concurrency-goroutines-and-channels">17. Concurrency: goroutines and channels</a>
+<a href="#18-mutexes">18. Mutexes</a>
+<a href="#19-generics">19. Generics</a>
+<a href="#20-go-proverbs">20. Go proverbs</a>
+<a href="#21-common-errors-and-fixes">21. Common errors and fixes</a>
+<a href="#22-project-building-an-rss-aggregator-backend">22. Project: building an RSS aggregator backend</a>
+<a href="#23-cheat-sheet">23. Cheat sheet</a>
+<a href="#24-self-check-quiz">24. Self-check quiz</a>
+</nav>
+<main>
+<h1>Go: Beginner to Backend</h1>
+<p>Detailed study notes on the Go programming language, from the basics to concurrency and generics, finishing with a full walkthrough of building a production-style backend server (an RSS feed aggregator).</p>
+<div class="callout info"><div class="ctitle">How to read these notes</div>
+<ul>
+<li>Sections build on each other, so read them in order the first time.</li>
+<li>Each topic has the <strong>idea</strong>, then <strong>code</strong>, then <strong>common mistakes</strong>.</li>
+<li><strong>Extra</strong> marks material that goes beyond the basics but that you&#39;ll meet in real Go code.</li>
+<li>Type every example yourself. Reading code is not the same as writing it.</li>
+<li>A styled version with a sidebar lives at <code>notes.parampreetsingh.dev/go</code>.</li>
+</ul>
+</div>
+<hr>
+<h2 id="1-why-go">1. Why Go?</h2>
+<p>Go (often called <em>Golang</em>) is a <strong>compiled</strong>, <strong>statically typed</strong>, <strong>garbage-collected</strong> language created at Google. It&#39;s popular for backend servers, cloud tools (Docker and Kubernetes are written in Go), and command-line programs.</p>
+<h3 id="speed-two-different-kinds">Speed: two different kinds</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Kind of speed</th>
+<th>How Go compares</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Execution speed</strong> (how fast the program runs)</td>
+<td>Much faster than interpreted languages (Python, JavaScript, Ruby, PHP). Roughly similar to Java and C#. Slower than Rust, C and C++.</td>
+</tr>
+<tr>
+<td><strong>Compilation speed</strong> (how fast code turns into a program)</td>
+<td>Much faster than most compiled languages. Large Go programs usually build in seconds, while big Java or C++ projects can take many minutes.</td>
+</tr>
+</tbody></table></div>
+<p>Fast compilation matters more than it sounds: you can test, fix and deploy quickly, so you iterate faster.</p>
+<h3 id="compiled-vs-interpreted">Compiled vs interpreted</h3>
+<p>Computers only understand <strong>machine code</strong> (binary instructions for the CPU). Human-readable code has to be translated.</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th></th>
+<th>Compiled (Go, Rust, C)</th>
+<th>Interpreted (Python, JavaScript)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Translation happens</td>
+<td><strong>Once, before running</strong> (<code>go build</code>)</td>
+<td><strong>Every time, while running</strong></td>
+</tr>
+<tr>
+<td>You ship</td>
+<td>A single executable file</td>
+<td>The source code</td>
+</tr>
+<tr>
+<td>User needs</td>
+<td>Nothing extra</td>
+<td>The interpreter installed (e.g. Python)</td>
+</tr>
+<tr>
+<td>Source code visible to user</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Errors like typos found</td>
+<td>At compile time</td>
+<td>Often only at runtime</td>
+</tr>
+<tr>
+<td>Runtime speed</td>
+<td>Faster (no translation at runtime)</td>
+<td>Slower</td>
+</tr>
+</tbody></table></div>
+<pre><code>main.go  ──go build──►  hello (executable)  ──run directly on any matching OS──►
+</code></pre>
+<div class="callout tip"><div class="ctitle">Why this makes deployment easy</div><p>A Go server compiles into <strong>one binary with no runtime dependencies</strong>. Copy it to a server and run it. There&#39;s no need to install Go, Node or Python there.</p>
+</div>
+<h3 id="compile-time-errors-vs-runtime-errors">Compile-time errors vs runtime errors</h3>
+<ul>
+<li>A <strong>compile-time error</strong> stops the program from being built at all, e.g. a missing <code>)</code> gives <code>syntax error</code>. You find it immediately.</li>
+<li>A <strong>runtime error</strong> happens while the program runs, possibly in production. Go&#39;s compiler and type system catch many mistakes early, so fewer reach runtime.</li>
+</ul>
+<h3 id="memory-and-the-go-runtime">Memory and the Go runtime</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Language</th>
+<th>Memory management</th>
+<th>Memory use</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>C, C++, Rust</td>
+<td>Manual (Rust checks it at compile time)</td>
+<td>Lowest</td>
+</tr>
+<tr>
+<td><strong>Go</strong></td>
+<td>Automatic (<strong>garbage collected</strong>) via a small <strong>runtime</strong> compiled into every binary</td>
+<td>Low to medium</td>
+</tr>
+<tr>
+<td>Java, C#</td>
+<td>Automatic, inside a full <strong>virtual machine</strong> (JVM / .NET)</td>
+<td>Highest</td>
+</tr>
+</tbody></table></div>
+<p>The <strong>Go runtime</strong> is a small chunk of code included in every Go program. It handles garbage collection (freeing memory that&#39;s no longer used) and schedules goroutines (section 17). It makes Go slightly slower than Rust or C, but it&#39;s far lighter than a JVM. In one benchmark of an idle web server, a Go server used roughly 100× less memory than the Java one, though Rust used about half of Go&#39;s.</p>
+<h3 id="static-strong-typing">Static, strong typing</h3>
+<p>Every variable has a fixed type known at compile time:</p>
+<pre><code class="language-go">username := &quot;gopher&quot;
+username = 42 // ✗ compile error: cannot use 42 (untyped int constant) as string value
+</code></pre>
+<p>Mixing types is an error, not a silent conversion:</p>
+<pre><code class="language-go">password := 12345
+auth := &quot;user:&quot; + password
+// ✗ invalid operation: mismatched types string and int
+</code></pre>
+<hr>
+<h2 id="2-setup-and-your-first-program">2. Setup and your first program</h2>
+<h3 id="install">Install</h3>
+<p>Download Go from <strong>go.dev/dl</strong> (or use your package manager, e.g. <code>brew install go</code>), then check it:</p>
+<pre><code class="language-bash">go version
+# go version go1.23.2 darwin/arm64
+</code></pre>
+<div class="callout warning"><div class="ctitle">Read the version carefully</div><p><code>go1.20</code> means version <strong>one-point-twenty</strong>, newer than <code>go1.19</code>, not &quot;1.2&quot;. Any recent <code>go1.2x</code> is fine for these notes.</p>
+</div>
+<p>Editor: VS Code with the official <strong>Go</strong> extension gives formatting, autocomplete and inline errors.</p>
+<h3 id="hello-world">Hello, world</h3>
+<pre><code class="language-go">package main
+
+import &quot;fmt&quot;
+
+func main() {
+	// This is a comment: it doesn&#39;t run
+	fmt.Println(&quot;hello world&quot;)
+}
+</code></pre>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Line</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>package main</code></td>
+<td>Every Go file starts with a package declaration. <code>main</code> is special: it builds into an <strong>executable program</strong>.</td>
+</tr>
+<tr>
+<td><code>import &quot;fmt&quot;</code></td>
+<td>Imports the <code>fmt</code> (format) package from the standard library, used for printing.</td>
+</tr>
+<tr>
+<td><code>func main()</code></td>
+<td>The <strong>entry point</strong>. Execution starts at the top of <code>main</code>. It takes no inputs and returns nothing.</td>
+</tr>
+<tr>
+<td><code>// ...</code></td>
+<td>A single-line comment. <code>/* ... */</code> is a multi-line comment.</td>
+</tr>
+<tr>
+<td><code>fmt.Println(...)</code></td>
+<td>Prints its arguments followed by a newline.</td>
+</tr>
+</tbody></table></div>
+<h3 id="running-code">Running code</h3>
+<pre><code class="language-bash">go run main.go        # compile + run in one step (quick experiments)
+go build              # compile into an executable in the current folder
+./hello               # run the executable
+go build &amp;&amp; ./hello   # rebuild and run, the most common dev loop
+</code></pre>
+<div class="callout warning"><div class="ctitle">Rebuild after every change</div><p>Running the old executable after editing code runs the <strong>old</strong> code. Always rebuild (<code>go build &amp;&amp; ./app</code>).</p>
+</div>
+<p>Go also ships a formatter, so all Go code looks the same:</p>
+<pre><code class="language-bash">go fmt ./...     # format every file in the module
+</code></pre>
+<hr>
+<h2 id="3-variables-and-types">3. Variables and types</h2>
+<h3 id="basic-types">Basic types</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Types</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Boolean</td>
+<td><code>bool</code></td>
+<td><code>true</code> / <code>false</code></td>
+</tr>
+<tr>
+<td>String</td>
+<td><code>string</code></td>
+<td>Text in double quotes <code>&quot;hi&quot;</code> or backticks for raw strings <code>`C:\path`</code></td>
+</tr>
+<tr>
+<td>Signed integers</td>
+<td><code>int</code>, <code>int8</code>, <code>int16</code>, <code>int32</code>, <code>int64</code></td>
+<td>Whole numbers, positive or negative</td>
+</tr>
+<tr>
+<td>Unsigned integers</td>
+<td><code>uint</code>, <code>uint8</code>, <code>uint16</code>, <code>uint32</code>, <code>uint64</code>, <code>uintptr</code></td>
+<td>Whole numbers ≥ 0 only</td>
+</tr>
+<tr>
+<td>Floats</td>
+<td><code>float32</code>, <code>float64</code></td>
+<td>Numbers with a decimal part, e.g. <code>3.14</code></td>
+</tr>
+<tr>
+<td>Complex</td>
+<td><code>complex64</code>, <code>complex128</code></td>
+<td>Imaginary numbers (rarely used)</td>
+</tr>
+<tr>
+<td>Aliases</td>
+<td><code>byte</code> = <code>uint8</code>, <code>rune</code> = <code>int32</code></td>
+<td><code>byte</code> for raw data; <code>rune</code> for one Unicode character</td>
+</tr>
+</tbody></table></div>
+<h3 id="size-matters">Size matters</h3>
+<p>The number is the size in <strong>bits</strong>. More bits means a bigger range of values, at the cost of more memory:</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Range</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>uint8</code></td>
+<td>0 to 255</td>
+</tr>
+<tr>
+<td><code>uint16</code></td>
+<td>0 to 65,535</td>
+</tr>
+<tr>
+<td><code>int8</code></td>
+<td>−128 to 127</td>
+</tr>
+<tr>
+<td><code>int64</code></td>
+<td>about ±9.2 × 10¹⁸</td>
+</tr>
+</tbody></table></div>
+<p><code>int</code> and <code>uint</code> are 32 or 64 bits depending on the CPU (64 bits on almost all modern machines).</p>
+<div class="callout tip"><div class="ctitle">Use the default types</div><p>Stick to <strong><code>int</code>, <code>uint</code>, <code>float64</code>, <code>string</code>, <code>bool</code></strong> (and <code>complex128</code> if you ever need it). Only reach for sized types like <code>int8</code> or <code>float32</code> when memory or performance really matters, e.g. huge arrays. Mixing sizes means lots of conversions and more chances for bugs.</p>
+</div>
+<p>Trivia: a <strong>byte</strong> is 8 bits; a <strong>nibble</strong> is 4 bits.</p>
+<h3 id="declaring-variables">Declaring variables</h3>
+<pre><code class="language-go">// Long form: name, type, (optional) value
+var smsSendingLimit int
+var costPerSMS float64
+var hasPermission bool
+var username string
+
+// Short form: := declares AND infers the type (most common inside functions)
+congrats := &quot;happy birthday&quot; // string
+numCars := 10                // int
+penniesPerText := 2.0        // float64 (the .0 makes it a float)
+
+// Several on one line
+averageOpenRate, displayMessage := 0.23, &quot;is the average open rate&quot;
+</code></pre>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Form</th>
+<th>Where it works</th>
+<th>Use when</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>var x int</code></td>
+<td>Anywhere (also package level)</td>
+<td>You want the zero value, or need a specific type</td>
+</tr>
+<tr>
+<td><code>x := 5</code></td>
+<td><strong>Only inside functions</strong></td>
+<td>Almost always inside functions</td>
+</tr>
+</tbody></table></div>
+<div class="callout important"><div class="ctitle"><code>:=</code> is still static typing</div><p><code>x := 5</code> doesn&#39;t make <code>x</code> a &quot;loose&quot; variable; it&#39;s an <code>int</code> forever. Go just worked the type out for you.</p>
+</div>
+<h3 id="zero-values">Zero values</h3>
+<p>Every type has a <strong>zero value</strong> used when you don&#39;t assign anything. There&#39;s no &quot;undefined&quot; in Go:</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Zero value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Numbers</td>
+<td><code>0</code> / <code>0.0</code></td>
+</tr>
+<tr>
+<td><code>bool</code></td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td><code>string</code></td>
+<td><code>&quot;&quot;</code> (empty string)</td>
+</tr>
+<tr>
+<td>Pointers, slices, maps, channels, functions, interfaces</td>
+<td><code>nil</code></td>
+</tr>
+<tr>
+<td>Structs</td>
+<td>Each field set to its own zero value</td>
+</tr>
+</tbody></table></div>
+<h3 id="type-conversion">Type conversion</h3>
+<p>Go never converts types automatically. Convert explicitly with <code>Type(value)</code>:</p>
+<pre><code class="language-go">temperatureInt := 88
+temperatureFloat := float64(temperatureInt) // 88.0
+
+accountAge := 2.6
+accountAgeInt := int(accountAge) // 2 (truncates: the .6 is dropped, not rounded)
+</code></pre>
+<h3 id="unused-variables">Unused variables</h3>
+<p>Go <strong>refuses to compile</strong> if you declare a local variable and never use it:</p>
+<pre><code>declared and not used: lastName
+</code></pre>
+<p>This keeps code clean. Use the blank identifier <code>_</code> to deliberately ignore a value (section 7).</p>
+<hr>
+<h2 id="4-constants">4. Constants</h2>
+<pre><code class="language-go">const premiumPlanName = &quot;Premium Plan&quot;
+const basicPlanName = &quot;Basic Plan&quot;
+
+premiumPlanName = &quot;Other&quot; // ✗ cannot assign to premiumPlanName
+</code></pre>
+<ul>
+<li>Declared with <code>const</code>. They <strong>can&#39;t</strong> use <code>:=</code>.</li>
+<li>They can&#39;t change after declaration.</li>
+</ul>
+<h3 id="constants-are-computed-at-compile-time">Constants are computed at compile time</h3>
+<p>Unlike JavaScript&#39;s <code>const</code> (which only means &quot;can&#39;t reassign&quot;), a Go constant&#39;s value must be known <strong>when the program compiles</strong>. You can build constants from other constants:</p>
+<pre><code class="language-go">const secondsInMinute = 60
+const minutesInHour = 60
+const secondsInHour = secondsInMinute * minutesInHour // 3600, computed by the compiler
+
+const firstName = &quot;Ada&quot;
+const lastName = &quot;Lovelace&quot;
+const fullName = firstName + &quot; &quot; + lastName // ✓ all inputs are constants
+</code></pre>
+<p>But you can&#39;t use a runtime value:</p>
+<pre><code class="language-go">const now = time.Now() // ✗ time.Now() is only known at runtime
+</code></pre>
+<h3 id="grouped-constants-and-iota-extra">Grouped constants and <code>iota</code> (Extra)</h3>
+<pre><code class="language-go">const (
+	Pending = iota // 0
+	Approved       // 1
+	Rejected       // 2
+)
+</code></pre>
+<p><code>iota</code> counts up from 0 inside a <code>const ( ... )</code> block. It&#39;s Go&#39;s usual way to make enum-like values.</p>
+<hr>
+<h2 id="5-formatting-strings">5. Formatting strings</h2>
+<p>The <code>fmt</code> package formats strings using <strong>verbs</strong>: placeholders starting with <code>%</code>.</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Function</th>
+<th>Does</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>fmt.Println(a, b)</code></td>
+<td>Prints values separated by spaces, plus a newline</td>
+</tr>
+<tr>
+<td><code>fmt.Printf(format, values...)</code></td>
+<td>Prints a formatted string (add <code>\n</code> yourself)</td>
+</tr>
+<tr>
+<td><code>fmt.Sprintf(format, values...)</code></td>
+<td><strong>Returns</strong> the formatted string instead of printing it</td>
+</tr>
+<tr>
+<td><code>fmt.Errorf(format, values...)</code></td>
+<td>Returns a formatted <strong>error</strong> (section 10)</td>
+</tr>
+</tbody></table></div>
+<pre><code class="language-go">name := &quot;Saul&quot;
+openRate := 30.5
+
+msg := fmt.Sprintf(&quot;Hi %s, your open rate is %.1f percent&quot;, name, openRate)
+fmt.Println(msg) // Hi Saul, your open rate is 30.5 percent
+</code></pre>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Verb</th>
+<th>Meaning</th>
+<th>Example output</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>%v</code></td>
+<td>Default format for any value (the safe choice)</td>
+<td><code>10</code>, <code>true</code>, <code>{Ada 36}</code></td>
+</tr>
+<tr>
+<td><code>%+v</code></td>
+<td>Like <code>%v</code>, with struct field names</td>
+<td><code>{Name:Ada Age:36}</code></td>
+</tr>
+<tr>
+<td><code>%s</code></td>
+<td>String</td>
+<td><code>hello</code></td>
+</tr>
+<tr>
+<td><code>%q</code></td>
+<td>Quoted string</td>
+<td><code>&quot;hello&quot;</code></td>
+</tr>
+<tr>
+<td><code>%d</code></td>
+<td>Integer in decimal</td>
+<td><code>42</code></td>
+</tr>
+<tr>
+<td><code>%f</code></td>
+<td>Float</td>
+<td><code>3.141593</code></td>
+</tr>
+<tr>
+<td><code>%.2f</code></td>
+<td>Float with 2 decimal places</td>
+<td><code>3.14</code></td>
+</tr>
+<tr>
+<td><code>%t</code></td>
+<td>Boolean</td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>%T</code></td>
+<td>The <strong>type</strong> of the value</td>
+<td><code>float64</code></td>
+</tr>
+<tr>
+<td><code>%p</code></td>
+<td>Pointer address</td>
+<td><code>0xc000012345</code></td>
+</tr>
+<tr>
+<td><code>%%</code></td>
+<td>A literal percent sign</td>
+<td><code>%</code></td>
+</tr>
+</tbody></table></div>
+<p>Values fill the verbs <strong>in order</strong>: the first value goes into the first verb, and so on.</p>
+<hr>
+<h2 id="6-conditionals">6. Conditionals</h2>
+<h3 id="if-else-if-else">if / else if / else</h3>
+<pre><code class="language-go">if height &gt; 6 {
+	fmt.Println(&quot;You are super tall!&quot;)
+} else if height &gt; 4 {
+	fmt.Println(&quot;You are tall enough!&quot;)
+} else {
+	fmt.Println(&quot;You are not tall enough!&quot;)
+}
+</code></pre>
+<ul>
+<li><strong>No parentheses</strong> around the condition, but the <strong>braces are required</strong>.</li>
+<li>Conditions are checked top to bottom; the first true one runs and the rest are skipped.</li>
+<li><code>else if</code> and <code>else</code> are optional.</li>
+</ul>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Operator</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>==</code>, <code>!=</code></td>
+<td>Equal, not equal</td>
+</tr>
+<tr>
+<td><code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, <code>&gt;=</code></td>
+<td>Comparisons</td>
+</tr>
+<tr>
+<td><code>&amp;&amp;</code></td>
+<td>AND: both sides true</td>
+</tr>
+<tr>
+<td><code>||</code></td>
+<td>OR: at least one side true</td>
+</tr>
+<tr>
+<td><code>!</code></td>
+<td>NOT</td>
+</tr>
+</tbody></table></div>
+<h3 id="the-initial-statement">The initial statement</h3>
+<p>An <code>if</code> can declare a variable that only exists inside the <code>if</code>/<code>else</code> blocks:</p>
+<pre><code class="language-go">// Normal way
+length := getLength(email)
+if length &lt; 1 {
+	fmt.Println(&quot;Email is invalid&quot;)
+}
+
+// With an initial statement: length is scoped to the if block
+if length := getLength(email); length &lt; 1 {
+	fmt.Println(&quot;Email is invalid&quot;)
+}
+// length doesn&#39;t exist here
+</code></pre>
+<p>Benefits: shorter code, and the variable can&#39;t be accidentally reused later. You&#39;ll see this pattern constantly with errors: <code>if err := doThing(); err != nil { ... }</code>.</p>
+<h3 id="switch-extra">switch (Extra)</h3>
+<pre><code class="language-go">switch plan {
+case &quot;free&quot;:
+	fmt.Println(&quot;1 retry&quot;)
+case &quot;pro&quot;, &quot;enterprise&quot;: // several values in one case
+	fmt.Println(&quot;unlimited retries&quot;)
+default:
+	fmt.Println(&quot;unknown plan&quot;)
+}
+</code></pre>
+<p>Unlike C or JavaScript, Go&#39;s <code>switch</code> <strong>doesn&#39;t fall through</strong>: only the matching case runs, so you don&#39;t need <code>break</code>.</p>
+<hr>
+<h2 id="7-functions">7. Functions</h2>
+<h3 id="signature">Signature</h3>
+<pre><code class="language-go">func sub(x int, y int) int {
+	return x - y
+}
+</code></pre>
+<p>The first line, <code>func sub(x int, y int) int</code>, is the <strong>function signature</strong>. It tells callers everything they need: the name, inputs and output types. The body is an implementation detail.</p>
+<ul>
+<li>The type comes <strong>after</strong> the name (<code>x int</code>). Go chose this because it reads like English, left to right: &quot;x is an int&quot;.</li>
+<li>If consecutive parameters share a type, write it once:</li>
+</ul>
+<pre><code class="language-go">func add(x, y int) int { return x + y }
+
+func createUser(firstName, lastName string, age int) {}
+</code></pre>
+<h3 id="pass-by-value">Pass by value</h3>
+<p>Go <strong>copies</strong> arguments into functions. Changing the copy doesn&#39;t affect the caller:</p>
+<pre><code class="language-go">func increment(x int) {
+	x++ // changes the local copy only
+}
+
+func main() {
+	x := 5
+	increment(x)
+	fmt.Println(x) // still 5
+}
+</code></pre>
+<p>Fix: return the new value and reassign it:</p>
+<pre><code class="language-go">func increment(x int) int {
+	x++
+	return x
+}
+
+x = increment(x) // 6
+</code></pre>
+<p>(Pointers, section 15, are the other fix. Slices and maps behave differently; see sections 12 and 13.)</p>
+<h3 id="multiple-return-values">Multiple return values</h3>
+<pre><code class="language-go">func getNames() (string, string) {
+	return &quot;John&quot;, &quot;Doe&quot;
+}
+
+firstName, lastName := getNames()
+firstName, _ := getNames() // _ ignores the second value
+</code></pre>
+<ul>
+<li>Multiple return types go in <strong>parentheses</strong>; a single return type doesn&#39;t need them.</li>
+<li><code>_</code> (the <strong>blank identifier</strong>) explicitly throws a value away. The compiler removes it entirely. This is how you satisfy the &quot;no unused variables&quot; rule.</li>
+</ul>
+<h3 id="named-return-values">Named return values</h3>
+<pre><code class="language-go">func getCoords() (x, y int) {
+	// x and y are already declared with their zero values (0, 0)
+	x = 5
+	y = 6
+	return // &quot;naked&quot; return: returns x, y automatically
+}
+</code></pre>
+<div class="tw"><table>
+<thead>
+<tr>
+<th></th>
+<th>Recommendation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Named returns</strong></td>
+<td>Good <strong>documentation</strong>: <code>func dims() (width, height, length int)</code> is much clearer than <code>(int, int, int)</code>. Use them freely.</td>
+</tr>
+<tr>
+<td><strong>Naked returns</strong> (<code>return</code> with nothing)</td>
+<td>Hurt readability. Only for <strong>very short</strong> functions. Prefer explicit <code>return x, y</code>.</td>
+</tr>
+</tbody></table></div>
+<p>An explicit return always wins: with <code>return 5, 6</code>, those values are returned, whatever <code>x</code> and <code>y</code> hold.</p>
+<h3 id="early-returns-guard-clauses">Early returns (guard clauses)</h3>
+<p>Return as soon as you know the answer, instead of nesting <code>if/else</code>:</p>
+<pre><code class="language-go">// ✗ Nested: hard to follow
+func getInsuranceAmount(s status) int {
+	amount := 0
+	if !s.hasInsurance() {
+		amount = 1
+	} else {
+		if s.isTotaled() {
+			amount = 10000
+		} else {
+			if s.isDented() {
+				amount = 160
+			} else {
+				amount = 0
+			}
+		}
+	}
+	return amount
+}
+
+// ✓ Guard clauses: read straight down
+func getInsuranceAmount(s status) int {
+	if !s.hasInsurance() {
+		return 1
+	}
+	if s.isTotaled() {
+		return 10000
+	}
+	if s.isDented() {
+		return 160
+	}
+	return 0
+}
+</code></pre>
+<p>Guard clauses give a <strong>linear</strong> path through the logic: check, bail out, move on. This style is idiomatic in Go, especially for errors.</p>
+<h3 id="functions-as-values">Functions as values</h3>
+<p>A function&#39;s <strong>type</strong> is its signature. <code>func(int, int) int</code> is a different type from <code>func(int, int, int) int</code>.</p>
+<pre><code class="language-go">func aggregate(a, b, c int, arithmetic func(int, int) int) int {
+	return arithmetic(arithmetic(a, b), c)
+}
+</code></pre>
+<p>Reading complex signatures: <code>func f(func(int, int) int, int) int</code> is &quot;a function <code>f</code> that takes <strong>a function</strong> (which takes two ints and returns an int) <strong>and an int</strong>, and returns an int&quot;. More in section 14.</p>
+<hr>
+<h2 id="8-structs">8. Structs</h2>
+<p>A <strong>struct</strong> groups related fields into one type, like an object in JavaScript or a dictionary in Python, but with fixed fields and types.</p>
+<pre><code class="language-go">type messageToSend struct {
+	phoneNumber int
+	message     string
+}
+
+msg := messageToSend{
+	phoneNumber: 148255510981,
+	message:     &quot;Thanks for signing up&quot;,
+}
+fmt.Println(msg.message) // dot operator reads fields
+msg.phoneNumber = 0      // and writes them
+</code></pre>
+<p>An empty literal <code>car{}</code> sets every field to its zero value.</p>
+<h3 id="nested-structs">Nested structs</h3>
+<pre><code class="language-go">type wheel struct {
+	radius   int
+	material string
+}
+
+type car struct {
+	make       string
+	model      string
+	frontWheel wheel
+	backWheel  wheel
+}
+
+myCar := car{}
+myCar.frontWheel.radius = 5
+</code></pre>
+<h3 id="validating-struct-fields">Validating struct fields</h3>
+<pre><code class="language-go">type user struct {
+	name   string
+	number int
+}
+
+type messageToSend struct {
+	message   string
+	sender    user
+	recipient user
+}
+
+func canSendMessage(m messageToSend) bool {
+	if m.sender.name == &quot;&quot; {
+		return false
+	}
+	if m.recipient.name == &quot;&quot; {
+		return false
+	}
+	if m.sender.number == 0 {
+		return false
+	}
+	if m.recipient.number == 0 {
+		return false
+	}
+	return true
+}
+</code></pre>
+<p>Zero values double as &quot;missing&quot;: an empty name or zero number means it wasn&#39;t set.</p>
+<h3 id="anonymous-structs">Anonymous structs</h3>
+<p>A struct type with no name, created and used in one place:</p>
+<pre><code class="language-go">myCar := struct {
+	make  string
+	model string
+}{
+	make:  &quot;Tesla&quot;,
+	model: &quot;Model 3&quot;,
+}
+
+// Also common nested inside another struct
+type car struct {
+	make  string
+	wheel struct {
+		radius   int
+		material string
+	}
+}
+</code></pre>
+<p>Use them only when the type is needed <strong>exactly once</strong>, e.g. the shape of a one-off JSON response. Otherwise prefer named structs; they&#39;re clearer and reusable.</p>
+<h3 id="embedded-structs">Embedded structs</h3>
+<p>Embedding puts one struct&#39;s fields <strong>directly</strong> into another, without a field name:</p>
+<pre><code class="language-go">type car struct {
+	make  string
+	model string
+}
+
+type truck struct {
+	car        // embedded: no field name
+	bedSize int
+}
+
+lanesTruck := truck{
+	bedSize: 10,
+	car: car{ // in the literal you still write it like a field
+		make:  &quot;Toyota&quot;,
+		model: &quot;Tacoma&quot;,
+	},
+}
+
+fmt.Println(lanesTruck.model) // ✓ promoted to the top level (not lanesTruck.car.model)
+</code></pre>
+<div class="tw"><table>
+<thead>
+<tr>
+<th></th>
+<th>Nested</th>
+<th>Embedded</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Declaration</td>
+<td><code>frontWheel wheel</code></td>
+<td><code>car</code> (type only)</td>
+</tr>
+<tr>
+<td>Access</td>
+<td><code>t.frontWheel.radius</code></td>
+<td><code>t.model</code> (promoted)</td>
+</tr>
+<tr>
+<td>Feels like</td>
+<td>&quot;has a&quot;</td>
+<td>&quot;is a kind of&quot;</td>
+</tr>
+</tbody></table></div>
+<div class="callout note"><div class="ctitle">Not inheritance</div><p>Go is <strong>not object-oriented</strong>: there are no classes or class inheritance. Embedding is mostly shorthand for &quot;copy these fields (and methods) in here&quot;.</p>
+</div>
+<h3 id="methods">Methods</h3>
+<p>A <strong>method</strong> is a function with a special <strong>receiver</strong> parameter written before the name:</p>
+<pre><code class="language-go">type rect struct {
+	width  int
+	height int
+}
+
+func (r rect) area() int {
+	return r.width * r.height
+}
+
+r := rect{width: 5, height: 10}
+fmt.Println(r.area()) // 50
+</code></pre>
+<p>Why use a method for <code>area</code> instead of storing it as a field? A stored area could go <strong>out of sync</strong> if someone changes the width and forgets the area. Computing it keeps one <strong>single source of truth</strong>.</p>
+<pre><code class="language-go">type authenticationInfo struct {
+	username string
+	password string
+}
+
+func (a authenticationInfo) getBasicAuth() string {
+	return fmt.Sprintf(&quot;Authorization: Basic %s:%s&quot;, a.username, a.password)
+}
+</code></pre>
+<p>Methods that need to <strong>change</strong> the struct use pointer receivers (section 15).</p>
+<hr>
+<h2 id="9-interfaces">9. Interfaces</h2>
+<p>An <strong>interface</strong> is a set of <strong>method signatures</strong>. Any type that has all those methods <strong>automatically</strong> satisfies the interface.</p>
+<pre><code class="language-go">type shape interface {
+	area() float64
+	perimeter() float64
+}
+
+type rect struct{ width, height float64 }
+
+func (r rect) area() float64      { return r.width * r.height }
+func (r rect) perimeter() float64 { return 2*r.width + 2*r.height }
+
+type circle struct{ radius float64 }
+
+func (c circle) area() float64      { return math.Pi * c.radius * c.radius }
+func (c circle) perimeter() float64 { return 2 * math.Pi * c.radius }
+
+// Accepts ANY shape: rect, circle, or future types
+func printShape(s shape) {
+	fmt.Printf(&quot;area %.2f, perimeter %.2f\n&quot;, s.area(), s.perimeter())
+}
+</code></pre>
+<p><code>printShape</code> doesn&#39;t know or care whether it got a rectangle or a circle. That&#39;s the power of interfaces: one function, many types.</p>
+<h3 id="implemented-implicitly">Implemented implicitly</h3>
+<p>There&#39;s <strong>no <code>implements</code> keyword</strong> in Go. If the methods match, the type satisfies the interface:</p>
+<pre><code class="language-go">type employee interface {
+	getName() string
+	getSalary() int
+}
+
+type contractor struct {
+	name         string
+	hourlyPay    int
+	hoursPerYear int
+}
+
+func (c contractor) getName() string { return c.name }
+func (c contractor) getSalary() int  { return c.hourlyPay * c.hoursPerYear }
+// contractor is now an employee: nothing else to declare
+</code></pre>
+<p>Benefits:</p>
+<ul>
+<li>The type doesn&#39;t need to know the interface exists. This <strong>decouples</strong> code.</li>
+<li>A type can satisfy <strong>many interfaces</strong> at once.</li>
+</ul>
+<h3 id="multiple-interfaces">Multiple interfaces</h3>
+<pre><code class="language-go">type expense interface{ cost() float64 }
+type printer interface{ print() }
+
+type email struct {
+	isSubscribed bool
+	body         string
+}
+
+func (e email) cost() float64 {
+	if !e.isSubscribed {
+		return 0.05 * float64(len(e.body))
+	}
+	return 0.01 * float64(len(e.body))
+}
+
+func (e email) print() { fmt.Println(e.body) }
+// email satisfies both expense and printer
+</code></pre>
+<p>Note <code>float64(len(e.body))</code>: <code>len</code> returns an <code>int</code>, and Go won&#39;t multiply an <code>int</code> by a <code>float64</code> without a conversion.</p>
+<h3 id="the-empty-interface">The empty interface</h3>
+<p><code>interface{}</code> (or its alias <strong><code>any</code></strong>) has no methods, so <strong>every</strong> type satisfies it. It&#39;s useful for &quot;anything&quot; (like <code>fmt.Println</code> arguments), but you can&#39;t call anything on it without checking its type first.</p>
+<h3 id="name-your-interface-parameters">Name your interface parameters</h3>
+<pre><code class="language-go">// Unclear: what are the two strings?
+type copier interface {
+	copy(string, string) int
+}
+
+// Clear: names document intent
+type copier interface {
+	copy(sourceFile string, destinationFile string) (bytesCopied int)
+}
+</code></pre>
+<p>The names are optional for the compiler, but they make the code much easier to understand.</p>
+<h3 id="type-assertions">Type assertions</h3>
+<p>Get the <strong>concrete type</strong> back out of an interface:</p>
+<pre><code class="language-go">c, ok := s.(circle)
+if ok {
+	fmt.Println(c.radius) // s really was a circle
+}
+</code></pre>
+<ul>
+<li><code>ok</code> is <code>true</code> if <code>s</code> held a <code>circle</code>; then <code>c</code> is that circle.</li>
+<li>If not, <code>ok</code> is <code>false</code> and <code>c</code> is the zero value.</li>
+<li>Writing <code>c := s.(circle)</code> <strong>without</strong> <code>ok</code> <strong>panics</strong> if the type is wrong, so always use the two-value form.</li>
+</ul>
+<pre><code class="language-go">func getExpenseReport(e expense) (string, float64) {
+	em, ok := e.(email)
+	if ok {
+		return em.toAddress, em.cost()
+	}
+	s, ok := e.(sms)
+	if ok {
+		return s.toPhoneNumber, s.cost()
+	}
+	return &quot;&quot;, 0.0
+}
+</code></pre>
+<h3 id="type-switches">Type switches</h3>
+<p>The cleaner way to do several assertions in a row:</p>
+<pre><code class="language-go">func getExpenseReport(e expense) (string, float64) {
+	switch v := e.(type) {
+	case email:
+		return v.toAddress, v.cost() // v is an email here
+	case sms:
+		return v.toPhoneNumber, v.cost() // v is an sms here
+	default:
+		return &quot;&quot;, 0.0
+	}
+}
+</code></pre>
+<h3 id="clean-interface-rules">Clean interface rules</h3>
+<ol>
+<li><strong>Keep interfaces small.</strong> The best interfaces have one or two methods. Example from the standard library:<pre><code class="language-go">type Stringer interface {
+    String() string
+}
+</code></pre>
+A larger file-like interface (Read, Write, Seek, Close…) is still fine if it&#39;s the <strong>minimum</strong> needed to describe the concept.</li>
+<li><strong>Interfaces shouldn&#39;t know about the types that satisfy them.</strong> ✗ <code>isFireTruck() bool</code> on a <code>car</code> interface. Use a type switch if you really need the concrete type.</li>
+<li><strong>Interfaces are not classes.</strong> They have no constructors, no hierarchy and <strong>no implementation</strong>. Each type still writes its own methods; an interface only lets you use different types in the same place.</li>
+</ol>
+<hr>
+<h2 id="10-errors">10. Errors</h2>
+<h3 id="errors-are-values">Errors are values</h3>
+<p>Go has <strong>no try/catch</strong>. A function that can fail returns an <strong><code>error</code></strong> as its last return value:</p>
+<pre><code class="language-go">user, err := getUser()
+if err != nil {
+	fmt.Println(err)
+	return
+}
+// use user safely here
+
+profile, err := getUserProfile(user.ID)
+if err != nil {
+	fmt.Println(err)
+	return
+}
+// use profile
+</code></pre>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Value of <code>err</code></th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>nil</code></td>
+<td>Success: nothing went wrong</td>
+</tr>
+<tr>
+<td>Not <code>nil</code></td>
+<td>Something failed; <code>err.Error()</code> describes what</td>
+</tr>
+</tbody></table></div>
+<h3 id="why-go-does-it-this-way">Why Go does it this way</h3>
+<p>Compared with JavaScript&#39;s <code>try/catch</code>:</p>
+<pre><code class="language-js">// JavaScript: user only exists inside the try block
+try {
+  const user = getUser();
+  const profile = getUserProfile(user.id); // forced inside the same block
+} catch (err) {
+  console.log(err); // which call failed? can&#39;t tell
+}
+</code></pre>
+<ol>
+<li><strong>Every error is visible in the signature.</strong> <code>func getUser() (user, error)</code> tells you it can fail. In JavaScript you can&#39;t tell whether a function throws without reading its body.</li>
+<li><strong>Each error is handled where it happens.</strong> There&#39;s no nesting of <code>try</code> blocks to handle two calls differently, and no scope problems.</li>
+<li><strong>You&#39;re forced to think about each failure.</strong> The <code>if err != nil</code> pattern is verbose, but deliberate.</li>
+</ol>
+<h3 id="the-error-interface">The <code>error</code> interface</h3>
+<pre><code class="language-go">type error interface {
+	Error() string
+}
+</code></pre>
+<p>That&#39;s all an error is: any type with an <code>Error() string</code> method. Example from the standard library:</p>
+<pre><code class="language-go">i, err := strconv.Atoi(&quot;42b&quot;)
+if err != nil {
+	fmt.Println(&quot;couldn&#39;t convert:&quot;, err)
+	// couldn&#39;t convert: strconv.Atoi: parsing &quot;42b&quot;: invalid syntax
+	return
+}
+</code></pre>
+<h3 id="returning-errors">Returning errors</h3>
+<p>Convention: on error, return <strong>zero values</strong> for everything else, plus the error:</p>
+<pre><code class="language-go">func sendSMSToCouple(msgToCustomer, msgToSpouse string) (float64, error) {
+	costForCustomer, err := sendSMS(msgToCustomer)
+	if err != nil {
+		return 0.0, err
+	}
+
+	costForSpouse, err := sendSMS(msgToSpouse)
+	if err != nil {
+		return 0.0, err
+	}
+
+	return costForCustomer + costForSpouse, nil
+}
+</code></pre>
+<h3 id="creating-errors">Creating errors</h3>
+<pre><code class="language-go">import &quot;errors&quot;
+
+// Simplest: a fixed message
+func divide(x, y float64) (float64, error) {
+	if y == 0 {
+		return 0.0, errors.New(&quot;no dividing by zero&quot;)
+	}
+	return x / y, nil
+}
+
+// With formatting
+err := fmt.Errorf(&quot;SMS that costs $%.2f to be sent to &#39;%v&#39; can not be sent&quot;, cost, recipient)
+</code></pre>
+<div class="callout note"><div class="ctitle">Style</div><p>Error messages start <strong>lowercase</strong> and have no trailing punctuation, because they&#39;re often joined into longer messages: <code>&quot;failed to save: no dividing by zero&quot;</code>.</p>
+</div>
+<h3 id="custom-error-types">Custom error types</h3>
+<p>Because <code>error</code> is an interface, any struct with an <code>Error()</code> method can be an error, and it can carry extra data:</p>
+<pre><code class="language-go">type divideError struct {
+	dividend float64
+}
+
+func (de divideError) Error() string {
+	return fmt.Sprintf(&quot;can not divide %v by zero&quot;, de.dividend)
+}
+
+func divide(dividend, divisor float64) (float64, error) {
+	if divisor == 0 {
+		return 0, divideError{dividend: dividend}
+	}
+	return dividend / divisor, nil
+}
+</code></pre>
+<h3 id="wrapping-and-checking-errors-extra">Wrapping and checking errors (Extra)</h3>
+<pre><code class="language-go">var ErrNotFound = errors.New(&quot;not found&quot;) // a &quot;sentinel&quot; error to compare against
+
+func load(id string) error {
+	err := db.Find(id)
+	if err != nil {
+		return fmt.Errorf(&quot;loading %s: %w&quot;, id, err) // %w wraps, keeping the original
+	}
+	return nil
+}
+
+err := load(&quot;42&quot;)
+if errors.Is(err, ErrNotFound) { /* matches even through wrapping */ }
+
+var de divideError
+if errors.As(err, &amp;de) { /* err (or something it wraps) is a divideError */ }
+</code></pre>
+<div class="callout tip"><div class="ctitle">Trailing commas</div><p>When a function call or literal spans several lines, the <strong>last line needs a comma</strong> too, or you get a syntax error:</p>
+<pre><code class="language-go">return fmt.Sprintf(
+	&quot;can not divide %v by zero&quot;,
+	de.dividend, // ← required
+)
+</code></pre>
+</div>
+<hr>
+<h2 id="11-loops">11. Loops</h2>
+<p>Go has <strong>only one loop keyword: <code>for</code></strong>. It covers every kind of loop.</p>
+<h3 id="classic-for-loop">Classic for loop</h3>
+<pre><code class="language-go">for i := 0; i &lt; 10; i++ {
+	fmt.Println(i) // 0 to 9
+}
+</code></pre>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Part</th>
+<th>Runs</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Initial</td>
+<td>Once, before the loop</td>
+<td><code>i := 0</code></td>
+</tr>
+<tr>
+<td>Condition</td>
+<td>Before each iteration; stop when false</td>
+<td><code>i &lt; 10</code></td>
+</tr>
+<tr>
+<td>After</td>
+<td>After each iteration</td>
+<td><code>i++</code></td>
+</tr>
+</tbody></table></div>
+<p>No parentheses, braces required, just like <code>if</code>.</p>
+<pre><code class="language-go">func bulkSend(numMessages int) float64 {
+	totalCost := 0.0
+	for i := 0; i &lt; numMessages; i++ {
+		totalCost += 1.0 + 0.01*float64(i) // each message: $1 + a growing fee
+	}
+	return totalCost
+}
+</code></pre>
+<h3 id="omitting-parts">Omitting parts</h3>
+<p>Every part is optional. Leaving out the condition loops <strong>forever</strong>, so you must exit with <code>return</code> or <code>break</code>:</p>
+<pre><code class="language-go">func maxMessages(thresh float64) int {
+	totalCost := 0.0
+	for i := 0; ; i++ {
+		totalCost += 1.0 + 0.01*float64(i)
+		if totalCost &gt; thresh {
+			return i
+		}
+	}
+}
+</code></pre>
+<h3 id="while-loop">&quot;While&quot; loop</h3>
+<p>With only a condition, <code>for</code> acts as a <code>while</code>:</p>
+<pre><code class="language-go">plantHeight := 1
+for plantHeight &lt; 5 {
+	fmt.Println(&quot;still growing! current height:&quot;, plantHeight)
+	plantHeight++
+}
+</code></pre>
+<pre><code class="language-go">func getMaxMessagesToSend(costMultiplier float64, maxCostInPennies int) int {
+	actualCostInPennies := 1.0
+	maxMessagesToSend := 0
+	for actualCostInPennies &lt;= float64(maxCostInPennies) {
+		maxMessagesToSend++
+		actualCostInPennies *= costMultiplier
+	}
+	return maxMessagesToSend
+}
+</code></pre>
+<p>And <code>for { ... }</code> with nothing at all is an infinite loop.</p>
+<h3 id="modulo-and-or">Modulo, AND, OR</h3>
+<p>The <strong>modulo</strong> operator <code>%</code> gives the <strong>remainder</strong> after integer division:</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Expression</th>
+<th>Integer division</th>
+<th>Remainder (<code>%</code>)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>4 / 3</code> vs <code>4 % 3</code></td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td><code>5 % 3</code></td>
+<td>1</td>
+<td><strong>2</strong></td>
+</tr>
+<tr>
+<td><code>6 % 3</code></td>
+<td>2</td>
+<td><strong>0</strong></td>
+</tr>
+<tr>
+<td><code>16 % 5</code></td>
+<td>3</td>
+<td><strong>1</strong></td>
+</tr>
+<tr>
+<td><code>22 % 8</code></td>
+<td>2</td>
+<td><strong>6</strong></td>
+</tr>
+<tr>
+<td><code>27 % 6</code></td>
+<td>4</td>
+<td><strong>3</strong></td>
+</tr>
+</tbody></table></div>
+<p><code>a % b == 0</code> means <strong>b divides evenly into a</strong>. <code>n % 2 == 0</code> means &quot;n is even&quot;.</p>
+<h3 id="fizzbuzz">FizzBuzz</h3>
+<pre><code class="language-go">func fizzbuzz() {
+	for i := 1; i &lt;= 100; i++ {
+		if i%3 == 0 &amp;&amp; i%5 == 0 { // check the most specific case FIRST
+			fmt.Println(&quot;fizzbuzz&quot;)
+		} else if i%3 == 0 {
+			fmt.Println(&quot;fizz&quot;)
+		} else if i%5 == 0 {
+			fmt.Println(&quot;buzz&quot;)
+		} else {
+			fmt.Println(i)
+		}
+	}
+}
+</code></pre>
+<p>Order matters: 15 is divisible by 3, so if the <code>i%3</code> check came first, &quot;fizzbuzz&quot; would never print.</p>
+<h3 id="continue-and-break">continue and break</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Keyword</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>continue</code></td>
+<td>Skip the rest of this iteration and go to the <strong>next</strong> one</td>
+</tr>
+<tr>
+<td><code>break</code></td>
+<td>Exit the loop <strong>entirely</strong></td>
+</tr>
+</tbody></table></div>
+<p><code>continue</code> makes great guard clauses inside loops. Printing prime numbers:</p>
+<pre><code class="language-go">func printPrimes(max int) {
+	for n := 2; n &lt;= max; n++ {
+		if n == 2 {
+			fmt.Println(n)
+			continue
+		}
+		if n%2 == 0 { // even numbers &gt; 2 aren&#39;t prime
+			continue
+		}
+
+		isPrime := true
+		for i := 3; i*i &lt;= n; i += 2 { // only check up to √n
+			if n%i == 0 {
+				isPrime = false
+				break // found a divisor: stop the INNER loop
+			}
+		}
+		if !isPrime {
+			continue
+		}
+		fmt.Println(n)
+	}
+}
+</code></pre>
+<ul>
+<li>A <strong>prime</strong> is a number greater than 1 whose only divisors are 1 and itself.</li>
+<li>We only test divisors up to <strong>√n</strong>: any factor bigger than √n pairs with one smaller than √n, which we&#39;d already have found. <code>i*i &lt;= n</code> checks this without floats.</li>
+<li><code>break</code> and <code>continue</code> affect only the <strong>innermost</strong> loop, which is why we need the <code>isPrime</code> flag.</li>
+</ul>
+<h3 id="range">Range</h3>
+<p><code>range</code> iterates over slices, arrays, strings, maps and channels (covered with each type):</p>
+<pre><code class="language-go">fruits := []string{&quot;apple&quot;, &quot;banana&quot;, &quot;grape&quot;}
+for i, fruit := range fruits {
+	fmt.Println(i, fruit) // 0 apple, 1 banana, 2 grape
+}
+
+for _, fruit := range fruits { /* ignore the index */ }
+for i := range 3 { /* Go 1.22+: loops 0, 1, 2 */ }
+</code></pre>
+<hr>
+<h2 id="12-arrays-and-slices">12. Arrays and slices</h2>
+<h3 id="arrays-fixed-size">Arrays: fixed size</h3>
+<pre><code class="language-go">var myInts [10]int                      // 10 zeros
+primes := [6]int{2, 3, 5, 7, 11, 13}    // array literal
+
+func getMessageWithRetries() [3]string {
+	return [3]string{
+		&quot;click here to sign up&quot;,
+		&quot;pretty please click here&quot;,
+		&quot;we beg you to sign up&quot;,
+	}
+}
+</code></pre>
+<p>The <strong>size is part of the type</strong>: <code>[3]int</code> and <code>[4]int</code> are different types. Arrays can never grow or shrink.</p>
+<h3 id="slices-flexible-views-into-arrays">Slices: flexible views into arrays</h3>
+<p>A <strong>slice</strong> (<code>[]int</code>, no size) is a dynamically sized <strong>view</strong> into an underlying array. You&#39;ll use slices <strong>~99% of the time</strong>; arrays mostly exist underneath them.</p>
+<pre><code class="language-go">primes := [6]int{2, 3, 5, 7, 11, 13}
+mySlice := primes[1:4] // [3 5 7]: from index 1 UP TO BUT NOT INCLUDING 4
+</code></pre>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Slice expression</th>
+<th>Takes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>a[low:high]</code></td>
+<td>Indexes <code>low</code> … <code>high-1</code></td>
+</tr>
+<tr>
+<td><code>a[:3]</code></td>
+<td>From the start to index 2</td>
+</tr>
+<tr>
+<td><code>a[2:]</code></td>
+<td>From index 2 to the end</td>
+</tr>
+<tr>
+<td><code>a[:]</code></td>
+<td>Everything (also converts an array to a slice)</td>
+</tr>
+</tbody></table></div>
+<pre><code class="language-go">func getMessageWithRetriesForPlan(plan string) ([]string, error) {
+	allMessages := getMessageWithRetries() // [3]string array
+	if plan == planPro {
+		return allMessages[:], nil  // all three, as a slice
+	}
+	if plan == planFree {
+		return allMessages[0:2], nil // first two
+	}
+	return nil, errors.New(&quot;unsupported plan&quot;)
+}
+</code></pre>
+<p>Returning <code>allMessages</code> directly would fail: <code>cannot use allMessages (variable of type [3]string) as []string value</code>. <code>[:]</code> turns the array into a slice.</p>
+<h3 id="slices-are-references">Slices are references</h3>
+<p>A slice doesn&#39;t hold data itself; it <strong>points to</strong> an underlying array. So:</p>
+<ul>
+<li><strong>Several slices can point to the same array.</strong></li>
+<li><strong>A function that receives a slice can change the caller&#39;s data</strong>, even without returning it. This is different from ints, strings and structs, which are copied.</li>
+</ul>
+<h3 id="how-slices-live-in-memory">How slices live in memory</h3>
+<p>Arrays are stored in <strong>contiguous</strong> memory: one block, elements side by side. That makes iterating fast, but an array can&#39;t grow in place, because the memory right after it may belong to another variable.</p>
+<p>When a slice outgrows its array, Go automatically:</p>
+<ol>
+<li>Allocates a <strong>new, bigger</strong> array somewhere else.</li>
+<li><strong>Copies</strong> the old elements across.</li>
+<li>Points the slice at the new array.</li>
+</ol>
+<p>Copying costs time, which is why <strong>capacity</strong> exists.</p>
+<h3 id="make-len-and-cap">make, len and cap</h3>
+<pre><code class="language-go">nums := make([]int, 5, 10) // length 5, capacity 10
+nums := make([]int, 5)     // length 5, capacity 5 (capacity defaults to length)
+nums := []string{&quot;a&quot;, &quot;b&quot;, &quot;c&quot;} // slice literal
+
+len(nums) // how many elements the slice currently has
+cap(nums) // how big it can grow before a new array must be allocated
+</code></pre>
+<div class="tw"><table>
+<thead>
+<tr>
+<th></th>
+<th><code>len</code></th>
+<th><code>cap</code></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Means</td>
+<td>Current number of elements</td>
+<td>Size of the underlying array (from the slice&#39;s start)</td>
+</tr>
+<tr>
+<td>Care about it for</td>
+<td>Everyday logic</td>
+<td>Performance only</td>
+</tr>
+<tr>
+<td>On a <code>nil</code> slice</td>
+<td><code>0</code> (never panics)</td>
+<td><code>0</code> (never panics)</td>
+</tr>
+</tbody></table></div>
+<p><strong>Pre-allocating</strong> when you know the size avoids repeated copying:</p>
+<pre><code class="language-go">func getMessageCosts(messages []string) []float64 {
+	costs := make([]float64, len(messages)) // right size from the start
+	for i := 0; i &lt; len(messages); i++ {
+		costs[i] = float64(len(messages[i])) * 0.01
+	}
+	return costs
+}
+</code></pre>
+<div class="callout tip"><div class="ctitle">Tip</div><p>Don&#39;t optimise capacity up front. Write simple code first and pre-allocate only when performance actually becomes a problem (or when you obviously know the final size, like above).</p>
+</div>
+<h3 id="variadic-functions">Variadic functions</h3>
+<p><code>...T</code> lets a function accept <strong>any number</strong> of arguments, which arrive as a slice:</p>
+<pre><code class="language-go">func sum(nums ...float64) float64 {
+	total := 0.0
+	for i := 0; i &lt; len(nums); i++ { // nums is a []float64 inside
+		total += nums[i]
+	}
+	return total
+}
+
+sum(1, 2, 3) // 6
+sum()        // 0
+</code></pre>
+<p><code>fmt.Println</code>, <code>fmt.Sprintf</code> and <code>append</code> are all variadic. The <strong>spread operator</strong> passes a slice into a variadic function:</p>
+<pre><code class="language-go">costs := []float64{1, 2, 3}
+sum(costs...) // spreads the slice into separate arguments
+</code></pre>
+<h3 id="append">append</h3>
+<pre><code class="language-go">slice = append(slice, oneThing)
+slice = append(slice, firstThing, secondThing)
+slice = append(slice, anotherSlice...)
+</code></pre>
+<p><code>append</code> handles growing (allocating a new array if needed) and returns the updated slice.</p>
+<pre><code class="language-go">type cost struct {
+	day   int
+	value float64
+}
+
+func getCostsByDay(costs []cost) []float64 {
+	costsByDay := []float64{}
+	for i := 0; i &lt; len(costs); i++ {
+		c := costs[i]
+		for c.day &gt;= len(costsByDay) { // grow until index c.day exists
+			costsByDay = append(costsByDay, 0.0)
+		}
+		costsByDay[c.day] += c.value
+	}
+	return costsByDay
+}
+</code></pre>
+<div class="callout warning"><div class="ctitle">Off-by-one and index panics</div><p>A slice of length 4 has indexes 0–3. Accessing index <code>len(s)</code> or beyond <strong>panics</strong>: <code>index out of range [5] with length 5</code>. That&#39;s why the loop above uses <code>&gt;=</code>, not <code>&gt;</code>.</p>
+</div>
+<h3 id="the-append-pitfall">The append pitfall</h3>
+<p><strong>Always assign <code>append</code>&#39;s result back to the same slice.</strong></p>
+<pre><code class="language-go">// ✗ DON&#39;T
+someSlice = append(otherSlice, element)
+
+// ✓ DO
+someSlice = append(someSlice, element)
+</code></pre>
+<p>Why: if the original slice still has spare <strong>capacity</strong>, <code>append</code> writes into the <strong>same underlying array</strong> instead of making a new one. Two &quot;different&quot; slices can then silently share memory:</p>
+<pre><code class="language-go">i := make([]int, 3, 8) // len 3, cap 8: room to grow
+j := append(i, 4)      // uses i&#39;s array (cap was enough)
+g := append(i, 5)      // ALSO uses i&#39;s array: overwrites the 4!
+
+fmt.Println(j) // [0 0 0 5]  ← surprise
+fmt.Println(g) // [0 0 0 5]
+</code></pre>
+<p>With a small capacity (e.g. <code>cap 3</code>), each <code>append</code> allocates a fresh array and the bug doesn&#39;t appear, which makes it even more confusing. Reassigning to the same slice avoids the whole problem.</p>
+<h3 id="slices-of-slices-2d">Slices of slices (2D)</h3>
+<pre><code class="language-go">func createMatrix(rows, cols int) [][]int {
+	matrix := make([][]int, 0)
+	for i := 0; i &lt; rows; i++ {
+		row := make([]int, 0)
+		for j := 0; j &lt; cols; j++ {
+			row = append(row, i*j)
+		}
+		matrix = append(matrix, row)
+	}
+	return matrix
+}
+// createMatrix(3, 3) → [[0 0 0] [0 1 2] [0 2 4]]
+</code></pre>
+<h3 id="range-over-a-slice">Range over a slice</h3>
+<pre><code class="language-go">func indexOfFirstBadWord(msg []string, badWords []string) int {
+	for i, word := range msg {
+		for _, badWord := range badWords {
+			if word == badWord {
+				return i
+			}
+		}
+	}
+	return -1
+}
+</code></pre>
+<hr>
+<h2 id="13-maps">13. Maps</h2>
+<p>A <strong>map</strong> stores <strong>key → value</strong> pairs, like a Python dictionary or a JavaScript object. Looking up a key is <strong>instant</strong> (constant time), much faster than searching a slice.</p>
+<pre><code class="language-go">ages := make(map[string]int) // map of string keys to int values
+ages[&quot;John&quot;] = 37
+ages[&quot;Mary&quot;] = 24
+
+ages := map[string]int{ // map literal
+	&quot;John&quot;: 37,
+	&quot;Mary&quot;: 24,
+}
+fmt.Println(len(ages)) // 2
+</code></pre>
+<h3 id="operations">Operations</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Code</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Insert / update</td>
+<td><code>m[key] = value</code></td>
+</tr>
+<tr>
+<td>Get</td>
+<td><code>value := m[key]</code> (missing key → <strong>zero value</strong>, no panic)</td>
+</tr>
+<tr>
+<td>Delete</td>
+<td><code>delete(m, key)</code></td>
+</tr>
+<tr>
+<td>Check existence</td>
+<td><code>value, ok := m[key]</code> (<code>ok</code> is <code>true</code> if the key exists)</td>
+</tr>
+<tr>
+<td>Count</td>
+<td><code>len(m)</code></td>
+</tr>
+<tr>
+<td>Iterate</td>
+<td><code>for key, value := range m { }</code> (<strong>random order</strong>)</td>
+</tr>
+</tbody></table></div>
+<pre><code class="language-go">func getUserMap(names []string, phoneNumbers []int) (map[string]user, error) {
+	if len(names) != len(phoneNumbers) {
+		return nil, errors.New(&quot;invalid sizes&quot;)
+	}
+	userMap := make(map[string]user)
+	for i := 0; i &lt; len(names); i++ {
+		userMap[names[i]] = user{name: names[i], phoneNumber: phoneNumbers[i]}
+	}
+	return userMap, nil
+}
+</code></pre>
+<h3 id="checking-if-a-key-exists">Checking if a key exists</h3>
+<pre><code class="language-go">func deleteIfNecessary(users map[string]user, name string) (deleted bool, err error) {
+	existingUser, ok := users[name]
+	if !ok {
+		return false, errors.New(&quot;not found&quot;)
+	}
+	if existingUser.scheduledForDeletion {
+		delete(users, name)
+		return true, nil
+	}
+	return false, nil
+}
+</code></pre>
+<p>Maps are <strong>references</strong> (like slices): <code>delete(users, name)</code> changes the caller&#39;s map, even though we don&#39;t return it.</p>
+<h3 id="counting-with-a-map">Counting with a map</h3>
+<pre><code class="language-go">func getCounts(userIDs []string) map[string]int {
+	counts := make(map[string]int)
+	for _, id := range userIDs {
+		counts[id]++ // missing key starts at 0, so this just works
+	}
+	return counts
+}
+</code></pre>
+<h3 id="what-can-be-a-key">What can be a key?</h3>
+<p>Keys must be <strong>comparable</strong> with <code>==</code>:</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>✓ Allowed keys</th>
+<th>✗ Not allowed</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>strings, numbers, booleans, pointers, channels, arrays, <strong>structs</strong> (of comparable fields)</td>
+<td><strong>slices, maps, functions</strong></td>
+</tr>
+</tbody></table></div>
+<p>Values can be any type.</p>
+<h3 id="nested-maps-vs-struct-keys">Nested maps vs struct keys</h3>
+<p>A two-level lookup can use nested maps:</p>
+<pre><code class="language-go">hits := make(map[string]map[string]int)
+n := hits[&quot;/doc/&quot;][&quot;au&quot;] // count of Australians on /doc/
+</code></pre>
+<p>But <strong>writing</strong> is awkward: you must check that each inner map exists, or writing to a <code>nil</code> inner map <strong>panics</strong>. A <strong>struct key</strong> is often simpler:</p>
+<pre><code class="language-go">type key struct {
+	path, country string
+}
+
+hits := make(map[key]int)
+hits[key{&quot;/&quot;, &quot;vn&quot;}]++ // one flat map, no inner-map checks
+</code></pre>
+<p>The nested approach, done safely:</p>
+<pre><code class="language-go">func getNameCounts(names []string) map[rune]map[string]int {
+	counts := make(map[rune]map[string]int)
+	for _, name := range names {
+		if name == &quot;&quot; {
+			continue
+		}
+		firstChar := rune(name[0]) // indexing a string gives a byte; convert to rune
+		if _, ok := counts[firstChar]; !ok {
+			counts[firstChar] = make(map[string]int) // create the inner map first
+		}
+		counts[firstChar][name]++
+	}
+	return counts
+}
+</code></pre>
+<div class="callout danger"><div class="ctitle">nil maps</div><p>Reading from a <code>nil</code> map returns zero values, but <strong>writing to a <code>nil</code> map panics</strong>: <code>assignment to entry in nil map</code>. Always create maps with <code>make</code> or a literal before writing.</p>
+</div>
+<hr>
+<h2 id="14-advanced-functions">14. Advanced functions</h2>
+<h3 id="first-class-and-higher-order-functions">First-class and higher-order functions</h3>
+<ul>
+<li><strong>First-class functions</strong>: functions can be stored in variables and passed around like any other value.</li>
+<li>A <strong>higher-order function</strong> takes a function as a parameter, or returns one.</li>
+</ul>
+<pre><code class="language-go">func add(x, y int) int      { return x + y }
+func multiply(x, y int) int { return x * y }
+
+// higher-order: takes a function
+func aggregate(a, b, c int, arithmetic func(int, int) int) int {
+	return arithmetic(arithmetic(a, b), c)
+}
+
+aggregate(2, 3, 4, add)      // 9
+aggregate(2, 3, 4, multiply) // 24
+</code></pre>
+<p>Real uses: HTTP handlers, click and event handlers, callbacks, middleware. Use them when there&#39;s a real reason; they add indirection.</p>
+<pre><code class="language-go">func getFormattedMessages(messages []string, formatter func(string) string) []string {
+	formatted := []string{}
+	for _, m := range messages {
+		formatted = append(formatted, formatter(m))
+	}
+	return formatted
+}
+</code></pre>
+<h3 id="currying">Currying</h3>
+<p>A function that takes a function and <strong>returns a new function</strong>, usually adding behaviour:</p>
+<pre><code class="language-go">func selfMath(mathFunc func(int, int) int) func(int) int {
+	return func(x int) int {
+		return mathFunc(x, x)
+	}
+}
+
+square := selfMath(multiply) // a new func(int) int
+double := selfMath(add)
+
+square(5) // 25
+double(5) // 10
+</code></pre>
+<p>The main real-world use in Go is <strong>middleware</strong>: wrapping an HTTP handler to add logic such as authentication (see the project, section 22).</p>
+<pre><code class="language-go">func getLogger(formatter func(string, string) string) func(string, string) {
+	return func(a, b string) {
+		fmt.Println(formatter(a, b))
+	}
+}
+</code></pre>
+<h3 id="defer">defer</h3>
+<p><code>defer</code> schedules a call to run <strong>when the surrounding function returns</strong>, however it returns:</p>
+<pre><code class="language-go">func copyFile(dstName, srcName string) (written int64, err error) {
+	src, err := os.Open(srcName)
+	if err != nil {
+		return
+	}
+	defer src.Close() // runs at the end, on every return path
+
+	dst, err := os.Create(dstName)
+	if err != nil {
+		return // src still gets closed
+	}
+	defer dst.Close()
+
+	return io.Copy(dst, src)
+}
+</code></pre>
+<ul>
+<li>Mostly used for <strong>cleanup</strong>: closing files, unlocking mutexes, closing response bodies.</li>
+<li>Multiple defers run in <strong>reverse order</strong> (last in, first out).</li>
+<li>Arguments are evaluated <strong>when <code>defer</code> runs</strong>, not later.</li>
+</ul>
+<p><code>defer</code> also fixes &quot;do X before every return&quot; logic:</p>
+<pre><code class="language-go">func logAndDelete(users map[string]user, name string) (log string) {
+	defer delete(users, name) // always delete, after the checks below have run
+	u, ok := users[name]
+	if !ok {
+		return logNotFound
+	}
+	if u.admin {
+		return logAdmin
+	}
+	return logDeleted
+}
+</code></pre>
+<p>Deleting at the top would break the <code>ok</code> check, and repeating <code>delete</code> before each return is error-prone. <code>defer</code> runs it last, exactly once.</p>
+<h3 id="closures">Closures</h3>
+<p>A <strong>closure</strong> is a function that uses variables from <strong>outside its own body</strong>. It keeps a <strong>reference</strong> to them (not a copy), so it can read and change them across calls:</p>
+<pre><code class="language-go">func adder() func(int) int {
+	sum := 0
+	return func(x int) int {
+		sum += x // modifies the enclosed sum
+		return sum
+	}
+}
+
+countAdder, costAdder := adder(), adder() // each has its OWN sum
+countAdder(1) // 1
+countAdder(1) // 2
+costAdder(45) // 45
+costAdder(32) // 77
+</code></pre>
+<pre><code class="language-go">func concatter() func(string) string {
+	doc := &quot;&quot;
+	return func(word string) string {
+		doc += word + &quot; &quot;
+		return doc
+	}
+}
+
+harryPotterAggregator := concatter()
+harryPotterAggregator(&quot;Mr.&quot;)
+harryPotterAggregator(&quot;and&quot;)
+harryPotterAggregator(&quot;Mrs.&quot;) // &quot;Mr. and Mrs. &quot;
+</code></pre>
+<p>Closures are rare in everyday code but essential to understand, because subtle bugs often come from accidentally shared closure variables.</p>
+<h3 id="anonymous-functions">Anonymous functions</h3>
+<p>Functions with <strong>no name</strong>, written inline where they&#39;re used:</p>
+<pre><code class="language-go">func printReports(messages []string) {
+	for _, message := range messages {
+		printCostReport(func(m string) int {
+			return len(m) * 2
+		}, message)
+	}
+}
+</code></pre>
+<p>Common for callbacks, closures, goroutines (<code>go func() { ... }()</code>) and <code>defer</code>.</p>
+<hr>
+<h2 id="15-pointers">15. Pointers</h2>
+<h3 id="memory-first">Memory first</h3>
+<p>Every variable lives at an <strong>address</strong> in RAM:</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Address</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>x</code></td>
+<td>169</td>
+<td><code>5</code></td>
+</tr>
+<tr>
+<td><code>y := x</code></td>
+<td>170</td>
+<td><code>5</code> (a <strong>copy</strong>, at its own address)</td>
+</tr>
+<tr>
+<td><code>z := &amp;x</code></td>
+<td>171</td>
+<td><code>169</code> (the <strong>address of x</strong>)</td>
+</tr>
+</tbody></table></div>
+<p>A <strong>pointer</strong> is a variable whose value is a <strong>memory address</strong>. <code>z</code> &quot;points to&quot; <code>x</code>.</p>
+<h3 id="syntax">Syntax</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Syntax</th>
+<th>Meaning</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>*T</code> (in a type)</td>
+<td>&quot;pointer to T&quot;</td>
+<td><code>var p *int</code></td>
+</tr>
+<tr>
+<td><code>&amp;x</code></td>
+<td><strong>Address of</strong> x: creates a pointer</td>
+<td><code>p := &amp;myString</code></td>
+</tr>
+<tr>
+<td><code>*p</code> (in an expression)</td>
+<td><strong>Dereference</strong>: the value p points to</td>
+<td><code>*p = &quot;new value&quot;</code></td>
+</tr>
+</tbody></table></div>
+<pre><code class="language-go">myString := &quot;hello&quot;
+myStringPtr := &amp;myString // type *string
+
+fmt.Println(*myStringPtr) // hello (read through the pointer)
+*myStringPtr = &quot;world&quot;    // write through the pointer
+fmt.Println(myString)     // world: the original changed
+</code></pre>
+<p>The zero value of a pointer is <code>nil</code>.</p>
+<h3 id="why-use-pointers">Why use pointers?</h3>
+<ol>
+<li><strong>To let a function change the caller&#39;s value.</strong> Normally arguments are copied (section 7).</li>
+<li><strong>Performance</strong>: passing a pointer avoids copying big structs. Only do this when it measurably matters, because shared mutable data causes bugs.</li>
+</ol>
+<pre><code class="language-go">func removeProfanity(message *string) {
+	if message == nil { // guard: dereferencing nil panics
+		return
+	}
+	messageVal := *message
+	messageVal = strings.ReplaceAll(messageVal, &quot;dang&quot;, &quot;****&quot;)
+	messageVal = strings.ReplaceAll(messageVal, &quot;shoot&quot;, &quot;*****&quot;)
+	messageVal = strings.ReplaceAll(messageVal, &quot;heck&quot;, &quot;****&quot;)
+	*message = messageVal // write back through the pointer
+}
+</code></pre>
+<div class="callout danger"><div class="ctitle">nil pointer dereference</div><p>Dereferencing a <code>nil</code> pointer <strong>panics</strong>: <code>invalid memory address or nil pointer dereference</code>. Check <code>if p == nil</code> before using <code>*p</code> whenever a pointer could be nil.</p>
+</div>
+<p>A common mistake is printing a pointer when you wanted the value: <code>&amp;msg</code> prints something like <code>0xc000010250</code>, a hexadecimal address.</p>
+<h3 id="quick-quiz">Quick quiz</h3>
+<pre><code class="language-go">x := 50
+y := &amp;x
+*y = 100
+// x is now 100: we changed x THROUGH y
+</code></pre>
+<h3 id="pointer-receivers">Pointer receivers</h3>
+<p>Methods that <strong>modify</strong> their struct need a <strong>pointer receiver</strong>:</p>
+<pre><code class="language-go">type car struct{ color string }
+
+func (c *car) setColor(color string) { // pointer receiver
+	c.color = color
+}
+
+func (c car) setColorBroken(color string) { // value receiver: works on a copy
+	c.color = color
+}
+
+c := car{color: &quot;white&quot;}
+c.setColor(&quot;blue&quot;)       // color is now blue
+c.setColorBroken(&quot;red&quot;)  // still blue: the copy was changed
+</code></pre>
+<ul>
+<li><strong>Pointer receivers are more common</strong> in real Go code.</li>
+<li>You can call a pointer method on a plain value (<code>c.setColor(...)</code>); Go automatically takes <code>&amp;c</code> for you.</li>
+</ul>
+<pre><code class="language-go">type email struct {
+	message     string
+	fromAddress string
+}
+
+func (e *email) setMessage(newMessage string) {
+	e.message = newMessage
+}
+</code></pre>
+<hr>
+<h2 id="16-packages-and-modules">16. Packages and modules</h2>
+<h3 id="packages">Packages</h3>
+<p>Every Go file belongs to a <strong>package</strong>, declared on its first line.</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th></th>
+<th><code>package main</code></th>
+<th>Any other name (library package)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Builds into</td>
+<td>An <strong>executable</strong> program</td>
+<td>Nothing runnable; code for others to import</td>
+</tr>
+<tr>
+<td>Has <code>func main()</code></td>
+<td>Yes, required (the entry point)</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Exports functions</td>
+<td>Pointless (nothing can import a main package)</td>
+<td>Yes, its public API</td>
+</tr>
+</tbody></table></div>
+<p>If a program compiles but &quot;does nothing&quot; or the build produces no executable, check that the package is <code>main</code>.</p>
+<h3 id="package-names-and-import-paths">Package names and import paths</h3>
+<ul>
+<li>By convention the package name is the <strong>last part of its import path</strong>: <code>math/rand</code> → <code>package rand</code>; <code>github.com/someone/parser</code> → <code>package parser</code>.</li>
+<li>It&#39;s legal to use a different name, but <strong>don&#39;t</strong>; follow the convention.</li>
+<li>The standard library has two different <code>rand</code> packages: <code>math/rand</code> and <code>crypto/rand</code>. They share a name but have different import paths.</li>
+<li><strong>A package is a directory.</strong> All <code>.go</code> files in one folder are the same package and can use each other&#39;s code <strong>without importing</strong>. One folder can hold only one package.</li>
+</ul>
+<h3 id="exported-names">Exported names</h3>
+<p><strong>Capitalisation controls visibility</strong>:</p>
+<pre><code class="language-go">func Reverse(s string) string { } // Exported: usable from other packages
+func reverse(s string) string { } // unexported: only inside this package
+</code></pre>
+<p>The same rule applies to types, struct fields, constants and variables. This is why JSON struct fields must be capitalised (section 22).</p>
+<h3 id="modules">Modules</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Package</strong></td>
+<td>A directory of <code>.go</code> files compiled together</td>
+</tr>
+<tr>
+<td><strong>Module</strong></td>
+<td>A collection of packages <strong>released together</strong>, defined by a <code>go.mod</code> file at its root</td>
+</tr>
+<tr>
+<td><strong>Repository</strong></td>
+<td>A git repo, usually containing one module</td>
+</tr>
+</tbody></table></div>
+<pre><code class="language-go">// go.mod
+module github.com/yourname/hellogo
+
+go 1.23
+
+require github.com/google/uuid v1.6.0
+</code></pre>
+<ul>
+<li>Line 1: the <strong>module path</strong>, the import-path prefix for every package inside it.</li>
+<li><code>go</code>: the Go version.</li>
+<li><code>require</code>: dependencies.</li>
+</ul>
+<p>The module path is usually the <strong>repo&#39;s URL</strong>, because Go downloads dependencies straight from source control. There&#39;s no central registry like npm; the import path <em>is</em> the download location. Standard library packages (<code>fmt</code>, <code>strings</code>) have no URL prefix; they ship with Go.</p>
+<p>An <strong>import path</strong> = module path + optional sub-directory, e.g. <code>github.com/yourname/rabbitmq/networks</code>.</p>
+<div class="callout note"><div class="ctitle">Forget GOPATH</div><p>Old tutorials say code must live inside <code>$GOPATH</code>. Since modules arrived (Go 1.13+), that&#39;s outdated: put your projects anywhere, and <strong>don&#39;t</strong> put them in GOPATH.</p>
+</div>
+<h3 id="building-a-project-step-by-step">Building a project step by step</h3>
+<pre><code class="language-bash">mkdir hellogo &amp;&amp; cd hellogo
+go mod init github.com/yourname/hellogo   # creates go.mod
+# write main.go ...
+go run main.go       # quick run, no executable kept
+go build             # creates ./hellogo (named after the folder)
+./hellogo
+go install           # compiles and puts the binary on your PATH, usable anywhere
+</code></pre>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Does</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>go run</code></td>
+<td>Compile and run once; builds nothing to keep. Fine for tiny scripts.</td>
+</tr>
+<tr>
+<td><code>go build</code></td>
+<td>Build an executable (main packages), or just check that a library compiles</td>
+</tr>
+<tr>
+<td><code>go install</code></td>
+<td>Build and install the binary globally (into <code>$GOPATH/bin</code> / <code>$GOBIN</code>); no prior <code>go build</code> needed</td>
+</tr>
+<tr>
+<td><code>go get pkg@version</code></td>
+<td>Add or upgrade a dependency in <code>go.mod</code></td>
+</tr>
+<tr>
+<td><code>go mod tidy</code></td>
+<td>Add missing and remove unused dependencies</td>
+</tr>
+<tr>
+<td><code>go mod vendor</code></td>
+<td>Copy dependencies into a local <code>vendor/</code> folder</td>
+</tr>
+</tbody></table></div>
+<h3 id="a-local-library-package">A local library package</h3>
+<pre><code class="language-go">// ../mystrings/mystrings.go   (module github.com/yourname/mystrings)
+package mystrings
+
+// Reverse reverses a string left to right
+func Reverse(s string) string {
+	result := &quot;&quot;
+	for _, v := range s {
+		result = string(v) + result
+	}
+	return result
+}
+</code></pre>
+<pre><code class="language-go">// hellogo/main.go
+package main
+
+import (
+	&quot;fmt&quot;
+
+	&quot;github.com/yourname/mystrings&quot;
+)
+
+func main() {
+	fmt.Println(mystrings.Reverse(&quot;hello world&quot;))
+}
+</code></pre>
+<p>To use it <strong>before publishing</strong> it, point Go at your local folder in <code>hellogo/go.mod</code>:</p>
+<pre><code class="language-go">replace github.com/yourname/mystrings v0.0.0 =&gt; ../mystrings
+
+require github.com/yourname/mystrings v0.0.0
+</code></pre>
+<div class="callout warning"><div class="ctitle">Warning</div><p><code>replace</code> is a <strong>local development hack</strong>. In real projects, push the library to GitHub and <code>go get</code> it instead.</p>
+</div>
+<h3 id="using-a-remote-package">Using a remote package</h3>
+<pre><code class="language-bash">go get github.com/google/uuid
+</code></pre>
+<p>This downloads the code, adds it to <code>go.mod</code>, and creates <strong><code>go.sum</code></strong>, which records checksums of every dependency (including the dependencies&#39; own dependencies) so builds are reproducible and safe.</p>
+<h3 id="clean-package-design">Clean package design</h3>
+<ol>
+<li><strong>Don&#39;t export from <code>main</code>.</strong> Nothing can import it, so capitalised names only mislead readers.</li>
+<li><strong>Export as little as possible.</strong> Everything exported is a promise you must keep supporting. A small public &quot;surface area&quot; is easier to use and maintain.</li>
+<li><strong>Keep the exported API stable.</strong> Changing or removing an exported function breaks everyone who uses it. Change internals freely; change the API rarely.</li>
+<li>Packages shouldn&#39;t know about their callers&#39; internals.</li>
+</ol>
+<hr>
+<h2 id="17-concurrency-goroutines-and-channels">17. Concurrency: goroutines and channels</h2>
+<h3 id="sequential-vs-concurrent">Sequential vs concurrent</h3>
+<p><strong>Sequential</strong> (synchronous) code runs one line at a time, top to bottom. It&#39;s simple and predictable, but it uses only <strong>one CPU core</strong>.</p>
+<p>Modern CPUs have <strong>many cores</strong>. If parts of a program don&#39;t depend on each other, they can run <strong>at the same time</strong> on different cores:</p>
+<pre><code class="language-go">// Block A (must run in order)   // Block B (must run in order)
+x := 5                          y := 6
+x++                             y--
+fmt.Println(x)                  fmt.Println(y)
+</code></pre>
+<p>A and B are independent, so running them in parallel can roughly <strong>halve</strong> the time. (Concurrency and parallelism are technically different ideas, but these notes treat them together.)</p>
+<h3 id="goroutines">Goroutines</h3>
+<p>Put <strong><code>go</code></strong> before a function call to run it <strong>concurrently</strong> in a new <strong>goroutine</strong>: a lightweight thread managed by the Go runtime.</p>
+<pre><code class="language-go">go doSomething()
+// execution continues IMMEDIATELY on the next line
+</code></pre>
+<ul>
+<li>You can&#39;t capture return values from a <code>go</code> call; it runs independently.</li>
+<li>Goroutines are cheap: thousands are normal.</li>
+</ul>
+<pre><code class="language-go">func sendEmail(message string) {
+	go func() {
+		time.Sleep(time.Millisecond * 250)
+		fmt.Printf(&quot;Email received: &#39;%s&#39;\n&quot;, message)
+	}()
+	fmt.Printf(&quot;Email sent: &#39;%s&#39;\n&quot;, message)
+}
+// prints &quot;sent&quot; first, then &quot;received&quot; 250ms later
+</code></pre>
+<h3 id="channels">Channels</h3>
+<p>Goroutines communicate through <strong>channels</strong>: typed, thread-safe queues.</p>
+<pre><code class="language-go">ch := make(chan int) // channel of ints
+
+ch &lt;- 69   // SEND: the arrow points INTO the channel
+v := &lt;-ch  // RECEIVE: the arrow points OUT of the channel
+</code></pre>
+<div class="callout important"><div class="ctitle">Sends and receives block</div>
+<ul>
+<li>A <strong>send</strong> waits until a receiver is ready to take the value.</li>
+<li>A <strong>receive</strong> waits until a value is sent.</li>
+</ul>
+<p>This blocking is how goroutines <strong>synchronise</strong>.</p>
+</div>
+<h3 id="deadlock">Deadlock</h3>
+<p>If every goroutine is blocked waiting, nothing can ever proceed: a <strong>deadlock</strong>. Go detects it and crashes with <code>fatal error: all goroutines are asleep - deadlock!</code>.</p>
+<pre><code class="language-go">// ✗ Sending and receiving on the SAME goroutine with no buffer
+func filterOldEmails(emails []email) {
+	isOldChan := make(chan bool)
+	for _, e := range emails {
+		isOldChan &lt;- e.date.Before(cutoff) // blocks forever: nobody is receiving yet
+	}
+	// ...
+}
+
+// ✓ Send from a separate goroutine
+func filterOldEmails(emails []email) {
+	isOldChan := make(chan bool)
+	go func() {
+		for _, e := range emails {
+			isOldChan &lt;- e.date.Before(cutoff)
+		}
+	}()
+	for range emails {
+		isOld := &lt;-isOldChan
+		fmt.Println(&quot;email is old:&quot;, isOld)
+	}
+}
+</code></pre>
+<h3 id="tokens-empty-structs-as-signals">Tokens: empty structs as signals</h3>
+<p>Sometimes you only care <strong>that</strong> something happened, not the value. Send empty structs (<code>struct{}</code>, which use zero memory):</p>
+<pre><code class="language-go">func waitForDBs(numDBs int, dbChan chan struct{}) {
+	for i := 0; i &lt; numDBs; i++ {
+		&lt;-dbChan // wait for one &quot;ready&quot; token; discard the value
+	}
+}
+</code></pre>
+<h3 id="buffered-channels">Buffered channels</h3>
+<p>A buffered channel has room for N values, so <strong>sends don&#39;t block until the buffer is full</strong>:</p>
+<pre><code class="language-go">ch := make(chan int, 100) // buffer of 100
+
+func addEmailsToQueue(emails []string) chan string {
+	emailsToSend := make(chan string, len(emails)) // big enough for every email
+	for _, email := range emails {
+		emailsToSend &lt;- email // doesn&#39;t block: there&#39;s room
+	}
+	return emailsToSend
+}
+</code></pre>
+<h3 id="closing-channels">Closing channels</h3>
+<p>The <strong>sender</strong> closes a channel to say &quot;no more values&quot;:</p>
+<pre><code class="language-go">close(ch)
+
+v, ok := &lt;-ch // ok is false once the channel is closed AND empty
+</code></pre>
+<pre><code class="language-go">func countReports(numSentCh chan int) int {
+	total := 0
+	for {
+		numSent, ok := &lt;-numSentCh
+		if !ok { // closed: we&#39;re done
+			break
+		}
+		total += numSent
+	}
+	return total
+}
+</code></pre>
+<div class="callout danger"><div class="ctitle">Danger</div><p>Sending on a <strong>closed</strong> channel <strong>panics</strong>. That&#39;s why only the <strong>sender</strong>, the one who knows when it&#39;s finished, should close a channel.</p>
+</div>
+<h3 id="range-over-a-channel">Range over a channel</h3>
+<p><code>range</code> receives values until the channel is <strong>closed</strong>:</p>
+<pre><code class="language-go">func fibonacci(n int, ch chan int) {
+	x, y := 0, 1
+	for i := 0; i &lt; n; i++ {
+		ch &lt;- x
+		x, y = y, x+y
+	}
+	close(ch) // ends the range loop below
+}
+
+func concurrentFib(n int) {
+	ch := make(chan int)
+	go fibonacci(n, ch)
+	for v := range ch {
+		fmt.Println(v) // 0 1 1 2 3 5 8 ...
+	}
+}
+</code></pre>
+<h3 id="select">select</h3>
+<p><code>select</code> waits on <strong>several channels at once</strong> and runs the case for whichever is ready first (randomly if several are ready):</p>
+<pre><code class="language-go">func logMessages(chEmails, chSms chan string) {
+	for {
+		select {
+		case email, ok := &lt;-chEmails:
+			if !ok {
+				return // stop when either channel closes
+			}
+			logEmail(email)
+		case sms, ok := &lt;-chSms:
+			if !ok {
+				return
+			}
+			logSms(sms)
+		}
+	}
+}
+</code></pre>
+<p>Check <code>ok</code> <strong>before</strong> using the value: a closed channel delivers zero values, which aren&#39;t real messages.</p>
+<p>A <strong><code>default</code></strong> case runs immediately if no channel is ready, making the <code>select</code> <strong>non-blocking</strong>:</p>
+<pre><code class="language-go">select {
+case v := &lt;-ch:
+	use(v)
+default:
+	// nothing ready right now
+}
+</code></pre>
+<h3 id="timers-and-channel-directions">Timers and channel directions</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Function / syntax</th>
+<th>Gives you</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>time.Tick(d)</code> / <code>time.NewTicker(d).C</code></td>
+<td>A channel that receives a value <strong>every</strong> <code>d</code></td>
+</tr>
+<tr>
+<td><code>time.After(d)</code></td>
+<td>A channel that receives <strong>one</strong> value after <code>d</code></td>
+</tr>
+<tr>
+<td><code>time.Sleep(d)</code></td>
+<td>Blocks the current goroutine for <code>d</code></td>
+</tr>
+<tr>
+<td><code>func f(ch &lt;-chan int)</code></td>
+<td><strong>Read-only</strong> channel: the compiler blocks sends</td>
+</tr>
+<tr>
+<td><code>func f(ch chan&lt;- int)</code></td>
+<td><strong>Write-only</strong> channel: the compiler blocks receives</td>
+</tr>
+</tbody></table></div>
+<pre><code class="language-go">func saveBackups(snapshotTicker, saveAfter &lt;-chan time.Time) {
+	for {
+		select {
+		case &lt;-snapshotTicker:
+			takeSnapshot()
+		case &lt;-saveAfter:
+			saveSnapshot()
+			return
+		default:
+			waitForData()
+			time.Sleep(time.Millisecond * 500)
+		}
+	}
+}
+</code></pre>
+<h3 id="channel-rules-to-memorise">Channel rules to memorise</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Action</th>
+<th>nil channel</th>
+<th>Closed channel</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Send</td>
+<td>Blocks forever</td>
+<td><strong>Panics</strong></td>
+</tr>
+<tr>
+<td>Receive</td>
+<td>Blocks forever</td>
+<td>Returns the zero value immediately (<code>ok == false</code>)</td>
+</tr>
+<tr>
+<td>Close</td>
+<td><strong>Panics</strong></td>
+<td><strong>Panics</strong></td>
+</tr>
+</tbody></table></div>
+<h3 id="waitgroup-extra-used-in-the-project">WaitGroup (Extra, used in the project)</h3>
+<p>Wait for a group of goroutines to finish:</p>
+<pre><code class="language-go">var wg sync.WaitGroup
+for _, url := range urls {
+	wg.Add(1) // one more to wait for
+	go func(u string) {
+		defer wg.Done() // this one finished
+		fetch(u)
+	}(url)
+}
+wg.Wait() // blocks until every Done has been called
+</code></pre>
+<hr>
+<h2 id="18-mutexes">18. Mutexes</h2>
+<p>Channels pass data <strong>between</strong> goroutines. A <strong>mutex</strong> (from <em>mutual exclusion</em>) protects data that <strong>several goroutines share</strong>, so only one can touch it at a time.</p>
+<h3 id="race-conditions">Race conditions</h3>
+<p>When two goroutines read and write the same data at once, results depend on timing: a <strong>race condition</strong>. Example: two goroutines both read <code>count = 5</code>, both double it, and both write <code>10</code>. You expected <code>20</code>. These bugs are intermittent and painful to debug.</p>
+<p><strong>Maps are not safe for concurrent use.</strong> Concurrent writes can crash the program with <code>fatal error: concurrent map writes</code>.</p>
+<h3 id="syncmutex">sync.Mutex</h3>
+<pre><code class="language-go">type safeCounter struct {
+	counts map[string]int
+	mu     *sync.Mutex
+}
+
+func (sc safeCounter) inc(key string) {
+	sc.mu.Lock()
+	defer sc.mu.Unlock() // always unlocks, whatever the return path
+	sc.counts[key]++
+}
+
+func (sc safeCounter) val(key string) int {
+	sc.mu.Lock() // reads need protection too
+	defer sc.mu.Unlock()
+	return sc.counts[key]
+}
+</code></pre>
+<ul>
+<li><code>Lock()</code>: if another goroutine holds the lock, wait. Only <strong>one</strong> goroutine holds it at a time.</li>
+<li><code>Unlock()</code>: release it so another can proceed.</li>
+<li><strong><code>defer Unlock()</code></strong> right after <code>Lock()</code> is the idiomatic pattern; you can&#39;t forget it on an early return.</li>
+<li>Locking makes code correct but slower, because goroutines take turns.</li>
+</ul>
+<h3 id="syncrwmutex">sync.RWMutex</h3>
+<p>Reading concurrently is safe; only writing is dangerous. A <strong>read/write mutex</strong> allows <strong>many readers or one writer</strong>:</p>
+<pre><code class="language-go">type safeCounter struct {
+	counts map[string]int
+	mu     *sync.RWMutex
+}
+
+func (sc safeCounter) inc(key string) {
+	sc.mu.Lock() // exclusive: for writing
+	defer sc.mu.Unlock()
+	sc.counts[key]++
+}
+
+func (sc safeCounter) val(key string) int {
+	sc.mu.RLock() // shared: many readers at once
+	defer sc.mu.RUnlock()
+	return sc.counts[key]
+}
+</code></pre>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Holder</th>
+<th>Other writers (<code>Lock</code>)</th>
+<th>Other readers (<code>RLock</code>)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>A writer holds <code>Lock</code></td>
+<td>Wait</td>
+<td>Wait</td>
+</tr>
+<tr>
+<td>Readers hold <code>RLock</code></td>
+<td>Wait</td>
+<td><strong>Allowed</strong> (no limit)</td>
+</tr>
+</tbody></table></div>
+<p>Use <code>RWMutex</code> when reads greatly outnumber writes.</p>
+<hr>
+<h2 id="19-generics">19. Generics</h2>
+<p>Added in <strong>Go 1.18</strong>, generics (<strong>type parameters</strong>) let you write one function for many types, with full type safety.</p>
+<h3 id="the-problem">The problem</h3>
+<pre><code class="language-go">func splitIntSlice(s []int) ([]int, []int) {
+	mid := len(s) / 2
+	return s[:mid], s[mid:]
+}
+// The logic is the same for []string, []bool… but you&#39;d need a copy of this function for each.
+</code></pre>
+<p>Before generics, the workaround was <code>[]interface{}</code>, which needs risky runtime type assertions afterwards.</p>
+<h3 id="type-parameters">Type parameters</h3>
+<pre><code class="language-go">func splitAnySlice[T any](s []T) ([]T, []T) {
+	mid := len(s) / 2
+	return s[:mid], s[mid:]
+}
+
+firstInts, secondInts := splitAnySlice([]int{0, 1, 2, 3}) // T = int
+firstStrs, secondStrs := splitAnySlice([]string{&quot;a&quot;, &quot;b&quot;}) // T = string
+</code></pre>
+<ul>
+<li><code>[T any]</code> declares a type parameter <code>T</code>; <code>any</code> means &quot;any type is allowed&quot;.</li>
+<li>The compiler knows that what comes out matches what went in.</li>
+<li>This keeps code <strong>DRY</strong> (<em>Don&#39;t Repeat Yourself</em>).</li>
+</ul>
+<pre><code class="language-go">func getLast[T any](s []T) T {
+	if len(s) == 0 {
+		var zeroVal T // the zero value of whatever T is
+		return zeroVal
+	}
+	return s[len(s)-1]
+}
+</code></pre>
+<h3 id="constraints">Constraints</h3>
+<p>Instead of <code>any</code>, a constraint limits which types are allowed and <strong>lets you use their methods</strong>:</p>
+<pre><code class="language-go">type stringer interface {
+	String() string
+}
+
+func concat[T stringer](vals []T) string {
+	result := &quot;&quot;
+	for _, val := range vals {
+		result += val.String() // allowed: every T has String()
+	}
+	return result
+}
+</code></pre>
+<pre><code class="language-go">type lineItem interface {
+	GetCost() float64
+	GetName() string
+}
+
+func chargeForLineItem[T lineItem](newItem T, oldItems []T, balance float64) ([]T, float64, error) {
+	newBalance := balance - newItem.GetCost()
+	if newBalance &lt; 0.0 {
+		return nil, 0.0, errors.New(&quot;insufficient funds&quot;)
+	}
+	oldItems = append(oldItems, newItem)
+	return oldItems, newBalance, nil
+}
+</code></pre>
+<h3 id="type-lists">Type lists</h3>
+<p>An interface can list <strong>exact types</strong>. This is useful for operators like <code>&lt;</code>:</p>
+<pre><code class="language-go">type Ordered interface {
+	~int | ~int8 | ~int16 | ~int32 | ~int64 |
+		~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 | ~uintptr |
+		~float32 | ~float64 | ~string
+}
+
+func max[T Ordered](a, b T) T {
+	if a &gt; b { // allowed: every listed type supports &gt;
+		return a
+	}
+	return b
+}
+</code></pre>
+<p>The <code>~</code> means &quot;this type <strong>or any type built on it</strong>&quot; (e.g. <code>type celsius float64</code>). Use a type list when you know exactly which types should qualify. Go 1.21+ also has a built-in <code>max</code> and the <code>cmp.Ordered</code> constraint.</p>
+<h3 id="parametric-constraints">Parametric constraints</h3>
+<p>Interfaces can have type parameters too:</p>
+<pre><code class="language-go">type customer interface {
+	GetBillingEmail() string
+}
+
+type biller[C customer] interface {
+	Charge(c C) bill
+	Name() string
+}
+// userBiller (Charge(user)) and orgBiller (Charge(org)) both satisfy biller
+</code></pre>
+<h3 id="when-to-use-generics">When to use generics</h3>
+<ul>
+<li><strong>Mostly in libraries</strong> and reusable data structures (trees, sets, queues, slice helpers).</li>
+<li>Application code rarely needs them. Don&#39;t force them.</li>
+<li>The name <code>T</code> is just a convention for a single type parameter; any name works.</li>
+</ul>
+<div class="callout note"><div class="ctitle">Why did generics take so long?</div><p>Go deliberately keeps its feature set small: fewer features means less to learn, and any Go code is easy to read. A feature is only added once it&#39;s proven essential. Generics were debated for years before landing.</p>
+</div>
+<hr>
+<h2 id="20-go-proverbs">20. Go proverbs</h2>
+<p>Short sayings that capture Go&#39;s philosophy:</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Proverb</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><em>Don&#39;t communicate by sharing memory; share memory by communicating.</em></td>
+<td>Prefer channels over mutex-protected shared variables.</td>
+</tr>
+<tr>
+<td><em>Channels orchestrate; mutexes serialize.</em></td>
+<td>Channels model the flow of work; mutexes just make goroutines take turns.</td>
+</tr>
+<tr>
+<td><em>The bigger the interface, the weaker the abstraction.</em></td>
+<td>Keep interfaces small.</td>
+</tr>
+<tr>
+<td><em>The empty interface says nothing.</em></td>
+<td>Avoid <code>interface{}</code> / <code>any</code>; it throws away type information.</td>
+</tr>
+<tr>
+<td><em>Gofmt&#39;s style is no one&#39;s favorite, yet gofmt is everyone&#39;s favorite.</em></td>
+<td>Everyone uses the same formatter, so all Go code looks alike.</td>
+</tr>
+<tr>
+<td><em>A little copying is better than a little dependency.</em></td>
+<td>Copy a few lines instead of pulling in a tiny package.</td>
+</tr>
+<tr>
+<td><em>Clear is better than clever.</em></td>
+<td>Code is written for humans; avoid tricks.</td>
+</tr>
+<tr>
+<td><em>Errors are values.</em></td>
+<td>Handle errors with ordinary code, not special syntax.</td>
+</tr>
+<tr>
+<td><em>Documentation is for users.</em></td>
+<td>Document how to <strong>use</strong> your code; the code itself should be readable for maintainers.</td>
+</tr>
+</tbody></table></div>
+<hr>
+<h2 id="21-common-errors-and-fixes">21. Common errors and fixes</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Message</th>
+<th>Cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>declared and not used: x</code></td>
+<td>Unused local variable</td>
+<td>Use it, delete it, or assign to <code>_</code></td>
+</tr>
+<tr>
+<td><code>&quot;os&quot; imported and not used</code></td>
+<td>Unused import</td>
+<td>Remove it (the editor&#39;s Go extension does this automatically)</td>
+</tr>
+<tr>
+<td><code>undefined: fmt</code></td>
+<td>Missing import</td>
+<td>Add <code>import &quot;fmt&quot;</code></td>
+</tr>
+<tr>
+<td><code>mismatched types int and float64</code></td>
+<td>Mixing number types</td>
+<td>Convert: <code>float64(n)</code></td>
+</tr>
+<tr>
+<td><code>cannot use x (variable of type [3]string) as []string value</code></td>
+<td>Array where a slice is expected</td>
+<td>Slice it: <code>x[:]</code></td>
+</tr>
+<tr>
+<td><code>missing return</code></td>
+<td>A code path has no <code>return</code></td>
+<td>Add a return at the end</td>
+</tr>
+<tr>
+<td><code>syntax error: unexpected newline in composite literal</code></td>
+<td>Missing trailing comma on a multi-line literal</td>
+<td>Add <code>,</code> on the last line</td>
+</tr>
+<tr>
+<td><code>index out of range [5] with length 5</code></td>
+<td>Index ≥ <code>len</code></td>
+<td>Check <code>len</code> first; watch for off-by-one</td>
+</tr>
+<tr>
+<td><code>assignment to entry in nil map</code></td>
+<td>Writing to a map that wasn&#39;t <code>make</code>&#39;d</td>
+<td><code>m := make(map[K]V)</code></td>
+</tr>
+<tr>
+<td><code>invalid memory address or nil pointer dereference</code></td>
+<td>Using a nil pointer</td>
+<td>Check <code>if p == nil</code> first</td>
+</tr>
+<tr>
+<td><code>all goroutines are asleep - deadlock!</code></td>
+<td>Every goroutine is blocked on a channel</td>
+<td>Send and receive in different goroutines, or use a buffer</td>
+</tr>
+<tr>
+<td><code>send on closed channel</code></td>
+<td>Sending after <code>close</code></td>
+<td>Only the sender closes, and only once it&#39;s finished</td>
+</tr>
+<tr>
+<td><code>concurrent map writes</code></td>
+<td>Map shared across goroutines</td>
+<td>Protect it with a <code>sync.Mutex</code></td>
+</tr>
+<tr>
+<td>Program builds but nothing runs</td>
+<td>Package isn&#39;t <code>main</code></td>
+<td>Use <code>package main</code> with <code>func main()</code></td>
+</tr>
+</tbody></table></div>
+<hr>
+<h2 id="22-project-building-an-rss-aggregator-backend">22. Project: building an RSS aggregator backend</h2>
+<p>Everything above comes together in a real server. The goal is a <strong>JSON REST API</strong> that lets users:</p>
+<ol>
+<li>Register and get an <strong>API key</strong>.</li>
+<li>Add <strong>RSS feeds</strong> (blogs, podcasts).</li>
+<li><strong>Follow</strong> feeds.</li>
+<li>Read the latest <strong>posts</strong> from the feeds they follow, collected automatically by a background <strong>scraper</strong>.</li>
+</ol>
+<div class="callout info"><div class="ctitle">What is RSS?</div><p><strong>RSS</strong> is an XML format that blogs and podcasts publish (e.g. <code>https://example.com/index.xml</code>) listing their posts: title, link, description and publish date. An aggregator fetches many feeds and combines them.</p>
+</div>
+<h3 id="what-you-need">What you need</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Go</td>
+<td>Language</td>
+</tr>
+<tr>
+<td>PostgreSQL (+ a GUI like pgAdmin)</td>
+<td>Database</td>
+</tr>
+<tr>
+<td>Basic SQL</td>
+<td>Querying it</td>
+</tr>
+<tr>
+<td>An HTTP client (Thunder Client, Postman, curl)</td>
+<td>Testing the API</td>
+</tr>
+<tr>
+<td>Git + GitHub</td>
+<td>Version control</td>
+</tr>
+</tbody></table></div>
+<h3 id="final-project-structure">Final project structure</h3>
+<pre><code>rssagg/
+├── main.go                  # setup, routes, start server + scraper
+├── json.go                  # respondWithJSON / respondWithError helpers
+├── models.go                # API-facing structs with JSON tags
+├── middleware_auth.go       # auth middleware
+├── handler_readiness.go     # GET /v1/healthz
+├── handler_err.go           # GET /v1/err
+├── handler_user.go          # users + user&#39;s posts
+├── handler_feed.go          # feeds
+├── handler_feed_follows.go  # follows
+├── rss.go                   # fetch + parse RSS XML
+├── scraper.go               # background worker
+├── sqlc.yaml                # sqlc config
+├── .env                     # PORT, DB_URL (git-ignored)
+├── .gitignore
+├── sql/
+│   ├── schema/              # goose migrations 001_users.sql …
+│   └── queries/             # sqlc queries users.sql, feeds.sql …
+├── internal/
+│   ├── database/            # code GENERATED by sqlc (never edit by hand)
+│   └── auth/auth.go         # GetAPIKey helper
+└── vendor/                  # vendored dependencies
+</code></pre>
+<h3 id="step-1-module-env-and-git">Step 1: module, env and git</h3>
+<pre><code class="language-bash">mkdir rssagg &amp;&amp; cd rssagg
+go mod init github.com/yourname/rssagg
+git init
+</code></pre>
+<pre><code class="language-bash"># .env
+PORT=8080
+DB_URL=postgres://username:password@localhost:5432/rssagg?sslmode=disable
+</code></pre>
+<pre><code class="language-bash"># .gitignore
+.env
+rssagg
+.vscode
+</code></pre>
+<p>Never commit <code>.env</code>; it holds secrets and machine-specific settings.</p>
+<p>Read environment variables with the standard library, loading <code>.env</code> with <strong>godotenv</strong>:</p>
+<pre><code class="language-bash">go get github.com/joho/godotenv
+</code></pre>
+<pre><code class="language-go">godotenv.Load(&quot;.env&quot;)
+
+portString := os.Getenv(&quot;PORT&quot;)
+if portString == &quot;&quot; {
+	log.Fatal(&quot;PORT is not found in the environment&quot;)
+}
+</code></pre>
+<ul>
+<li><code>os.Getenv</code> returns <code>&quot;&quot;</code> if the variable isn&#39;t set.</li>
+<li><code>log.Fatal</code> prints the message and exits with code 1.</li>
+<li><code>godotenv.Load</code> doesn&#39;t override variables already exported in your shell. If a value seems stuck, open a new terminal.</li>
+</ul>
+<div class="callout tip"><div class="ctitle">Vendoring</div><p><code>go mod tidy &amp;&amp; go mod vendor</code> after adding dependencies copies them into <code>vendor/</code>. Unlike <code>node_modules</code>, Go dependency folders are small, and committing <code>vendor/</code> is common.</p>
+</div>
+<h3 id="step-2-router-and-server">Step 2: router and server</h3>
+<p>Using <strong>chi</strong>, a lightweight router compatible with the standard <code>net/http</code> package:</p>
+<pre><code class="language-bash">go get github.com/go-chi/chi/v5
+go get github.com/go-chi/cors
+</code></pre>
+<pre><code class="language-go">router := chi.NewRouter()
+
+router.Use(cors.Handler(cors.Options{
+	AllowedOrigins:   []string{&quot;https://*&quot;, &quot;http://*&quot;},
+	AllowedMethods:   []string{&quot;GET&quot;, &quot;POST&quot;, &quot;PUT&quot;, &quot;DELETE&quot;, &quot;OPTIONS&quot;},
+	AllowedHeaders:   []string{&quot;*&quot;},
+	ExposedHeaders:   []string{&quot;Link&quot;},
+	AllowCredentials: false,
+	MaxAge:           300,
+}))
+
+v1Router := chi.NewRouter()
+v1Router.Get(&quot;/healthz&quot;, handlerReadiness)
+v1Router.Get(&quot;/err&quot;, handlerErr)
+router.Mount(&quot;/v1&quot;, v1Router) // every v1 route lives under /v1
+
+srv := &amp;http.Server{
+	Handler: router,
+	Addr:    &quot;:&quot; + portString,
+}
+
+log.Printf(&quot;Server starting on port %v&quot;, portString)
+err := srv.ListenAndServe() // blocks forever while serving requests
+if err != nil {
+	log.Fatal(err)
+}
+</code></pre>
+<ul>
+<li><strong>CORS</strong> headers tell browsers which other websites may call your API. This config is wide open, which is fine for local development; tighten it for production.</li>
+<li><strong>Versioning</strong> with <code>/v1</code> lets you ship breaking changes later under <code>/v2</code>.</li>
+<li><code>v1Router.Get</code> only matches <strong>GET</strong>; a POST to the same path gets <code>405 Method Not Allowed</code>. Plain <code>HandleFunc</code> would accept any method.</li>
+<li>chi paths must start with <code>/</code>, or it panics: <code>routing pattern must begin with &#39;/&#39;</code>.</li>
+</ul>
+<h3 id="step-3-json-helpers">Step 3: JSON helpers</h3>
+<pre><code class="language-go">// json.go
+func respondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
+	data, err := json.Marshal(payload)
+	if err != nil {
+		log.Printf(&quot;Failed to marshal JSON response: %v&quot;, payload)
+		w.WriteHeader(500)
+		return
+	}
+	w.Header().Add(&quot;Content-Type&quot;, &quot;application/json&quot;)
+	w.WriteHeader(code)
+	w.Write(data)
+}
+
+func respondWithError(w http.ResponseWriter, code int, msg string) {
+	if code &gt; 499 {
+		log.Println(&quot;Responding with 5XX error:&quot;, msg) // our bug: log it
+	}
+	type errResponse struct {
+		Error string `json:&quot;error&quot;`
+	}
+	respondWithJSON(w, code, errResponse{Error: msg})
+}
+</code></pre>
+<ul>
+<li><code>json.Marshal</code> turns a struct into JSON bytes.</li>
+<li><strong>Struct tags</strong> like <code>`json:&quot;error&quot;`</code> set the JSON key name. Fields must be <strong>exported</strong> (capitalised) to appear in JSON at all.</li>
+<li>4xx codes are <strong>client</strong> mistakes; 5xx codes are <strong>server</strong> bugs, so only those are logged.</li>
+<li>Every error response has the same shape, <code>{&quot;error&quot;: &quot;something went wrong&quot;}</code>, so clients can rely on it.</li>
+</ul>
+<h3 id="step-4-handlers">Step 4: handlers</h3>
+<p>Every HTTP handler in Go has the same signature:</p>
+<pre><code class="language-go">func handlerReadiness(w http.ResponseWriter, r *http.Request) {
+	respondWithJSON(w, 200, struct{}{}) // {} with status 200
+}
+
+func handlerErr(w http.ResponseWriter, r *http.Request) {
+	respondWithError(w, 400, &quot;Something went wrong&quot;)
+}
+</code></pre>
+<p><code>/healthz</code> is a common convention for &quot;is the server alive?&quot; checks used by load balancers and Kubernetes.</p>
+<h3 id="step-5-postgres-goose-migrations-sqlc">Step 5: Postgres, goose migrations, sqlc</h3>
+<p>Create a database (<code>rssagg</code>) in Postgres, then install two command-line tools:</p>
+<pre><code class="language-bash">go install github.com/pressly/goose/v3/cmd/goose@latest
+go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+</code></pre>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Job</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>goose</strong></td>
+<td>Runs <strong>migrations</strong>: versioned SQL files that change the schema (create/alter tables)</td>
+</tr>
+<tr>
+<td><strong>sqlc</strong></td>
+<td>Reads your SQL <strong>queries</strong> and <strong>generates type-safe Go code</strong> to run them</td>
+</tr>
+</tbody></table></div>
+<p>Neither is an ORM. You write plain SQL, which keeps things transparent.</p>
+<h4>Migrations</h4>
+<p>Each migration has an <strong>up</strong> (apply) and a <strong>down</strong> (undo). Files run in numeric order:</p>
+<pre><code class="language-sql">-- sql/schema/001_users.sql
+-- +goose Up
+CREATE TABLE users (
+  id UUID PRIMARY KEY,
+  created_at TIMESTAMP NOT NULL,
+  updated_at TIMESTAMP NOT NULL,
+  name TEXT NOT NULL
+);
+
+-- +goose Down
+DROP TABLE users;
+</code></pre>
+<pre><code class="language-bash">cd sql/schema
+goose postgres &quot;postgres://username:password@localhost:5432/rssagg&quot; up
+goose postgres &quot;postgres://username:password@localhost:5432/rssagg&quot; down
+</code></pre>
+<ul>
+<li>goose tracks what has run in its own <code>goose_db_version</code> table, so re-running <code>up</code> is safe.</li>
+<li>Leave off <code>?sslmode=disable</code> for goose; only the Go app needs it.</li>
+<li><strong>Never edit a migration that has already run.</strong> Add a new numbered one instead.</li>
+<li><strong>UUIDs</strong> as primary keys are random and unguessable, and can be generated anywhere without asking the database.</li>
+</ul>
+<h4>sqlc config and queries</h4>
+<pre><code class="language-yaml"># sqlc.yaml
+version: &quot;2&quot;
+sql:
+  - schema: &quot;sql/schema&quot;
+    queries: &quot;sql/queries&quot;
+    engine: &quot;postgresql&quot;
+    gen:
+      go:
+        out: &quot;internal/database&quot;
+</code></pre>
+<pre><code class="language-sql">-- sql/queries/users.sql
+-- name: CreateUser :one
+INSERT INTO users (id, created_at, updated_at, name)
+VALUES ($1, $2, $3, $4)
+RETURNING *;
+</code></pre>
+<ul>
+<li><code>-- name: CreateUser :one</code> gives the Go function name and says it returns <strong>one</strong> row (<code>:many</code> for several, <code>:exec</code> for none).</li>
+<li><code>$1</code>, <code>$2</code>… become the function&#39;s parameters.</li>
+</ul>
+<pre><code class="language-bash">sqlc generate   # run from the project root; writes Go code into internal/database
+</code></pre>
+<h3 id="step-6-connecting-the-app-to-the-database">Step 6: connecting the app to the database</h3>
+<pre><code class="language-go">import (
+	&quot;database/sql&quot;
+
+	_ &quot;github.com/lib/pq&quot; // Postgres driver; the _ import registers it without direct use
+	&quot;github.com/yourname/rssagg/internal/database&quot;
+)
+
+type apiConfig struct {
+	DB *database.Queries
+}
+
+dbURL := os.Getenv(&quot;DB_URL&quot;)
+if dbURL == &quot;&quot; {
+	log.Fatal(&quot;DB_URL is not found in the environment&quot;)
+}
+
+conn, err := sql.Open(&quot;postgres&quot;, dbURL)
+if err != nil {
+	log.Fatal(&quot;Can&#39;t connect to database:&quot;, err)
+}
+
+db := database.New(conn) // sqlc&#39;s wrapper with our generated query methods
+apiCfg := apiConfig{DB: db}
+</code></pre>
+<h4>Passing dependencies into handlers</h4>
+<p>The handler signature is fixed, so you can&#39;t add a database parameter. Instead, make the handler a <strong>method</strong> on <code>apiConfig</code>:</p>
+<pre><code class="language-go">func (apiCfg *apiConfig) handlerCreateUser(w http.ResponseWriter, r *http.Request) {
+	type parameters struct {
+		Name string `json:&quot;name&quot;`
+	}
+	decoder := json.NewDecoder(r.Body)
+	params := parameters{}
+	err := decoder.Decode(&amp;params)
+	if err != nil {
+		respondWithError(w, 400, fmt.Sprintf(&quot;Error parsing JSON: %v&quot;, err))
+		return
+	}
+
+	user, err := apiCfg.DB.CreateUser(r.Context(), database.CreateUserParams{
+		ID:        uuid.New(),
+		CreatedAt: time.Now().UTC(),
+		UpdatedAt: time.Now().UTC(),
+		Name:      params.Name,
+	})
+	if err != nil {
+		respondWithError(w, 400, fmt.Sprintf(&quot;Couldn&#39;t create user: %v&quot;, err))
+		return
+	}
+
+	respondWithJSON(w, 201, databaseUserToUser(user)) // 201 Created
+}
+
+// in main
+v1Router.Post(&quot;/users&quot;, apiCfg.handlerCreateUser)
+</code></pre>
+<ul>
+<li><code>json.NewDecoder(r.Body).Decode(&amp;params)</code> reads the JSON request body into a struct.</li>
+<li><code>r.Context()</code> is the request&#39;s <strong>context</strong>. If the client disconnects, it&#39;s cancelled, and the database query stops too.</li>
+<li><code>uuid.New()</code> comes from <code>github.com/google/uuid</code>.</li>
+<li>Store times in <strong>UTC</strong>.</li>
+</ul>
+<h4>Own your API&#39;s JSON shape</h4>
+<p>sqlc&#39;s generated structs have no JSON tags and you must not edit them, so map them to your own models:</p>
+<pre><code class="language-go">// models.go
+type User struct {
+	ID        uuid.UUID `json:&quot;id&quot;`
+	CreatedAt time.Time `json:&quot;created_at&quot;`
+	UpdatedAt time.Time `json:&quot;updated_at&quot;`
+	Name      string    `json:&quot;name&quot;`
+	APIKey    string    `json:&quot;api_key&quot;`
+}
+
+func databaseUserToUser(dbUser database.User) User {
+	return User{
+		ID:        dbUser.ID,
+		CreatedAt: dbUser.CreatedAt,
+		UpdatedAt: dbUser.UpdatedAt,
+		Name:      dbUser.Name,
+		APIKey:    dbUser.ApiKey,
+	}
+}
+</code></pre>
+<p>This also lets you leave out database-only fields from responses.</p>
+<h3 id="step-7-authentication-with-api-keys">Step 7: authentication with API keys</h3>
+<p>An <strong>API key</strong> is a long random secret that identifies a user, so there&#39;s no username and password to manage.</p>
+<pre><code class="language-sql">-- sql/schema/002_users_apikey.sql
+-- +goose Up
+ALTER TABLE users ADD COLUMN api_key VARCHAR(64) UNIQUE NOT NULL DEFAULT (
+  encode(sha256(random()::text::bytea), &#39;hex&#39;)
+);
+
+-- +goose Down
+ALTER TABLE users DROP COLUMN api_key;
+</code></pre>
+<ul>
+<li>A <strong>new</strong> migration, so the old one stays untouched.</li>
+<li>The <strong>DEFAULT</strong> is required: existing users need a unique, non-null key the moment the column appears.</li>
+<li><code>random()</code> → text → bytes → <strong>SHA-256</strong> hash → <strong>hex</strong> gives exactly 64 random hex characters.</li>
+</ul>
+<p>Generate the key in SQL when creating users, and add a lookup query:</p>
+<pre><code class="language-sql">-- name: CreateUser :one
+INSERT INTO users (id, created_at, updated_at, name, api_key)
+VALUES ($1, $2, $3, $4, encode(sha256(random()::text::bytea), &#39;hex&#39;))
+RETURNING *;
+
+-- name: GetUserByAPIKey :one
+SELECT * FROM users WHERE api_key = $1;
+</code></pre>
+<p>Clients send the key in a header: <code>Authorization: ApiKey &lt;key&gt;</code>.</p>
+<pre><code class="language-go">// internal/auth/auth.go
+package auth
+
+// GetAPIKey extracts an API key from the headers of an HTTP request
+// Example: Authorization: ApiKey {insert apikey here}
+func GetAPIKey(headers http.Header) (string, error) {
+	val := headers.Get(&quot;Authorization&quot;)
+	if val == &quot;&quot; {
+		return &quot;&quot;, errors.New(&quot;no authentication info found&quot;)
+	}
+
+	vals := strings.Split(val, &quot; &quot;)
+	if len(vals) != 2 {
+		return &quot;&quot;, errors.New(&quot;malformed auth header&quot;)
+	}
+	if vals[0] != &quot;ApiKey&quot; {
+		return &quot;&quot;, errors.New(&quot;malformed first part of auth header&quot;)
+	}
+	return vals[1], nil
+}
+</code></pre>
+<h3 id="step-8-auth-middleware">Step 8: auth middleware</h3>
+<p>Every authenticated handler would repeat &quot;read key → look up user → handle errors&quot;. Middleware removes that duplication using a <strong>closure</strong> (section 14):</p>
+<pre><code class="language-go">// middleware_auth.go
+type authedHandler func(http.ResponseWriter, *http.Request, database.User)
+
+func (apiCfg *apiConfig) middlewareAuth(handler authedHandler) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		apiKey, err := auth.GetAPIKey(r.Header)
+		if err != nil {
+			respondWithError(w, 403, fmt.Sprintf(&quot;Auth error: %v&quot;, err))
+			return
+		}
+
+		user, err := apiCfg.DB.GetUserByAPIKey(r.Context(), apiKey)
+		if err != nil {
+			respondWithError(w, 400, fmt.Sprintf(&quot;Couldn&#39;t get user: %v&quot;, err))
+			return
+		}
+
+		handler(w, r, user) // call the real handler with the user attached
+	}
+}
+</code></pre>
+<p>Authenticated handlers now just receive the user:</p>
+<pre><code class="language-go">func (apiCfg *apiConfig) handlerGetUser(w http.ResponseWriter, r *http.Request, user database.User) {
+	respondWithJSON(w, 200, databaseUserToUser(user))
+}
+
+v1Router.Get(&quot;/users&quot;, apiCfg.middlewareAuth(apiCfg.handlerGetUser))
+</code></pre>
+<p>Same path <code>/users</code>, different methods: POST creates a user, GET returns the logged-in user.</p>
+<h3 id="step-9-feeds">Step 9: feeds</h3>
+<pre><code class="language-sql">-- sql/schema/003_feeds.sql
+-- +goose Up
+CREATE TABLE feeds (
+  id UUID PRIMARY KEY,
+  created_at TIMESTAMP NOT NULL,
+  updated_at TIMESTAMP NOT NULL,
+  name TEXT NOT NULL,
+  url TEXT UNIQUE NOT NULL,
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- +goose Down
+DROP TABLE feeds;
+</code></pre>
+<ul>
+<li><code>REFERENCES users(id)</code> is a <strong>foreign key</strong>: a feed can&#39;t point to a user who doesn&#39;t exist.</li>
+<li><code>ON DELETE CASCADE</code>: deleting a user deletes their feeds automatically.</li>
+<li><code>NOT NULL</code> on <code>user_id</code> matters: without it, sqlc generates <code>uuid.NullUUID</code> instead of <code>uuid.UUID</code>.</li>
+</ul>
+<pre><code class="language-sql">-- name: CreateFeed :one
+INSERT INTO feeds (id, created_at, updated_at, name, url, user_id)
+VALUES ($1, $2, $3, $4, $5, $6)
+RETURNING *;
+
+-- name: GetFeeds :many
+SELECT * FROM feeds;
+</code></pre>
+<pre><code class="language-go">func (apiCfg *apiConfig) handlerCreateFeed(w http.ResponseWriter, r *http.Request, user database.User) {
+	type parameters struct {
+		Name string `json:&quot;name&quot;`
+		URL  string `json:&quot;url&quot;`
+	}
+	// ...decode params as before...
+	feed, err := apiCfg.DB.CreateFeed(r.Context(), database.CreateFeedParams{
+		ID:        uuid.New(),
+		CreatedAt: time.Now().UTC(),
+		UpdatedAt: time.Now().UTC(),
+		Name:      params.Name,
+		Url:       params.URL,
+		UserID:    user.ID, // the authenticated user owns the feed
+	})
+	// ...handle err, respondWithJSON(w, 201, databaseFeedToFeed(feed))
+}
+
+func (apiCfg *apiConfig) handlerGetFeeds(w http.ResponseWriter, r *http.Request) {
+	feeds, err := apiCfg.DB.GetFeeds(r.Context())
+	if err != nil {
+		respondWithError(w, 400, fmt.Sprintf(&quot;Couldn&#39;t get feeds: %v&quot;, err))
+		return
+	}
+	respondWithJSON(w, 200, databaseFeedsToFeeds(feeds))
+}
+
+// converting a whole slice
+func databaseFeedsToFeeds(dbFeeds []database.Feed) []Feed {
+	feeds := []Feed{}
+	for _, dbFeed := range dbFeeds {
+		feeds = append(feeds, databaseFeedToFeed(dbFeed))
+	}
+	return feeds
+}
+
+v1Router.Post(&quot;/feeds&quot;, apiCfg.middlewareAuth(apiCfg.handlerCreateFeed))
+v1Router.Get(&quot;/feeds&quot;, apiCfg.handlerGetFeeds) // public: no auth
+</code></pre>
+<h3 id="step-10-following-feeds-many-to-many">Step 10: following feeds (many-to-many)</h3>
+<p>A user follows many feeds, and a feed has many followers. That&#39;s a <strong>many-to-many</strong> relationship, stored in a <strong>join table</strong>:</p>
+<pre><code class="language-sql">-- sql/schema/004_feed_follows.sql
+-- +goose Up
+CREATE TABLE feed_follows (
+  id UUID PRIMARY KEY,
+  created_at TIMESTAMP NOT NULL,
+  updated_at TIMESTAMP NOT NULL,
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  feed_id UUID NOT NULL REFERENCES feeds(id) ON DELETE CASCADE,
+  UNIQUE(user_id, feed_id)
+);
+
+-- +goose Down
+DROP TABLE feed_follows;
+</code></pre>
+<p><code>UNIQUE(user_id, feed_id)</code> stops a user following the same feed twice. Trying returns a <code>duplicate key value violates unique constraint</code> error.</p>
+<pre><code class="language-sql">-- name: CreateFeedFollow :one
+INSERT INTO feed_follows (id, created_at, updated_at, user_id, feed_id)
+VALUES ($1, $2, $3, $4, $5)
+RETURNING *;
+
+-- name: GetFeedFollows :many
+SELECT * FROM feed_follows WHERE user_id = $1;
+
+-- name: DeleteFeedFollow :exec
+DELETE FROM feed_follows WHERE id = $1 AND user_id = $2;
+</code></pre>
+<div class="callout important"><div class="ctitle">Why <code>AND user_id = $2</code> on delete?</div><p>The ID alone identifies the row, but checking the owner too means a user can <strong>only delete their own follows</strong>, even if they somehow learn someone else&#39;s follow ID.</p>
+</div>
+<p><strong>DELETE requests</strong> usually carry the ID in the <strong>URL path</strong>, not a body:</p>
+<pre><code class="language-go">v1Router.Delete(&quot;/feed_follows/{feedFollowID}&quot;, apiCfg.middlewareAuth(apiCfg.handlerDeleteFeedFollow))
+
+func (apiCfg *apiConfig) handlerDeleteFeedFollow(w http.ResponseWriter, r *http.Request, user database.User) {
+	feedFollowIDStr := chi.URLParam(r, &quot;feedFollowID&quot;) // matches {feedFollowID}
+	feedFollowID, err := uuid.Parse(feedFollowIDStr)
+	if err != nil {
+		respondWithError(w, 400, fmt.Sprintf(&quot;Couldn&#39;t parse feed follow id: %v&quot;, err))
+		return
+	}
+
+	err = apiCfg.DB.DeleteFeedFollow(r.Context(), database.DeleteFeedFollowParams{
+		ID:     feedFollowID,
+		UserID: user.ID,
+	})
+	if err != nil {
+		respondWithError(w, 400, fmt.Sprintf(&quot;Couldn&#39;t delete feed follow: %v&quot;, err))
+		return
+	}
+	respondWithJSON(w, 200, struct{}{})
+}
+</code></pre>
+<h3 id="step-11-fetching-and-parsing-rss">Step 11: fetching and parsing RSS</h3>
+<p>Track when each feed was last fetched:</p>
+<pre><code class="language-sql">-- sql/schema/005_feeds_lastfetchedat.sql
+-- +goose Up
+ALTER TABLE feeds ADD COLUMN last_fetched_at TIMESTAMP; -- nullable: never fetched yet
+
+-- +goose Down
+ALTER TABLE feeds DROP COLUMN last_fetched_at;
+</code></pre>
+<pre><code class="language-sql">-- name: GetNextFeedsToFetch :many
+SELECT * FROM feeds
+ORDER BY last_fetched_at ASC NULLS FIRST
+LIMIT $1;
+
+-- name: MarkFeedAsFetched :one
+UPDATE feeds
+SET last_fetched_at = NOW(), updated_at = NOW()
+WHERE id = $1
+RETURNING *;
+</code></pre>
+<p><code>NULLS FIRST</code> puts never-fetched feeds first; <code>ASC</code> then picks the ones fetched <strong>longest ago</strong>.</p>
+<p>Parse XML just like JSON, with struct tags:</p>
+<pre><code class="language-go">// rss.go
+type RSSFeed struct {
+	Channel struct {
+		Title       string    `xml:&quot;title&quot;`
+		Link        string    `xml:&quot;link&quot;`
+		Description string    `xml:&quot;description&quot;`
+		Language    string    `xml:&quot;language&quot;`
+		Item        []RSSItem `xml:&quot;item&quot;`
+	} `xml:&quot;channel&quot;`
+}
+
+type RSSItem struct {
+	Title       string `xml:&quot;title&quot;`
+	Link        string `xml:&quot;link&quot;`
+	Description string `xml:&quot;description&quot;`
+	PubDate     string `xml:&quot;pubDate&quot;`
+}
+
+func urlToFeed(url string) (RSSFeed, error) {
+	httpClient := http.Client{
+		Timeout: 10 * time.Second, // never hang on a slow feed
+	}
+	resp, err := httpClient.Get(url)
+	if err != nil {
+		return RSSFeed{}, err
+	}
+	defer resp.Body.Close()
+
+	dat, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return RSSFeed{}, err
+	}
+
+	rssFeed := RSSFeed{}
+	err = xml.Unmarshal(dat, &amp;rssFeed)
+	if err != nil {
+		return RSSFeed{}, err
+	}
+	return rssFeed, nil
+}
+</code></pre>
+<h3 id="step-12-the-background-scraper">Step 12: the background scraper</h3>
+<p>A long-running worker that fetches feeds on an interval, <strong>several at once</strong>:</p>
+<pre><code class="language-go">// scraper.go
+func startScraping(db *database.Queries, concurrency int, timeBetweenRequest time.Duration) {
+	log.Printf(&quot;Scraping on %v goroutines every %s duration&quot;, concurrency, timeBetweenRequest)
+	ticker := time.NewTicker(timeBetweenRequest)
+
+	for ; ; &lt;-ticker.C { // empty init/condition: runs once immediately, then on every tick
+		feeds, err := db.GetNextFeedsToFetch(context.Background(), int32(concurrency))
+		if err != nil {
+			log.Println(&quot;error fetching feeds:&quot;, err)
+			continue // never stop the scraper because of one failure
+		}
+
+		wg := &amp;sync.WaitGroup{}
+		for _, feed := range feeds {
+			wg.Add(1)
+			go scrapeFeed(db, wg, feed)
+		}
+		wg.Wait() // finish this batch before the next tick
+	}
+}
+
+func scrapeFeed(db *database.Queries, wg *sync.WaitGroup, feed database.Feed) {
+	defer wg.Done()
+
+	_, err := db.MarkFeedAsFetched(context.Background(), feed.ID)
+	if err != nil {
+		log.Println(&quot;Error marking feed as fetched:&quot;, err)
+		return
+	}
+
+	rssFeed, err := urlToFeed(feed.Url)
+	if err != nil {
+		log.Println(&quot;Error fetching feed:&quot;, err)
+		return
+	}
+
+	// save posts (step 13)...
+	log.Printf(&quot;Feed %s collected, %v posts found&quot;, feed.Name, len(rssFeed.Channel.Item))
+}
+</code></pre>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Piece</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>time.NewTicker</code></td>
+<td>Sends on <code>ticker.C</code> every interval</td>
+</tr>
+<tr>
+<td><code>for ; ; &lt;-ticker.C</code></td>
+<td>Runs the body <strong>immediately</strong>, then waits for each tick (<code>for range ticker.C</code> would wait first)</td>
+</tr>
+<tr>
+<td><code>concurrency</code> + <code>LIMIT $1</code></td>
+<td>Fetch up to N feeds per batch, each on its own goroutine</td>
+</tr>
+<tr>
+<td><code>sync.WaitGroup</code></td>
+<td><code>Add(1)</code> per feed, <code>Done()</code> when each finishes, <code>Wait()</code> blocks until all are done</td>
+</tr>
+<tr>
+<td><code>context.Background()</code></td>
+<td>No request context exists here, so use the global background context</td>
+</tr>
+<tr>
+<td><code>continue</code> / <code>return</code> + log</td>
+<td>A background worker should <strong>log and keep going</strong>, never crash</td>
+</tr>
+</tbody></table></div>
+<p>Start it in <code>main</code>, <strong>on its own goroutine</strong>, before <code>ListenAndServe</code> (which blocks forever):</p>
+<pre><code class="language-go">go startScraping(db, 10, time.Minute)
+</code></pre>
+<h3 id="step-13-storing-posts">Step 13: storing posts</h3>
+<pre><code class="language-sql">-- sql/schema/006_posts.sql
+-- +goose Up
+CREATE TABLE posts (
+  id UUID PRIMARY KEY,
+  created_at TIMESTAMP NOT NULL,
+  updated_at TIMESTAMP NOT NULL,
+  title TEXT NOT NULL,
+  description TEXT,          -- nullable: some posts have none
+  published_at TIMESTAMP NOT NULL,
+  url TEXT NOT NULL UNIQUE,  -- never store the same post twice
+  feed_id UUID NOT NULL REFERENCES feeds(id) ON DELETE CASCADE
+);
+
+-- +goose Down
+DROP TABLE posts;
+</code></pre>
+<pre><code class="language-go">for _, item := range rssFeed.Channel.Item {
+	description := sql.NullString{}
+	if item.Description != &quot;&quot; {
+		description.String = item.Description
+		description.Valid = true
+	}
+
+	pubAt, err := time.Parse(time.RFC1123Z, item.PubDate)
+	if err != nil {
+		log.Printf(&quot;couldn&#39;t parse date %v with err %v&quot;, item.PubDate, err)
+		continue
+	}
+
+	_, err = db.CreatePost(context.Background(), database.CreatePostParams{
+		ID:          uuid.New(),
+		CreatedAt:   time.Now().UTC(),
+		UpdatedAt:   time.Now().UTC(),
+		Title:       item.Title,
+		Description: description,
+		PublishedAt: pubAt,
+		Url:         item.Link,
+		FeedID:      feed.ID,
+	})
+	if err != nil {
+		if strings.Contains(err.Error(), &quot;duplicate key&quot;) {
+			continue // already saved on an earlier run: expected, not an error
+		}
+		log.Println(&quot;failed to create post:&quot;, err)
+	}
+}
+</code></pre>
+<ul>
+<li><strong><code>sql.NullString</code></strong>: a nullable SQL column becomes <code>{String, Valid}</code>. Set <code>Valid: true</code> only when there&#39;s a real value, so empty descriptions are stored as <code>NULL</code>.</li>
+<li><strong>Dates</strong>: <code>time.Parse(layout, value)</code>. Feeds use different formats, and this handles only <code>RFC1123Z</code>. Supporting more formats is a good extension.</li>
+<li><strong>Duplicates</strong>: the unique <code>url</code> makes repeat runs fail harmlessly. Skip those errors instead of logging noise.</li>
+</ul>
+<h3 id="step-14-a-users-personal-feed-join">Step 14: a user&#39;s personal feed (JOIN)</h3>
+<p>Show the newest posts from feeds the user follows:</p>
+<pre><code class="language-sql">-- name: GetPostsForUser :many
+SELECT posts.* FROM posts
+JOIN feed_follows ON posts.feed_id = feed_follows.feed_id
+WHERE feed_follows.user_id = $1
+ORDER BY posts.published_at DESC
+LIMIT $2;
+</code></pre>
+<ol>
+<li><strong>JOIN</strong> attaches follow data to each post by matching <code>feed_id</code>.</li>
+<li><strong>WHERE</strong> keeps only the rows for this user, which drops posts from feeds they don&#39;t follow.</li>
+<li><strong>ORDER BY … DESC</strong> puts the newest first; <strong>LIMIT</strong> caps the count.</li>
+</ol>
+<p>In the API model, turn <code>sql.NullString</code> into a <strong><code>*string</code></strong>. A nil pointer marshals to JSON <code>null</code>, while a <code>NullString</code> would marshal as a nested <code>{&quot;String&quot;: &quot;...&quot;, &quot;Valid&quot;: true}</code> object:</p>
+<pre><code class="language-go">type Post struct {
+	ID          uuid.UUID `json:&quot;id&quot;`
+	CreatedAt   time.Time `json:&quot;created_at&quot;`
+	UpdatedAt   time.Time `json:&quot;updated_at&quot;`
+	Title       string    `json:&quot;title&quot;`
+	Description *string   `json:&quot;description&quot;`
+	PublishedAt time.Time `json:&quot;published_at&quot;`
+	Url         string    `json:&quot;url&quot;`
+	FeedID      uuid.UUID `json:&quot;feed_id&quot;`
+}
+
+func databasePostToPost(dbPost database.Post) Post {
+	var description *string
+	if dbPost.Description.Valid {
+		description = &amp;dbPost.Description.String
+	}
+	return Post{
+		ID:          dbPost.ID,
+		CreatedAt:   dbPost.CreatedAt,
+		UpdatedAt:   dbPost.UpdatedAt,
+		Title:       dbPost.Title,
+		Description: description,
+		PublishedAt: dbPost.PublishedAt,
+		Url:         dbPost.Url,
+		FeedID:      dbPost.FeedID,
+	}
+}
+
+v1Router.Get(&quot;/posts&quot;, apiCfg.middlewareAuth(apiCfg.handlerGetPostsForUser))
+</code></pre>
+<h3 id="final-api">Final API</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Path</th>
+<th>Auth</th>
+<th>Does</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GET</td>
+<td><code>/v1/healthz</code></td>
+<td>–</td>
+<td>Health check</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/v1/err</code></td>
+<td>–</td>
+<td>Test error response</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/v1/users</code></td>
+<td>–</td>
+<td>Create user → returns <code>api_key</code></td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/v1/users</code></td>
+<td>✓</td>
+<td>Current user</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/v1/feeds</code></td>
+<td>✓</td>
+<td>Add a feed</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/v1/feeds</code></td>
+<td>–</td>
+<td>List all feeds</td>
+</tr>
+<tr>
+<td>POST</td>
+<td><code>/v1/feed_follows</code></td>
+<td>✓</td>
+<td>Follow a feed (<code>{&quot;feed_id&quot;: &quot;…&quot;}</code>)</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/v1/feed_follows</code></td>
+<td>✓</td>
+<td>List my follows</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td><code>/v1/feed_follows/{feedFollowID}</code></td>
+<td>✓</td>
+<td>Unfollow</td>
+</tr>
+<tr>
+<td>GET</td>
+<td><code>/v1/posts</code></td>
+<td>✓</td>
+<td>Latest posts from followed feeds</td>
+</tr>
+</tbody></table></div>
+<p>Auth header: <code>Authorization: ApiKey &lt;your key&gt;</code>.</p>
+<h3 id="ideas-to-extend-it">Ideas to extend it</h3>
+<ul>
+<li>Support more <strong>date formats</strong> and log parsing failures.</li>
+<li>Add <strong>pagination</strong> (<code>?limit=</code> and <code>?offset=</code>) to <code>/v1/posts</code>.</li>
+<li>Auto-follow a feed when a user creates it.</li>
+<li>Build a <strong>frontend</strong> or <strong>CLI</strong> client for the API.</li>
+<li>Add tests, tighter CORS, and rate limiting.</li>
+<li>Deploy it (it&#39;s a single binary plus Postgres), e.g. on a small VPS or a Raspberry Pi.</li>
+</ul>
+<div class="callout note"><div class="ctitle">Happy-path programming</div><p>The project handles the <strong>expected</strong> cases well, but not every edge case (unusual date formats, broken feeds, huge feeds). Real-world hardening means adding many feeds, watching the logs, and fixing problems as they appear.</p>
+</div>
+<hr>
+<h2 id="23-cheat-sheet">23. Cheat sheet</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>Syntax</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Entry point</td>
+<td><code>package main</code> + <code>func main()</code></td>
+</tr>
+<tr>
+<td>Declare</td>
+<td><code>var x int</code> · <code>x := 5</code> · <code>a, b := 1, &quot;s&quot;</code></td>
+</tr>
+<tr>
+<td>Constant</td>
+<td><code>const n = 10</code></td>
+</tr>
+<tr>
+<td>Convert</td>
+<td><code>float64(i)</code> · <code>int(f)</code> (truncates)</td>
+</tr>
+<tr>
+<td>Print / format</td>
+<td><code>fmt.Println</code> · <code>fmt.Printf(&quot;%v %.2f %T\n&quot;, …)</code> · <code>fmt.Sprintf</code></td>
+</tr>
+<tr>
+<td>If with init</td>
+<td><code>if v, err := f(); err != nil { }</code></td>
+</tr>
+<tr>
+<td>Function</td>
+<td><code>func add(x, y int) int { return x + y }</code></td>
+</tr>
+<tr>
+<td>Multiple returns</td>
+<td><code>func f() (int, error)</code> · <code>v, _ := f()</code></td>
+</tr>
+<tr>
+<td>Struct</td>
+<td><code>type user struct { name string }</code> · <code>u := user{name: &quot;a&quot;}</code></td>
+</tr>
+<tr>
+<td>Method</td>
+<td><code>func (u user) hi() string</code> · pointer: <code>func (u *user) set()</code></td>
+</tr>
+<tr>
+<td>Interface</td>
+<td><code>type shape interface { area() float64 }</code> (implicit)</td>
+</tr>
+<tr>
+<td>Type assertion</td>
+<td><code>c, ok := s.(circle)</code></td>
+</tr>
+<tr>
+<td>Type switch</td>
+<td><code>switch v := s.(type) { case circle: }</code></td>
+</tr>
+<tr>
+<td>Error</td>
+<td><code>errors.New(&quot;x&quot;)</code> · <code>fmt.Errorf(&quot;x: %w&quot;, err)</code> · <code>if err != nil</code></td>
+</tr>
+<tr>
+<td>Loops</td>
+<td><code>for i := 0; i &lt; n; i++</code> · <code>for cond {}</code> · <code>for {}</code> · <code>for i, v := range s</code></td>
+</tr>
+<tr>
+<td>Array / slice</td>
+<td><code>[3]int{}</code> · <code>[]int{1, 2}</code> · <code>make([]int, len, cap)</code> · <code>s[1:3]</code></td>
+</tr>
+<tr>
+<td>Append</td>
+<td><code>s = append(s, v)</code> (assign back to the SAME slice)</td>
+</tr>
+<tr>
+<td>Variadic / spread</td>
+<td><code>func f(n ...int)</code> · <code>f(s...)</code></td>
+</tr>
+<tr>
+<td>Map</td>
+<td><code>m := make(map[string]int)</code> · <code>v, ok := m[k]</code> · <code>delete(m, k)</code></td>
+</tr>
+<tr>
+<td>Pointer</td>
+<td><code>p := &amp;x</code> · <code>*p = 5</code> · type <code>*int</code></td>
+</tr>
+<tr>
+<td>Defer</td>
+<td><code>defer f.Close()</code></td>
+</tr>
+<tr>
+<td>Closure</td>
+<td><code>func() func() int { n := 0; return func() int { n++; return n } }</code></td>
+</tr>
+<tr>
+<td>Goroutine</td>
+<td><code>go f()</code> · <code>go func() { }()</code></td>
+</tr>
+<tr>
+<td>Channel</td>
+<td><code>ch := make(chan int)</code> · <code>ch &lt;- v</code> · <code>v := &lt;-ch</code> · <code>close(ch)</code></td>
+</tr>
+<tr>
+<td>Buffered</td>
+<td><code>make(chan int, 100)</code></td>
+</tr>
+<tr>
+<td>Select</td>
+<td><code>select { case v := &lt;-a: … case &lt;-b: … default: … }</code></td>
+</tr>
+<tr>
+<td>Wait for goroutines</td>
+<td><code>wg.Add(1)</code> · <code>defer wg.Done()</code> · <code>wg.Wait()</code></td>
+</tr>
+<tr>
+<td>Mutex</td>
+<td><code>mu.Lock(); defer mu.Unlock()</code> · <code>RLock</code>/<code>RUnlock</code></td>
+</tr>
+<tr>
+<td>Generics</td>
+<td><code>func f[T any](s []T) T</code> · <code>[T interface{ ~int | ~float64 }]</code></td>
+</tr>
+<tr>
+<td>Exported</td>
+<td>Capitalised: <code>Reverse</code> (public) vs <code>reverse</code> (private)</td>
+</tr>
+<tr>
+<td>Tooling</td>
+<td><code>go mod init</code> · <code>go run</code> · <code>go build</code> · <code>go install</code> · <code>go get</code> · <code>go mod tidy</code> · <code>go fmt</code></td>
+</tr>
+</tbody></table></div>
+<hr>
+<h2 id="24-self-check-quiz">24. Self-check quiz</h2>
+<details class="callout question"><summary>Does Go run faster than interpreted languages? Does it compile faster than most compiled languages?</summary><p>Yes to both: it runs faster than Python or JavaScript and compiles faster than C++, Rust or Java. It doesn&#39;t usually run faster than Rust or C.</p>
+</details>
+<details class="callout question"><summary>Why is a compiled Go program easy to deploy?</summary><p>It&#39;s a single binary with no runtime dependencies, so the target machine doesn&#39;t need Go installed.</p>
+</details>
+<details class="callout question"><summary>What is the Go runtime for?</summary><p>Code built into every binary that handles garbage collection (cleaning up unused memory) and goroutine scheduling.</p>
+</details>
+<details class="callout question"><summary>What does the 64 in <code>float64</code> mean?</summary><p>64 bits.</p>
+</details>
+<details class="callout question"><summary>When should you avoid the default types (<code>int</code>, <code>float64</code>)?</summary><p>Only when memory or performance is a primary concern.</p>
+</details>
+<details class="callout question"><summary>What&#39;s the difference between <code>var x int</code> and <code>x := 0</code>?</summary><p>Both make an <code>int</code>. <code>:=</code> infers the type and works only inside functions.</p>
+</details>
+<details class="callout question"><summary>What does <code>int(2.6)</code> return?</summary><p><code>2</code>. Conversion truncates; it doesn&#39;t round.</p>
+</details>
+<details class="callout question"><summary>How are Go constants different from JavaScript&#39;s <code>const</code>?</summary><p>Go constants must be computable at compile time; JavaScript&#39;s can be computed at runtime.</p>
+</details>
+<details class="callout question"><summary><code>Printf</code> vs <code>Sprintf</code>?</summary><p><code>Printf</code> prints; <code>Sprintf</code> returns the formatted string.</p>
+</details>
+<details class="callout question"><summary>Why use an <code>if</code> initial statement?</summary><p>Shorter code, and the variable stays scoped to the <code>if</code> block.</p>
+</details>
+<details class="callout question"><summary>Arguments are passed by value. What does that mean?</summary><p>The function receives a copy, so changes don&#39;t affect the caller unless you return the value or pass a pointer.</p>
+</details>
+<details class="callout question"><summary>When should you use naked returns?</summary><p>Rarely, and only in very short functions. Named return values are fine as documentation.</p>
+</details>
+<details class="callout question"><summary>What is a guard clause?</summary><p>An early return when a condition is met, which keeps logic linear instead of nested.</p>
+</details>
+<details class="callout question"><summary>Nested vs embedded struct?</summary><p>Nested is accessed as <code>t.car.model</code>; embedded fields are promoted, so <code>t.model</code>.</p>
+</details>
+<details class="callout question"><summary>How does a type implement an interface?</summary><p>Implicitly, by having all of its methods. There&#39;s no <code>implements</code> keyword.</p>
+</details>
+<details class="callout question"><summary>Do interfaces share implementation like parent classes?</summary><p>No. Each type still implements every method; interfaces only let different types be used in the same places.</p>
+</details>
+<details class="callout question"><summary>What does the two-value type assertion <code>c, ok := s.(circle)</code> protect against?</summary><p>A panic when <code>s</code> isn&#39;t a circle; <code>ok</code> is just <code>false</code> instead.</p>
+</details>
+<details class="callout question"><summary>What is the underlying type of <code>error</code>?</summary><p>An interface with one method, <code>Error() string</code>.</p>
+</details>
+<details class="callout question"><summary>What does <code>nil</code> error mean?</summary><p>Success: nothing went wrong.</p>
+</details>
+<details class="callout question"><summary>What loop keywords does Go have?</summary><p>Only <code>for</code>, which covers classic, while-style and infinite loops plus <code>range</code>.</p>
+</details>
+<details class="callout question"><summary><code>continue</code> vs <code>break</code>?</summary><p><code>continue</code> skips to the next iteration; <code>break</code> exits the innermost loop.</p>
+</details>
+<details class="callout question"><summary>What is <code>27 % 6</code>?</summary><p>3.</p>
+</details>
+<details class="callout question"><summary>Do slices reference arrays, or arrays slices?</summary><p>Slices reference arrays. Several slices can share one array.</p>
+</details>
+<details class="callout question"><summary>Can a function change a slice&#39;s contents without returning it?</summary><p>Yes. Slices (and maps) are references to shared data.</p>
+</details>
+<details class="callout question"><summary>What do <code>len</code> and <code>cap</code> return for a nil slice?</summary><p>0. They never panic.</p>
+</details>
+<details class="callout question"><summary>What&#39;s the safe way to use <code>append</code>?</summary><p>Always assign the result back to the same slice: <code>s = append(s, v)</code>.</p>
+</details>
+<details class="callout question"><summary>What happens when you read a missing map key? Write to a nil map?</summary><p>Reading returns the zero value. Writing to a nil map panics.</p>
+</details>
+<details class="callout question"><summary>Which types can&#39;t be map keys?</summary><p>Slices, maps and functions, because they aren&#39;t comparable.</p>
+</details>
+<details class="callout question"><summary>What does <code>defer</code> do?</summary><p>It runs a call when the surrounding function returns, on every return path.</p>
+</details>
+<details class="callout question"><summary>Does a closure get a copy of the outer variable?</summary><p>No, a reference to the original, so it can modify it across calls.</p>
+</details>
+<details class="callout question"><summary>What do <code>&amp;x</code> and <code>*p</code> mean?</summary><p><code>&amp;x</code> gives the address of <code>x</code> (a pointer); <code>*p</code> gives the value <code>p</code> points to.</p>
+</details>
+<details class="callout question"><summary>Which receiver type is more common?</summary><p>Pointer receivers, because methods often need to modify the struct.</p>
+</details>
+<details class="callout question"><summary>What makes a name exported?</summary><p>Starting it with a capital letter.</p>
+</details>
+<details class="callout question"><summary>What is a Go module?</summary><p>A collection of packages released together, defined by <code>go.mod</code>.</p>
+</details>
+<details class="callout question"><summary><code>go run</code> vs <code>go build</code> vs <code>go install</code>?</summary><p><code>run</code> compiles and runs once; <code>build</code> makes an executable here; <code>install</code> compiles and installs the binary globally.</p>
+</details>
+<details class="callout question"><summary>What does <code>go func() { ... }()</code> do?</summary><p>Runs the anonymous function concurrently in a new goroutine.</p>
+</details>
+<details class="callout question"><summary>Do channel sends and receives block?</summary><p>Yes, until the other side is ready (or there&#39;s buffer space for a send).</p>
+</details>
+<details class="callout question"><summary>Who should close a channel, and why?</summary><p>The sender, because sending on a closed channel panics, and only the sender knows when it&#39;s done.</p>
+</details>
+<details class="callout question"><summary>Receive from a closed channel? From a nil channel?</summary><p>Closed returns the zero value immediately; nil blocks forever.</p>
+</details>
+<details class="callout question"><summary>How many goroutines can hold a <code>Mutex</code>? An <code>RWMutex</code> read lock?</summary><p>One. For read locks there&#39;s no limit, as long as nobody holds the write lock.</p>
+</details>
+<details class="callout question"><summary>What problem do generics solve?</summary><p>Writing one type-safe function for many types instead of copies, or unsafe <code>interface{}</code> code.</p>
+</details>
+<details class="callout question"><summary>Where are generics used most?</summary><p>In library packages and reusable data structures.</p>
+</details>
+<details class="callout question"><summary>Why must JSON struct fields be capitalised?</summary><p><code>encoding/json</code> can only access exported fields.</p>
+</details>
+<details class="callout question"><summary>Why is the handler a method on <code>apiConfig</code>?</summary><p>The handler signature is fixed, so the method receiver is how the database connection gets passed in.</p>
+</details>
+<details class="callout question"><summary>Why add a DEFAULT when adding a <code>UNIQUE NOT NULL</code> column?</summary><p>Existing rows need a valid, unique value immediately.</p>
+</details>
+<details class="callout question"><summary>What does the auth middleware do?</summary><p>It reads the API key, loads the user, handles auth errors, then calls the real handler with the user.</p>
+</details>
+<details class="callout question"><summary>Why does the scraper use a WaitGroup?</summary><p>To fetch a batch of feeds concurrently and wait for all of them before the next tick.</p>
+</details>
+
+</main>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>
+// syntax highlighting when online; plain code otherwise
+if (window.hljs) document.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
+
+document.querySelectorAll('pre').forEach(pre => {
+  const b = document.createElement('button');
+  b.className = 'copy'; b.textContent = 'Copy';
+  b.onclick = () => navigator.clipboard.writeText(pre.querySelector('code').innerText)
+    .then(() => { b.textContent = 'Copied'; setTimeout(() => b.textContent = 'Copy', 1200); });
+  pre.appendChild(b);
+});
+
+const root = document.documentElement;
+try { const t = localStorage.getItem('theme'); if (t) root.dataset.theme = t; } catch {}
+document.getElementById('themeBtn').onclick = () => {
+  const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  root.dataset.theme = dark ? 'light' : 'dark';
+  try { localStorage.setItem('theme', root.dataset.theme); } catch {}
+};
+
+const nav = document.getElementById('nav');
+document.getElementById('menuBtn').onclick = () => nav.classList.toggle('open');
+nav.addEventListener('click', e => { if (e.target.tagName === 'A') nav.classList.remove('open'); });
+
+document.getElementById('search').oninput = e => {
+  const q = e.target.value.toLowerCase();
+  nav.querySelectorAll('a').forEach(a => a.style.display = a.textContent.toLowerCase().includes(q) ? '' : 'none');
+};
+
+const links = [...nav.querySelectorAll('a')];
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(en => {
+    if (en.isIntersecting) links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + en.target.id));
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+document.querySelectorAll('main h2[id]').forEach(h => obs.observe(h));
+
+const bar = document.getElementById('progress');
+addEventListener('scroll', () => {
+  const h = document.documentElement;
+  bar.style.width = (h.scrollTop / (h.scrollHeight - h.clientHeight) * 100) + '%';
+}, { passive: true });
+</script>
+</body>
+</html>
