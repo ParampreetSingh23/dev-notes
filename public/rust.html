@@ -1,0 +1,3398 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rust: Beginner to Advanced</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+<style>
+:root{
+  --bg:#ffffff; --bg-side:#f6f7f9; --text:#1f2328; --muted:#59636e; --border:#d8dee4;
+  --accent:#0b6bcb; --accent-soft:#e6f0fb; --code-bg:#eef0f3; --pre-bg:#0f172a; --pre-text:#e2e8f0;
+  --info:#2f6fd6; --info-bg:#e7f1ff; --tip:#0b8a5c; --tip-bg:#e3f6ee; --warn:#c98a00; --warn-bg:#fff6e0;
+  --danger:#d13c3c; --danger-bg:#fdecec; --imp:#7c4dcc; --imp-bg:#f1eafd;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0d1117; --bg-side:#11161d; --text:#e6edf3; --muted:#9aa5b1; --border:#262f3a;
+    --accent:#58a6ff; --accent-soft:#0f1e33; --code-bg:#1c232c; --pre-bg:#070b11; --pre-text:#d6deeb;
+    --info:#5b9bf5; --info-bg:#0f1e33; --tip:#3ddc97; --tip-bg:#0f261c; --warn:#e6b030; --warn-bg:#2b2310;
+    --danger:#f06a6a; --danger-bg:#2c1414; --imp:#b18cf2; --imp-bg:#1f1630;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0d1117; --bg-side:#11161d; --text:#e6edf3; --muted:#9aa5b1; --border:#262f3a;
+  --accent:#58a6ff; --accent-soft:#0f1e33; --code-bg:#1c232c; --pre-bg:#070b11; --pre-text:#d6deeb;
+  --info:#5b9bf5; --info-bg:#0f1e33; --tip:#3ddc97; --tip-bg:#0f261c; --warn:#e6b030; --warn-bg:#2b2310;
+  --danger:#f06a6a; --danger-bg:#2c1414; --imp:#b18cf2; --imp-bg:#1f1630;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.7 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--bg)}
+header .logo{font-weight:700;color:var(--accent);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+header .spacer{flex:1}
+#progress{position:absolute;left:0;bottom:-1px;height:2px;background:var(--accent);width:0}
+button{font:inherit;cursor:pointer;border:1px solid var(--border);background:var(--bg-side);color:var(--text);border-radius:6px;padding:4px 10px}
+#menuBtn{display:none}
+.layout{display:flex}
+nav{width:290px;flex-shrink:0;position:sticky;top:53px;height:calc(100vh - 53px);overflow-y:auto;background:var(--bg-side);border-right:1px solid var(--border);padding:16px 12px}
+nav input{width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);margin-bottom:12px}
+nav a{display:block;padding:5px 10px;border-radius:6px;color:var(--muted);text-decoration:none;font-size:14.5px;line-height:1.4}
+nav a:hover{color:var(--text);background:var(--code-bg)}
+nav a.active{color:var(--accent);background:var(--accent-soft);font-weight:600}
+main{flex:1;min-width:0;max-width:900px;padding:24px 36px 100px}
+h1{font-size:2.1rem;margin:.2em 0 .4em}
+h2{font-size:1.55rem;margin-top:2.6em;padding-top:.5em;border-top:1px solid var(--border)}
+h3{font-size:1.15rem;margin-top:1.8em}
+h4{font-size:1rem;margin-top:1.4em}
+hr{display:none}
+p,li{max-width:75ch}
+a{color:var(--accent)}
+code{font:0.88em ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--code-bg);padding:.12em .35em;border-radius:4px}
+pre{position:relative;background:var(--pre-bg);color:var(--pre-text);padding:14px 16px;border-radius:8px;overflow-x:auto;font-size:13.5px;line-height:1.55}
+pre code,pre code.hljs{background:none;padding:0;color:inherit;font-size:inherit}
+pre .copy{position:absolute;top:8px;right:8px;font-size:12px;padding:2px 8px;background:#ffffff14;color:#cbd5e1;border-color:#ffffff22}
+.tw{overflow-x:auto;margin:14px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{border:1px solid var(--border);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--bg-side)}
+.callout{--c:var(--info);--cb:var(--info-bg);border-left:4px solid var(--c);background:var(--cb);border-radius:6px;padding:10px 14px;margin:16px 0}
+.callout>:last-child{margin-bottom:0}
+.callout .ctitle,.callout summary{font-weight:700;color:var(--c)}
+.callout summary{cursor:pointer}
+.callout.tip{--c:var(--tip);--cb:var(--tip-bg)}
+.callout.warning{--c:var(--warn);--cb:var(--warn-bg)}
+.callout.danger{--c:var(--danger);--cb:var(--danger-bg)}
+.callout.important{--c:var(--imp);--cb:var(--imp-bg)}
+.callout.question{--c:var(--accent);--cb:var(--accent-soft);margin:8px 0}
+.callout.question summary{color:var(--text)}
+@media (max-width:860px){
+  #menuBtn{display:inline-block}
+  nav{position:fixed;left:0;top:53px;z-index:9;transform:translateX(-100%);transition:transform .2s}
+  nav.open{transform:none;box-shadow:0 0 40px #0005}
+  main{padding:20px 16px 80px}
+}
+</style>
+</head>
+<body>
+<header>
+  <button id="menuBtn" aria-label="Toggle menu">☰</button>
+  <span class="logo">Rust: Beginner to Advanced</span>
+  <span class="spacer"></span>
+  <button id="themeBtn" aria-label="Toggle theme">◐ Theme</button>
+  <div id="progress"></div>
+</header>
+<div class="layout">
+<nav id="nav">
+<input id="search" type="search" placeholder="Filter topics…" aria-label="Filter topics">
+<a href="#1-what-is-rust">1. What is Rust?</a>
+<a href="#2-installing-rust-and-setting-up-your-editor">2. Installing Rust and setting up your editor</a>
+<a href="#3-cargo-creating-and-running-a-project">3. Cargo: creating and running a project</a>
+<a href="#4-variables-types-and-functions">4. Variables, types and functions</a>
+<a href="#5-structs">5. Structs</a>
+<a href="#6-enums-and-pattern-matching">6. Enums and pattern matching</a>
+<a href="#7-option-rusts-replacement-for-null">7. <code>Option</code>: Rust&#39;s replacement for null</a>
+<a href="#8-result-error-handling">8. <code>Result</code>: error handling</a>
+<a href="#9-crates-and-packages">9. Crates and packages</a>
+<a href="#10-memory-stack-vs-heap">10. Memory: stack vs heap</a>
+<a href="#11-memory-management-in-rust-vs-cc-vs-garbage-collected-languages">11. Memory management in Rust vs C/C++ vs garbage-collected languages</a>
+<a href="#12-mutability">12. Mutability</a>
+<a href="#13-ownership">13. Ownership</a>
+<a href="#14-moving-values">14. Moving values</a>
+<a href="#15-borrowing-and-references">15. Borrowing and references</a>
+<a href="#16-vectors">16. Vectors</a>
+<a href="#17-hashmaps">17. HashMaps</a>
+<a href="#18-iterators">18. Iterators</a>
+<a href="#19-strings-vs-string-slices">19. Strings vs string slices</a>
+<a href="#20-generics">20. Generics</a>
+<a href="#21-traits">21. Traits</a>
+<a href="#22-lifetimes">22. Lifetimes</a>
+<a href="#23-threads">23. Threads</a>
+<a href="#24-message-passing-with-channels">24. Message passing with channels</a>
+<a href="#25-macros">25. Macros</a>
+<a href="#26-what-comes-next-async-rust">26. What comes next: async Rust</a>
+<a href="#27-common-compiler-errors-and-what-they-mean">27. Common compiler errors and what they mean</a>
+<a href="#28-cheat-sheet">28. Cheat sheet</a>
+<a href="#29-self-check-quiz">29. Self-check quiz</a>
+</nav>
+<main>
+<h1>Rust: Beginner to Advanced</h1>
+<p>Detailed, hands-on study notes on Rust. The first half covers the everyday language (variables, functions, structs, enums, <code>Option</code>, <code>Result</code>, packages). The second half covers what makes Rust special: <strong>ownership, borrowing, lifetimes</strong>, plus collections, iterators, strings vs slices, generics, traits, threads and macros.</p>
+<div class="callout info"><div class="ctitle">How to use these notes</div>
+<ul>
+<li><strong>Type every example yourself</strong> in a Cargo project (section 3) and run it with <code>cargo run</code>. Reading Rust is not the same as writing it; the compiler is your teacher.</li>
+<li>Each section follows the same pattern: <strong>idea → code → what the compiler says → common mistakes → practice</strong>.</li>
+<li>Code marked <code>// does NOT compile</code> is deliberately broken so you can see (and recognise) the error message.</li>
+<li>Parts marked <strong>Extra</strong> go beyond the core topics but appear constantly in real Rust code.</li>
+<li>Practice answers are hidden in collapsed boxes. Try first, then open the answer.</li>
+<li>A styled version with a sidebar is at <code>notes.parampreetsingh.dev/rust</code>.</li>
+</ul>
+</div>
+<div class="callout tip"><div class="ctitle">Suggested path</div><p>Sections 1–9 are the &quot;easy&quot; part: go through them in one or two sittings. Sections 10–15 (memory, mutability, ownership, borrowing) are the <strong>hardest and most important</strong>: slow down, re-type every example, and cause every error on purpose. Sections 16–21 are comfortable once those click. Section 22 (lifetimes) is the hardest topic in the language; it is fine to need a second pass.</p>
+</div>
+<hr>
+<h2 id="1-what-is-rust">1. What is Rust?</h2>
+<p><strong>Rust</strong> is a <strong>compiled, statically typed</strong> systems language focused on three things: <strong>speed</strong>, <strong>memory safety</strong> and <strong>fearless concurrency</strong>. It&#39;s used for command-line tools, web back ends, game engines, operating systems, blockchains and browsers.</p>
+<h3 id="the-big-idea">The big idea</h3>
+<p>Languages manage memory in one of three ways:</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Approach</th>
+<th>Examples</th>
+<th>Trade-off</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Garbage collector</strong> (a background process cleans up unused memory)</td>
+<td>Java, JavaScript, Python, Go</td>
+<td>Safe and easy, but uses extra memory and occasionally pauses the program</td>
+</tr>
+<tr>
+<td><strong>Manual</strong> (you allocate and free memory yourself)</td>
+<td>C, C++</td>
+<td>Fast and flexible, but easy to get wrong: leaks, crashes, security bugs</td>
+</tr>
+<tr>
+<td><strong>Ownership rules checked at compile time</strong></td>
+<td><strong>Rust</strong></td>
+<td>As fast as C/C++, as safe as a garbage-collected language, but you must learn the rules</td>
+</tr>
+</tbody></table></div>
+<p>Rust&#39;s compiler refuses to build code that could cause memory bugs (dangling pointers, double frees, data races). The price is that it feels strict at first. This is often called &quot;fighting the borrow checker&quot;, and nearly every Rust learner goes through it. Once your code compiles, a whole class of bugs simply can&#39;t exist.</p>
+<h3 id="how-rust-compares">How Rust compares</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th></th>
+<th>Rust</th>
+<th>JavaScript/Python</th>
+<th>Go</th>
+<th>C/C++</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Compiled to machine code</td>
+<td>✓</td>
+<td>✗</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Garbage collector</td>
+<td>✗</td>
+<td>✓</td>
+<td>✓</td>
+<td>✗</td>
+</tr>
+<tr>
+<td>Memory-safety guaranteed by compiler</td>
+<td>✓</td>
+<td>✓ (via GC)</td>
+<td>✓ (via GC)</td>
+<td>✗</td>
+</tr>
+<tr>
+<td>Null values</td>
+<td>✗ (uses <code>Option</code>)</td>
+<td>✓</td>
+<td>✓ (<code>nil</code>)</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Exceptions</td>
+<td>✗ (uses <code>Result</code>)</td>
+<td>✓</td>
+<td>✗</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>Learning curve</td>
+<td>Steep</td>
+<td>Gentle</td>
+<td>Gentle</td>
+<td>Steep</td>
+</tr>
+</tbody></table></div>
+<h3 id="what-youll-learn-here">What you&#39;ll learn here</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Part</th>
+<th>Topics</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Basics</strong></td>
+<td>setup, Cargo, variables, functions, structs, enums, pattern matching, <code>Option</code>, <code>Result</code>, crates</td>
+</tr>
+<tr>
+<td><strong>Memory model</strong></td>
+<td>stack vs heap, mutability, ownership, moving, borrowing and references</td>
+</tr>
+<tr>
+<td><strong>Collections and abstractions</strong></td>
+<td>vectors, hash maps, iterators, strings vs slices, generics, traits</td>
+</tr>
+<tr>
+<td><strong>Advanced</strong></td>
+<td>lifetimes, threads, message passing, macros (async is the natural next topic)</td>
+</tr>
+</tbody></table></div>
+<hr>
+<h2 id="2-installing-rust-and-setting-up-your-editor">2. Installing Rust and setting up your editor</h2>
+<h3 id="install-with-rustup">Install with rustup</h3>
+<p>Go to <strong>rust-lang.org/tools/install</strong> and run the one-line script for your system. On macOS and Linux it looks like:</p>
+<pre><code class="language-bash">curl --proto &#39;=https&#39; --tlsv1.2 -sSf https://sh.rustup.rs | sh
+</code></pre>
+<p>Choose <strong>&quot;1) Proceed with standard installation&quot;</strong>. On Windows, download and run <code>rustup-init.exe</code>.</p>
+<p><code>rustup</code> installs and manages everything you need:</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>What it is</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>rustc</code></td>
+<td>The Rust compiler</td>
+</tr>
+<tr>
+<td><code>cargo</code></td>
+<td>The build tool and package manager (you&#39;ll use this constantly)</td>
+</tr>
+<tr>
+<td><code>rustup</code></td>
+<td>The installer/updater (<code>rustup update</code> upgrades Rust)</td>
+</tr>
+</tbody></table></div>
+<h3 id="check-it-worked">Check it worked</h3>
+<p>Open a <strong>new</strong> terminal (so the new PATH is picked up) and run:</p>
+<pre><code class="language-bash">cargo --version
+rustc --version
+</code></pre>
+<p>You should see version numbers. If you get <code>command not found: cargo</code>, close and reopen the terminal, or add <code>~/.cargo/bin</code> to your <code>PATH</code>.</p>
+<h3 id="editor-setup-vs-code">Editor setup (VS Code)</h3>
+<p>Open the Extensions panel and install:</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Extension</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>rust-analyzer</strong> (required)</td>
+<td>Autocomplete, inline errors, type hints, go-to-definition</td>
+</tr>
+<tr>
+<td><strong>CodeLLDB</strong></td>
+<td>Run and debug Rust from the editor</td>
+</tr>
+<tr>
+<td><strong>Even Better TOML</strong></td>
+<td>Colours <code>Cargo.toml</code> files</td>
+</tr>
+</tbody></table></div>
+<div class="callout tip"><div class="ctitle">No local install? Use the browser</div><p><strong>play.rust-lang.org</strong> (the official Rust Playground) runs Rust in your browser with no setup. Good for the examples in sections 1–10; for crates and threads you&#39;ll want a local project.</p>
+</div>
+<hr>
+<h2 id="3-cargo-creating-and-running-a-project">3. Cargo: creating and running a project</h2>
+<h3 id="two-kinds-of-project">Two kinds of project</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Kind</th>
+<th>Command</th>
+<th>What it makes</th>
+<th>Entry file</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Binary</strong> (an application: a CLI, a server…)</td>
+<td><code>cargo init</code> / <code>cargo new name</code></td>
+<td>An executable</td>
+<td><code>src/main.rs</code></td>
+</tr>
+<tr>
+<td><strong>Library</strong> (reusable code for others, like an npm package)</td>
+<td><code>cargo init --lib</code></td>
+<td>A crate others can depend on</td>
+<td><code>src/lib.rs</code></td>
+</tr>
+</tbody></table></div>
+<p>These notes use <strong>binaries</strong>.</p>
+<pre><code class="language-bash">cargo new rust-practice     # creates a new folder with a project inside
+cd rust-practice
+cargo run                   # compile and run
+</code></pre>
+<p>(<code>cargo init</code> does the same but inside an <em>existing</em> empty folder.)</p>
+<h3 id="what-you-get">What you get</h3>
+<pre><code>rust-practice/
+├── Cargo.toml     # project metadata + dependencies (like package.json)
+├── Cargo.lock     # exact dependency versions (created on first build)
+├── src/
+│   └── main.rs    # your code
+└── target/        # build output (auto-created; never commit it)
+</code></pre>
+<pre><code class="language-toml"># Cargo.toml
+[package]
+name = &quot;rust-practice&quot;
+version = &quot;0.1.0&quot;
+edition = &quot;2024&quot;
+
+[dependencies]
+# crates you add go here
+</code></pre>
+<pre><code class="language-rust">// src/main.rs
+fn main() {
+    println!(&quot;Hello, world!&quot;);
+}
+</code></pre>
+<ul>
+<li><code>fn main()</code> is the <strong>entry point</strong>: execution starts here.</li>
+<li><code>println!</code> ends with <code>!</code> because it&#39;s a <strong>macro</strong>, not a function (section 25).</li>
+<li>Rust files end statements with <code>;</code>.</li>
+</ul>
+<h3 id="everyday-cargo-commands">Everyday Cargo commands</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Does</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>cargo run</code></td>
+<td>Build (if needed) and run</td>
+</tr>
+<tr>
+<td><code>cargo build</code></td>
+<td>Build a debug version into <code>target/debug/</code></td>
+</tr>
+<tr>
+<td><code>cargo build --release</code></td>
+<td>Build an optimised version into <code>target/release/</code> (much faster at runtime, slower to compile)</td>
+</tr>
+<tr>
+<td><code>cargo check</code></td>
+<td>Type-check without producing a binary; the quickest way to see errors</td>
+</tr>
+<tr>
+<td><code>cargo add &lt;crate&gt;</code></td>
+<td>Add a dependency to <code>Cargo.toml</code></td>
+</tr>
+<tr>
+<td><code>cargo test</code></td>
+<td>Run tests</td>
+</tr>
+<tr>
+<td><code>cargo fmt</code></td>
+<td>Auto-format code</td>
+</tr>
+<tr>
+<td><code>cargo clippy</code></td>
+<td>A linter with helpful style and bug suggestions</td>
+</tr>
+</tbody></table></div>
+<div class="callout note"><div class="ctitle">Compile times</div><p>Rust compiles slowly compared with Go or JavaScript tooling. That&#39;s normal; <code>cargo check</code> is much faster than a full build when you only want to see errors.</p>
+</div>
+<h3 id="where-to-put-your-practice-code">Where to put your practice code</h3>
+<p>Use one project, and either overwrite <code>main.rs</code> for each exercise, or keep separate files as binaries in <code>src/bin/</code>:</p>
+<pre><code>src/bin/is_even.rs    →  cargo run --bin is_even
+src/bin/fib.rs        →  cargo run --bin fib
+</code></pre>
+<p>Each file needs its own <code>fn main()</code>.</p>
+<hr>
+<h2 id="4-variables-types-and-functions">4. Variables, types and functions</h2>
+<h3 id="variables-and-mutability">Variables and mutability</h3>
+<pre><code class="language-rust">fn main() {
+    let x = 5;          // immutable by default
+    // x = 6;           // ✗ error: cannot assign twice to immutable variable `x`
+
+    let mut y = 5;      // `mut` makes it changeable
+    y = 6;
+    println!(&quot;x = {x}, y = {y}&quot;);
+}
+</code></pre>
+<p><strong>Every variable is immutable unless you write <code>mut</code>.</strong> This is Rust&#39;s default for safety. (Section 12 explains why it matters.)</p>
+<h3 id="printing">Printing</h3>
+<pre><code class="language-rust">let name = &quot;Alice&quot;;
+let age = 30;
+println!(&quot;Hello, {name}!&quot;);                 // inline variable
+println!(&quot;{} is {} years old&quot;, name, age);  // positional
+println!(&quot;{:?}&quot;, (1, 2));                   // Debug format (for types that support it)
+println!(&quot;{:#?}&quot;, vec![1, 2]);              // pretty Debug
+println!(&quot;{:.2}&quot;, 3.14159);                 // 3.14 (two decimals)
+println!(&quot;{:&gt;5}|{:&lt;5}|{:^5}&quot;, 1, 2, 3);     // right, left, centre alignment
+</code></pre>
+<p><code>{}</code> uses the <strong>Display</strong> format; <code>{:?}</code> uses the <strong>Debug</strong> format. Some types (like <code>Vec</code>) only support Debug.</p>
+<h3 id="type-annotations-and-inference">Type annotations and inference</h3>
+<p>Rust infers most types, but you can write them:</p>
+<pre><code class="language-rust">let a: i32 = 10;
+let b = 10;          // inferred as i32 (the default for integers)
+let c = 3.5;         // inferred as f64 (the default for floats)
+let d: u8 = 255;
+</code></pre>
+<h3 id="number-types">Number types</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Meaning</th>
+<th>Range</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>i8</code>, <code>i16</code>, <code>i32</code>, <code>i64</code>, <code>i128</code></td>
+<td><strong>Signed</strong> integers (positive and negative)</td>
+<td><code>i32</code>: about ±2.1 billion</td>
+</tr>
+<tr>
+<td><code>u8</code>, <code>u16</code>, <code>u32</code>, <code>u64</code>, <code>u128</code></td>
+<td><strong>Unsigned</strong> integers (zero and positive only)</td>
+<td><code>u32</code>: 0 to about 4.29 billion</td>
+</tr>
+<tr>
+<td><code>isize</code>, <code>usize</code></td>
+<td>Pointer-sized (64 bits on a 64-bit machine). <code>usize</code> is used for <strong>lengths and indexes</strong></td>
+<td></td>
+</tr>
+<tr>
+<td><code>f32</code>, <code>f64</code></td>
+<td>Floating-point (decimals). Default is <code>f64</code></td>
+<td></td>
+</tr>
+</tbody></table></div>
+<ul>
+<li>The number is the <strong>bits</strong>. More bits means bigger numbers and more memory.</li>
+<li><strong>Why unsigned?</strong> A signed number spends one bit on the sign, so an <code>i32</code> holds half as many positive values as a <code>u32</code>. If a value can never be negative (an age, a count, an index), unsigned is the right type.</li>
+<li>Overflow is caught: in debug builds, going past a type&#39;s limit <strong>panics</strong> (<code>attempt to add with overflow</code>).</li>
+</ul>
+<pre><code class="language-rust">let big: i32 = 2_147_483_647;   // underscores make numbers readable
+// let too_big: i32 = 3_000_000_000;  // ✗ error: literal out of range for `i32`
+let fine: i64 = 3_000_000_000;  // ✓
+</code></pre>
+<h3 id="other-basic-types">Other basic types</h3>
+<pre><code class="language-rust">let is_ready: bool = true;
+let letter: char = &#39;A&#39;;          // a single Unicode character, in SINGLE quotes
+let text: &amp;str = &quot;hello&quot;;        // string slice, in DOUBLE quotes (section 19)
+let nothing: () = ();            // the &quot;unit&quot; type: no value
+</code></pre>
+<h3 id="tuples-and-arrays">Tuples and arrays</h3>
+<pre><code class="language-rust">let person: (String, i32) = (String::from(&quot;Alice&quot;), 30);
+println!(&quot;{} is {}&quot;, person.0, person.1);
+let (name, age) = person;           // destructuring
+
+let nums: [i32; 3] = [1, 2, 3];     // array: fixed length, all the same type
+println!(&quot;{} {}&quot;, nums[0], nums.len());
+let zeros = [0; 5];                 // [0, 0, 0, 0, 0]
+</code></pre>
+<p>An <strong>array</strong> has a fixed size known at compile time. For a growable list use a <strong>vector</strong> (section 16).</p>
+<h3 id="shadowing-extra">Shadowing (Extra)</h3>
+<p>You can re-declare a variable with the same name; the new one <strong>shadows</strong> the old:</p>
+<pre><code class="language-rust">let spaces = &quot;   &quot;;
+let spaces = spaces.len();   // now an integer: shadowing can change the type
+println!(&quot;{spaces}&quot;);        // 3
+</code></pre>
+<p>This is different from <code>mut</code>: shadowing creates a new variable, so the type may change.</p>
+<h3 id="constants-extra">Constants (Extra)</h3>
+<pre><code class="language-rust">const MAX_USERS: u32 = 100;   // always typed, always uppercase by convention
+</code></pre>
+<h3 id="functions">Functions</h3>
+<pre><code class="language-rust">fn is_even(num: i32) -&gt; bool {
+    if num % 2 == 0 {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+fn main() {
+    let answer = is_even(10);
+    println!(&quot;{answer}&quot;);          // true
+    println!(&quot;{}&quot;, is_even(11));   // false
+}
+</code></pre>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Part</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>fn is_even</code></td>
+<td>Function names use <strong>snake_case</strong> (<code>is_even</code>, not <code>isEven</code>)</td>
+</tr>
+<tr>
+<td><code>(num: i32)</code></td>
+<td>Each parameter <strong>must</strong> have a type</td>
+</tr>
+<tr>
+<td><code>-&gt; bool</code></td>
+<td>The return type. Leave it out if the function returns nothing (<code>()</code> )</td>
+</tr>
+<tr>
+<td><code>num % 2 == 0</code></td>
+<td><code>%</code> is the remainder. No parentheses needed around the condition</td>
+</tr>
+</tbody></table></div>
+<h3 id="expressions-and-implicit-return">Expressions and implicit return</h3>
+<p>In Rust, <strong>the last expression in a block, written without a semicolon, is its value</strong>. So the function can be simplified:</p>
+<pre><code class="language-rust">fn is_even(num: i32) -&gt; bool {
+    num % 2 == 0          // no `return`, no semicolon → this value is returned
+}
+</code></pre>
+<div class="callout warning"><div class="ctitle">The semicolon matters</div><p><code>num % 2 == 0;</code> (with a semicolon) turns the expression into a statement that produces <code>()</code>, and the compiler complains: <code>mismatched types: expected bool, found ()</code>. Use <code>return value;</code> for early exits, and an unterminated final expression for the normal result.</p>
+</div>
+<p><code>if</code> is also an expression:</p>
+<pre><code class="language-rust">let label = if is_even(4) { &quot;even&quot; } else { &quot;odd&quot; };
+</code></pre>
+<h3 id="loops">Loops</h3>
+<pre><code class="language-rust">for i in 0..3 {            // 0, 1, 2   (end is exclusive)
+    println!(&quot;{i}&quot;);
+}
+for i in 0..=3 { }         // 0, 1, 2, 3 (inclusive end)
+
+let mut n = 3;
+while n &gt; 0 {
+    n -= 1;
+}
+
+loop {                     // infinite loop; leave with `break`
+    break;
+}
+</code></pre>
+<p>Use <code>_</code> for a loop variable you don&#39;t use: <code>for _ in 0..5 { }</code>. Without it you get an &quot;unused variable&quot; warning.</p>
+<h3 id="example-fibonacci">Example: Fibonacci</h3>
+<p>The Fibonacci sequence: <code>0, 1, 1, 2, 3, 5, 8, 13, …</code> where each number is the sum of the two before it. Index 0 is <code>0</code>, index 1 is <code>1</code>, index 4 is <code>3</code>.</p>
+<pre><code class="language-rust">fn fib(num: u32) -&gt; u32 {
+    let mut first = 0;
+    let mut second = 1;
+
+    if num == 0 {
+        return first;
+    }
+    if num == 1 {
+        return second;
+    }
+
+    for _ in 0..(num - 1) {
+        let temp = second;
+        second = second + first;
+        first = temp;
+    }
+    second
+}
+
+fn main() {
+    for i in 0..8 {
+        println!(&quot;fib({i}) = {}&quot;, fib(i));
+    }
+}
+</code></pre>
+<p>Dry run for <code>fib(4)</code> (loop runs 3 times):</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Iteration</th>
+<th><code>first</code></th>
+<th><code>second</code></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>start</td>
+<td>0</td>
+<td>1</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>2</td>
+<td>1</td>
+<td>2</td>
+</tr>
+<tr>
+<td>3</td>
+<td>2</td>
+<td>3</td>
+</tr>
+</tbody></table></div>
+<p>Returns <code>3</code> ✓. Why <code>mut</code>? We reassign <code>first</code> and <code>second</code>. Why <code>num - 1</code> iterations? We start already sitting at index 1, so we need <code>num - 1</code> steps to reach index <code>num</code>.</p>
+<div class="callout warning"><div class="ctitle">Common mistake: off-by-one</div><p>Looping <code>0..(num - 2)</code> returns the <em>previous</em> number. Always dry-run an algorithm on a tiny input before trusting it.</p>
+</div>
+<h3 id="example-string-length">Example: string length</h3>
+<pre><code class="language-rust">fn get_str_length(s: &amp;str) -&gt; usize {
+    s.chars().count()
+}
+
+fn main() {
+    let name = String::from(&quot;Alice&quot;);
+    println!(&quot;{}&quot;, get_str_length(&amp;name));   // 5
+}
+</code></pre>
+<ul>
+<li><code>usize</code> is the type of lengths.</li>
+<li><code>chars()</code> iterates over characters; <code>count()</code> counts them.</li>
+<li>The <code>&amp;</code> before <code>name</code> and <code>&amp;str</code> as the parameter type are <strong>references</strong> (sections 15 and 19). For now, copy the pattern.</li>
+</ul>
+<details class="callout question"><summary>Practice: write <code>fn max_of_three(a: i32, b: i32, c: i32) -&gt; i32</code></summary>
+<pre><code class="language-rust">fn max_of_three(a: i32, b: i32, c: i32) -&gt; i32 {
+    let mut best = a;
+    if b &gt; best { best = b; }
+    if c &gt; best { best = c; }
+    best
+}
+</code></pre>
+<p>The standard library also has <code>a.max(b).max(c)</code>.</p>
+</details>
+<details class="callout question"><summary>Practice: write <code>fn sum_to(n: u32) -&gt; u32</code> that adds 1 through n</summary>
+<pre><code class="language-rust">fn sum_to(n: u32) -&gt; u32 {
+    let mut total = 0;
+    for i in 1..=n {
+        total += i;
+    }
+    total
+}
+// sum_to(10) == 55
+</code></pre>
+</details>
+<hr>
+<h2 id="5-structs">5. Structs</h2>
+<p>A <strong>struct</strong> groups related values into one named type, like an object in JavaScript or a struct in C.</p>
+<pre><code class="language-rust">struct User {
+    first_name: String,
+    last_name: String,
+    age: u32,
+}
+
+fn main() {
+    let user = User {
+        first_name: String::from(&quot;Alice&quot;),
+        last_name: String::from(&quot;Smith&quot;),
+        age: 32,
+    };
+    println!(&quot;{} {}&quot;, user.first_name, user.age);   // dot syntax reads fields
+}
+</code></pre>
+<ul>
+<li>Define the shape once; then create as many values (instances) as you like.</li>
+<li>Field order in the literal doesn&#39;t matter.</li>
+<li>A struct instance must be <code>mut</code> to change a field: <code>let mut user = ...; user.age = 33;</code>.</li>
+</ul>
+<h3 id="printing-a-whole-struct">Printing a whole struct</h3>
+<pre><code class="language-rust">println!(&quot;{}&quot;, user);     // ✗ does NOT compile: `User` doesn&#39;t implement `std::fmt::Display`
+println!(&quot;{:?}&quot;, user);   // ✗ does NOT compile: `User` doesn&#39;t implement `Debug`
+</code></pre>
+<p><code>println!</code> doesn&#39;t know how to print your struct. The quick fix is to <strong>derive</strong> the <code>Debug</code> trait (traits are covered in section 21):</p>
+<pre><code class="language-rust">#[derive(Debug)]
+struct User {
+    first_name: String,
+    last_name: String,
+    age: u32,
+}
+
+fn main() {
+    let user = User { first_name: &quot;Alice&quot;.into(), last_name: &quot;Smith&quot;.into(), age: 32 };
+    println!(&quot;{:?}&quot;, user);    // User { first_name: &quot;Alice&quot;, last_name: &quot;Smith&quot;, age: 32 }
+    println!(&quot;{:#?}&quot;, user);   // pretty, multi-line
+}
+</code></pre>
+<p>(<code>&quot;Alice&quot;.into()</code> converts a <code>&amp;str</code> into a <code>String</code>.)</p>
+<div class="callout note"><div class="ctitle">&quot;Unused field&quot; warnings</div><p>Rust warns about fields you never read. That&#39;s a hint, not an error.</p>
+</div>
+<h3 id="methods-impl">Methods: <code>impl</code></h3>
+<p>You attach functions to a struct inside an <strong><code>impl</code></strong> block:</p>
+<pre><code class="language-rust">struct Rect {
+    width: u32,
+    height: u32,
+}
+
+impl Rect {
+    // A method: first parameter is `&amp;self`
+    fn area(&amp;self) -&gt; u32 {
+        self.width * self.height
+    }
+
+    fn perimeter(&amp;self) -&gt; u32 {
+        2 * (self.width + self.height)
+    }
+
+    // A method with an extra argument
+    fn scale(&amp;self, factor: u32) -&gt; Rect {
+        Rect { width: self.width * factor, height: self.height * factor }
+    }
+
+    // An associated function: no `self`, called with `::`
+    fn square(side: u32) -&gt; Rect {
+        Rect { width: side, height: side }
+    }
+}
+
+fn main() {
+    let r = Rect { width: 20, height: 10 };
+    println!(&quot;area = {}&quot;, r.area());           // method call: dot
+    println!(&quot;perimeter = {}&quot;, r.perimeter());
+    let big = r.scale(2);
+    println!(&quot;big area = {}&quot;, big.area());
+
+    let sq = Rect::square(5);                   // associated function: ::
+    println!(&quot;square area = {}&quot;, sq.area());
+}
+</code></pre>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Kind</th>
+<th>First parameter</th>
+<th>How you call it</th>
+<th>Like in JavaScript</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Method</strong></td>
+<td><code>&amp;self</code> (or <code>&amp;mut self</code>, or <code>self</code>)</td>
+<td><code>value.method()</code></td>
+<td>an instance method (<code>this</code>)</td>
+</tr>
+<tr>
+<td><strong>Associated function</strong></td>
+<td>no <code>self</code></td>
+<td><code>Type::function()</code></td>
+<td>a <code>static</code> method</td>
+</tr>
+</tbody></table></div>
+<p><code>self</code> is the instance the method was called on (like <code>this</code> in a JS class). You don&#39;t pass it yourself: <code>r.scale(2)</code> passes <code>r</code> as <code>self</code> automatically, and <code>2</code> as <code>factor</code>.</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Receiver</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>&amp;self</code></td>
+<td>Borrow the struct to <strong>read</strong> it (most common)</td>
+</tr>
+<tr>
+<td><code>&amp;mut self</code></td>
+<td>Borrow it to <strong>change</strong> it</td>
+</tr>
+<tr>
+<td><code>self</code></td>
+<td><strong>Take ownership</strong> (consumes it; the caller can&#39;t use it afterwards)</td>
+</tr>
+</tbody></table></div>
+<pre><code class="language-rust">// A function without self cannot be called on an instance:
+// r.square(5);        // ✗ error: no method named `square` found
+Rect::square(5);       // ✓ call on the type
+</code></pre>
+<div class="callout tip"><div class="ctitle">Convention</div><p>A constructor function is usually named <code>new</code>: <code>fn new(width: u32, height: u32) -&gt; Rect</code>. It&#39;s just an ordinary associated function, not special syntax.</p>
+</div>
+<details class="callout question"><summary>Practice: add a method <code>is_square(&amp;self) -&gt; bool</code> to <code>Rect</code></summary>
+<pre><code class="language-rust">impl Rect {
+    fn is_square(&amp;self) -&gt; bool {
+        self.width == self.height
+    }
+}
+</code></pre>
+</details>
+<hr>
+<h2 id="6-enums-and-pattern-matching">6. Enums and pattern matching</h2>
+<p>An <strong>enum</strong> is a type that can be <strong>exactly one of several variants</strong>. Use it whenever a value has a fixed set of possible kinds.</p>
+<pre><code class="language-rust">enum Direction {
+    North,
+    East,
+    South,
+    West,
+}
+
+fn move_around(dir: Direction) {
+    // ... only four possible values ever arrive here
+}
+
+fn main() {
+    let d = Direction::North;
+    move_around(d);
+}
+</code></pre>
+<p><strong>Why not a string?</strong> With <code>&quot;North&quot;</code> someone could pass <code>&quot;Banana&quot;</code>. With an enum the compiler guarantees only valid values exist, and the data is small and fast.</p>
+<h3 id="variants-can-hold-data">Variants can hold data</h3>
+<pre><code class="language-rust">enum Shape {
+    Circle(f64),             // radius
+    Square(f64),             // side
+    Rectangle(f64, f64),     // width, height
+}
+
+let c = Shape::Circle(2.0);
+let r = Shape::Rectangle(3.0, 4.5);
+</code></pre>
+<p>(Literals like <code>2.0</code> must be written as floats for <code>f64</code>; <code>2</code> would be an integer.)</p>
+<h3 id="reading-the-data-match">Reading the data: <code>match</code></h3>
+<p>The <strong><code>match</code></strong> expression compares a value against patterns and runs the first one that fits:</p>
+<pre><code class="language-rust">use std::f64::consts::PI;
+
+enum Shape {
+    Circle(f64),
+    Square(f64),
+    Rectangle(f64, f64),
+}
+
+fn calculate_area(shape: &amp;Shape) -&gt; f64 {
+    match shape {
+        Shape::Circle(radius) =&gt; PI * radius * radius,
+        Shape::Square(side) =&gt; side * side,
+        Shape::Rectangle(width, height) =&gt; width * height,
+    }
+}
+
+fn main() {
+    println!(&quot;{:.2}&quot;, calculate_area(&amp;Shape::Circle(2.0)));          // 12.57
+    println!(&quot;{:.2}&quot;, calculate_area(&amp;Shape::Square(3.0)));          // 9.00
+    println!(&quot;{:.2}&quot;, calculate_area(&amp;Shape::Rectangle(3.0, 4.5)));  // 13.50
+}
+</code></pre>
+<p>Each arm is <code>pattern =&gt; expression,</code>. The values inside the variant are <strong>destructured</strong> into names (<code>radius</code>, <code>side</code>, …) that you can use on the right. Because <code>match</code> is an expression, the whole thing evaluates to a value and is returned.</p>
+<div class="callout important"><div class="ctitle"><code>match</code> must be exhaustive</div><p>You must cover <strong>every</strong> variant. If you forget one, the compiler stops you:</p>
+<pre><code>error[E0004]: non-exhaustive patterns: `&amp;Shape::Rectangle(_, _)` not covered
+</code></pre>
+<p>This is a safety net: add a new variant later and the compiler shows every place that needs updating. Use <code>_ =&gt; ...</code> as a catch-all if you really don&#39;t care about the rest.</p>
+</div>
+<pre><code class="language-rust">let n = 3;
+match n {
+    1 =&gt; println!(&quot;one&quot;),
+    2 | 3 =&gt; println!(&quot;two or three&quot;),     // several values
+    4..=9 =&gt; println!(&quot;four to nine&quot;),     // a range
+    _ =&gt; println!(&quot;something else&quot;),       // catch-all
+}
+</code></pre>
+<h3 id="if-let-when-you-only-care-about-one-case-extra"><code>if let</code>: when you only care about one case (Extra)</h3>
+<pre><code class="language-rust">let shape = Shape::Circle(1.5);
+if let Shape::Circle(r) = shape {
+    println!(&quot;a circle of radius {r}&quot;);
+}
+</code></pre>
+<h3 id="methods-on-enums">Methods on enums</h3>
+<p>Enums can have <code>impl</code> blocks, too:</p>
+<pre><code class="language-rust">impl Shape {
+    fn area(&amp;self) -&gt; f64 {
+        match self {
+            Shape::Circle(r) =&gt; std::f64::consts::PI * r * r,
+            Shape::Square(s) =&gt; s * s,
+            Shape::Rectangle(w, h) =&gt; w * h,
+        }
+    }
+}
+</code></pre>
+<details class="callout question"><summary>Practice: add a <code>Triangle(f64, f64)</code> variant (base, height). What breaks?</summary><p>Every <code>match</code> on <code>Shape</code> now fails to compile (non-exhaustive). Add the arm <code>Shape::Triangle(b, h) =&gt; 0.5 * b * h,</code> to fix it. That&#39;s the safety net in action.</p>
+</details>
+<hr>
+<h2 id="7-option-rusts-replacement-for-null">7. <code>Option</code>: Rust&#39;s replacement for null</h2>
+<p>Many languages use <code>null</code>/<code>undefined</code>/<code>nil</code> for &quot;no value&quot;, which causes the infamous null-pointer crashes. <strong>Rust has no null.</strong> Instead, the standard library provides an enum:</p>
+<pre><code class="language-rust">enum Option&lt;T&gt; {
+    Some(T),   // there is a value
+    None,      // there isn&#39;t
+}
+</code></pre>
+<p>(<code>&lt;T&gt;</code> is a <em>generic</em>, explained in section 20: <code>Option&lt;i32&gt;</code> means &quot;maybe an <code>i32</code>&quot;, <code>Option&lt;String&gt;</code> means &quot;maybe a <code>String</code>&quot;.) <code>Option</code>, <code>Some</code> and <code>None</code> are available everywhere without importing.</p>
+<h3 id="the-problem-it-solves">The problem it solves</h3>
+<p>Write a function that returns the index of the first <code>&#39;a&#39;</code> in a string. What do you return when there is no <code>&#39;a&#39;</code>?</p>
+<pre><code class="language-rust">// Poor: -1 is a &quot;magic number&quot; and could be confused with a real result
+fn find_first_a(s: &amp;str) -&gt; i32 { /* ... */ -1 }
+</code></pre>
+<p>The honest answer is &quot;nothing&quot;, so return an <code>Option</code>:</p>
+<pre><code class="language-rust">fn find_first_a(s: &amp;str) -&gt; Option&lt;usize&gt; {
+    for (i, c) in s.chars().enumerate() {
+        if c == &#39;a&#39; {
+            return Some(i);
+        }
+    }
+    None
+}
+
+fn main() {
+    match find_first_a(&quot;banana&quot;) {
+        Some(index) =&gt; println!(&quot;first &#39;a&#39; is at index {index}&quot;),
+        None =&gt; println!(&quot;no &#39;a&#39; found&quot;),
+    }
+    match find_first_a(&quot;rust&quot;) {
+        Some(index) =&gt; println!(&quot;first &#39;a&#39; is at index {index}&quot;),
+        None =&gt; println!(&quot;no &#39;a&#39; found&quot;),
+    }
+}
+</code></pre>
+<p>Output: <code>first &#39;a&#39; is at index 1</code> then <code>no &#39;a&#39; found</code>.</p>
+<ul>
+<li><code>.enumerate()</code> gives <code>(index, item)</code> pairs.</li>
+<li><code>Some(i)</code> wraps a value; <code>None</code> carries nothing.</li>
+<li>The <strong>caller is forced to handle both cases</strong> with <code>match</code>. You can&#39;t &quot;forget the null check&quot;, because you can&#39;t use the value without unwrapping it.</li>
+</ul>
+<div class="callout tip"><div class="ctitle">There&#39;s often a built-in</div><p><code>&quot;banana&quot;.chars().position(|c| c == &#39;a&#39;)</code> does the same thing and returns an <code>Option&lt;usize&gt;</code>. <code>&quot;banana&quot;.find(&#39;a&#39;)</code> returns the <em>byte</em> index.</p>
+</div>
+<h3 id="handy-option-methods-extra">Handy <code>Option</code> methods (Extra)</h3>
+<pre><code class="language-rust">let maybe: Option&lt;i32&gt; = Some(5);
+
+maybe.unwrap();               // 5, but PANICS if it&#39;s None
+maybe.expect(&quot;need a value&quot;); // same, with your own panic message
+maybe.unwrap_or(0);           // 5, or 0 if None (safe)
+maybe.is_some();              // true
+maybe.is_none();              // false
+maybe.map(|n| n * 2);         // Some(10)  (None stays None)
+
+if let Some(n) = maybe {      // handle just the Some case
+    println!(&quot;{n}&quot;);
+}
+</code></pre>
+<details class="callout question"><summary>Practice: write <code>fn first_even(nums: &amp;[i32]) -&gt; Option&lt;i32&gt;</code> returning the first even number</summary>
+<pre><code class="language-rust">fn first_even(nums: &amp;[i32]) -&gt; Option&lt;i32&gt; {
+    for &amp;n in nums {
+        if n % 2 == 0 {
+            return Some(n);
+        }
+    }
+    None
+}
+// first_even(&amp;[1, 3, 4, 6]) == Some(4);  first_even(&amp;[1, 3]) == None
+</code></pre>
+</details>
+<hr>
+<h2 id="8-result-error-handling">8. <code>Result</code>: error handling</h2>
+<p>Where <code>Option</code> means &quot;maybe a value&quot;, <strong><code>Result</code></strong> means &quot;it worked, or here&#39;s what went wrong&quot;:</p>
+<pre><code class="language-rust">enum Result&lt;T, E&gt; {
+    Ok(T),    // success, carrying the value
+    Err(E),   // failure, carrying the error
+}
+</code></pre>
+<p>Rust has <strong>no exceptions</strong>. A function that can fail <em>returns</em> a <code>Result</code>, and the caller decides what to do. It&#39;s part of the function&#39;s signature, so you can see at a glance that a function can fail.</p>
+<h3 id="example-reading-a-file">Example: reading a file</h3>
+<pre><code class="language-rust">use std::fs::read_to_string;
+
+fn main() {
+    let result = read_to_string(&quot;a.txt&quot;);   // Result&lt;String, std::io::Error&gt;
+
+    match result {
+        Ok(contents) =&gt; println!(&quot;File says: {contents}&quot;),
+        Err(error) =&gt; println!(&quot;Could not read the file: {error}&quot;),
+    }
+}
+</code></pre>
+<ul>
+<li><code>use std::fs::read_to_string;</code> imports a function from the standard library (functions in <code>std</code> aren&#39;t available until imported).</li>
+<li>If <code>a.txt</code> doesn&#39;t exist, you get <code>Err(...)</code> instead of a crash.</li>
+</ul>
+<p>Create <code>a.txt</code> next to <code>Cargo.toml</code> (run from the project folder) to see the <code>Ok</code> branch.</p>
+<h3 id="dont-swallow-errors">Don&#39;t swallow errors</h3>
+<pre><code class="language-rust">// Poor: hides the failure
+fn read_or_default(path: &amp;str) -&gt; String {
+    match read_to_string(path) {
+        Ok(data) =&gt; data,
+        Err(_) =&gt; String::from(&quot;-1&quot;),   // was the file missing, or does it contain &quot;-1&quot;?
+    }
+}
+</code></pre>
+<p>The caller can&#39;t tell a real result from a failure. Return the <code>Result</code> and let the caller decide:</p>
+<pre><code class="language-rust">use std::fs::read_to_string;
+use std::io;
+
+fn read_file(path: &amp;str) -&gt; Result&lt;String, io::Error&gt; {
+    read_to_string(path)
+}
+
+fn main() {
+    match read_file(&quot;a.txt&quot;) {
+        Ok(data) =&gt; println!(&quot;{data}&quot;),
+        Err(e) =&gt; println!(&quot;error: {e}&quot;),
+    }
+}
+</code></pre>
+<h3 id="the-operator-extra-very-common">The <code>?</code> operator (Extra, very common)</h3>
+<p><code>?</code> means: &quot;if this is <code>Ok</code>, give me the value; if it&#39;s <code>Err</code>, <strong>return that error from the current function immediately</strong>.&quot;</p>
+<pre><code class="language-rust">use std::fs::read_to_string;
+use std::io;
+
+fn count_lines(path: &amp;str) -&gt; Result&lt;usize, io::Error&gt; {
+    let text = read_to_string(path)?;     // early-return on error
+    Ok(text.lines().count())              // wrap the success value in Ok
+}
+
+fn main() {
+    match count_lines(&quot;a.txt&quot;) {
+        Ok(n) =&gt; println!(&quot;{n} lines&quot;),
+        Err(e) =&gt; println!(&quot;failed: {e}&quot;),
+    }
+}
+</code></pre>
+<p><code>?</code> only works in a function whose return type is <code>Result</code> (or <code>Option</code>). It replaces long chains of <code>match</code>.</p>
+<h3 id="unwrap-expect-and-panic"><code>unwrap</code>, <code>expect</code> and <code>panic!</code></h3>
+<pre><code class="language-rust">let text = read_to_string(&quot;a.txt&quot;).unwrap();            // panics if Err
+let text = read_to_string(&quot;a.txt&quot;).expect(&quot;no a.txt&quot;);  // panics with your message
+panic!(&quot;something is badly wrong&quot;);                     // stop the thread right now
+</code></pre>
+<p>A <strong>panic</strong> stops the thread and prints <code>thread &#39;main&#39; panicked at src/main.rs:5:10</code>. Use <code>unwrap</code>/<code>expect</code> for quick experiments and cases that truly can&#39;t fail; in real code, handle the error with <code>match</code>, <code>?</code>, <code>unwrap_or</code>, etc.</p>
+<h3 id="writing-your-own-result-function">Writing your own <code>Result</code> function</h3>
+<pre><code class="language-rust">fn divide(a: f64, b: f64) -&gt; Result&lt;f64, String&gt; {
+    if b == 0.0 {
+        return Err(String::from(&quot;cannot divide by zero&quot;));
+    }
+    Ok(a / b)
+}
+
+fn main() {
+    match divide(10.0, 2.0) {
+        Ok(v) =&gt; println!(&quot;result: {v}&quot;),
+        Err(e) =&gt; println!(&quot;error: {e}&quot;),
+    }
+    println!(&quot;{:?}&quot;, divide(1.0, 0.0));   // Err(&quot;cannot divide by zero&quot;)
+}
+</code></pre>
+<div class="tw"><table>
+<thead>
+<tr>
+<th></th>
+<th><code>Option&lt;T&gt;</code></th>
+<th><code>Result&lt;T, E&gt;</code></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Meaning</td>
+<td>value or nothing</td>
+<td>value or an error</td>
+</tr>
+<tr>
+<td>Variants</td>
+<td><code>Some(T)</code>, <code>None</code></td>
+<td><code>Ok(T)</code>, <code>Err(E)</code></td>
+</tr>
+<tr>
+<td>Use for</td>
+<td>&quot;might not exist&quot; (lookups, searches)</td>
+<td>&quot;might fail&quot; (I/O, parsing, validation)</td>
+</tr>
+</tbody></table></div>
+<details class="callout question"><summary>Practice: parse a number safely</summary><p>Write <code>fn parse_age(s: &amp;str) -&gt; Result&lt;u32, String&gt;</code>. Use <code>s.parse::&lt;u32&gt;()</code>, which returns a <code>Result</code>.</p>
+<pre><code class="language-rust">fn parse_age(s: &amp;str) -&gt; Result&lt;u32, String&gt; {
+    match s.parse::&lt;u32&gt;() {
+        Ok(n) =&gt; Ok(n),
+        Err(_) =&gt; Err(format!(&quot;&#39;{s}&#39; is not a valid age&quot;)),
+    }
+}
+// parse_age(&quot;42&quot;) == Ok(42);  parse_age(&quot;abc&quot;) == Err(&quot;&#39;abc&#39; is not a valid age&quot;)
+</code></pre>
+</details>
+<hr>
+<h2 id="9-crates-and-packages">9. Crates and packages</h2>
+<p>A <strong>crate</strong> is a unit of Rust code, either your own project or a library someone published on <strong>crates.io</strong> (Rust&#39;s version of npm). Using other people&#39;s crates means you don&#39;t rewrite common things (dates, JSON, HTTP, random numbers).</p>
+<h3 id="adding-a-crate">Adding a crate</h3>
+<pre><code class="language-bash">cargo add chrono
+</code></pre>
+<p>This adds a line under <code>[dependencies]</code> in <code>Cargo.toml</code>:</p>
+<pre><code class="language-toml">[dependencies]
+chrono = &quot;0.4&quot;
+</code></pre>
+<p>The next <code>cargo build</code>/<code>cargo run</code> downloads and compiles it, and records exact versions in <code>Cargo.lock</code>. Browse available crates at <strong>crates.io</strong> and read their docs at <strong>docs.rs</strong>.</p>
+<h3 id="using-it">Using it</h3>
+<pre><code class="language-rust">use chrono::{Local, Utc};
+
+fn main() {
+    let local = Local::now();
+    let utc = Utc::now();
+
+    println!(&quot;Local: {}&quot;, local.format(&quot;%Y-%m-%d %H:%M:%S&quot;));
+    println!(&quot;UTC:   {}&quot;, utc.format(&quot;%Y-%m-%d %H:%M:%S&quot;));
+}
+</code></pre>
+<ul>
+<li><code>use chrono::{Local, Utc};</code> brings the two items into scope.</li>
+<li><code>Local::now()</code> is an <strong>associated function</strong> (section 5): it&#39;s called with <code>::</code> on the type.</li>
+<li><code>.format(...)</code> takes a pattern string (<code>%Y</code> year, <code>%m</code> month, <code>%d</code> day, <code>%H</code> hour, <code>%M</code> minute, <code>%S</code> second).</li>
+</ul>
+<h3 id="the-standard-library">The standard library</h3>
+<p>You don&#39;t need <code>cargo add</code> for the standard library (<code>std</code>); just <code>use</code> what you need:</p>
+<pre><code class="language-rust">use std::collections::HashMap;
+use std::fs::read_to_string;
+use std::thread;
+</code></pre>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>Rust</th>
+<th>npm equivalent</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Dependency list</td>
+<td><code>Cargo.toml</code> <code>[dependencies]</code></td>
+<td><code>package.json</code></td>
+</tr>
+<tr>
+<td>Lock file</td>
+<td><code>Cargo.lock</code></td>
+<td><code>package-lock.json</code></td>
+</tr>
+<tr>
+<td>Registry</td>
+<td>crates.io</td>
+<td>npmjs.com</td>
+</tr>
+<tr>
+<td>Add a package</td>
+<td><code>cargo add name</code></td>
+<td><code>npm install name</code></td>
+</tr>
+</tbody></table></div>
+<div class="callout tip"><div class="ctitle">Reading <code>use</code> paths</div><p><code>use std::collections::HashMap;</code> means: from the crate <code>std</code>, module <code>collections</code>, bring in <code>HashMap</code>. Paths use <code>::</code>.</p>
+</div>
+<hr>
+<h2 id="10-memory-stack-vs-heap">10. Memory: stack vs heap</h2>
+<p>Everything from here to section 15 explains <strong>how Rust manages memory</strong>, which is the reason ownership rules exist.</p>
+<h3 id="what-is-memory">What is memory?</h3>
+<p>When your program runs, its variables live in <strong>RAM</strong>. RAM is fast but limited (8–64 GB), compared with your SSD/hard drive. Every running program (your browser, your editor, your Rust program) uses some. Memory management means <strong>allocating</strong> (reserving) space when you need it and <strong>freeing</strong> it when you&#39;re done.</p>
+<h3 id="two-regions-the-stack-and-the-heap">Two regions: the stack and the heap</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th></th>
+<th><strong>Stack</strong></th>
+<th><strong>Heap</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Size of data</td>
+<td><strong>Known at compile time</strong>, fixed</td>
+<td><strong>Not known</strong> until the program runs; can grow and shrink</td>
+</tr>
+<tr>
+<td>Allocation</td>
+<td>Automatic, extremely fast (just move a pointer)</td>
+<td>Must ask the operating system for space; slower</td>
+</tr>
+<tr>
+<td>Layout</td>
+<td>Last in, first out; one <strong>frame</strong> per function call</td>
+<td>A big pool of memory; items live anywhere</td>
+</tr>
+<tr>
+<td>Freed</td>
+<td>Automatically when the function returns</td>
+<td>Must be cleaned up by <em>someone</em> (garbage collector, you, or Rust&#39;s ownership)</td>
+</tr>
+<tr>
+<td>Typical data</td>
+<td>Numbers, booleans, chars, fixed arrays, structs of those</td>
+<td><code>String</code>, <code>Vec</code>, <code>HashMap</code>, anything that can change size</td>
+</tr>
+</tbody></table></div>
+<h3 id="the-stack-step-by-step">The stack, step by step</h3>
+<pre><code class="language-rust">fn find_sum(a: i32, b: i32) -&gt; i32 {
+    let answer = a + b;
+    answer
+}
+
+fn main() {
+    let x = 1;
+    let y = 2;
+    let z = find_sum(x, y);
+    println!(&quot;{z}&quot;);
+}
+</code></pre>
+<ol>
+<li><code>main</code> starts: a <strong>stack frame</strong> is pushed holding <code>x</code>, <code>y</code>, <code>z</code> (3 × 32 bits = 96 bits).</li>
+<li><code>find_sum</code> is called: a <strong>new frame</strong> is pushed on top holding <code>a</code>, <code>b</code>, <code>answer</code>.</li>
+<li><code>find_sum</code> returns: its frame is <strong>popped</strong> and its memory is instantly free.</li>
+<li><code>main</code> finishes: its frame is popped. Done.</li>
+</ol>
+<p>Numbers never change size (an <code>i32</code> always uses 32 bits, whether it holds 1 or 1,000,000), so the stack handles them perfectly.</p>
+<h3 id="why-strings-go-on-the-heap">Why strings go on the heap</h3>
+<p>A <code>String</code> can grow:</p>
+<pre><code class="language-rust">let mut name = String::from(&quot;Alice&quot;);   // 5 characters now
+name.push_str(&quot; Smith&quot;);                // 11 characters later
+</code></pre>
+<p>The compiler can&#39;t know in advance how big it will become, so it can&#39;t reserve a fixed stack slot. So:</p>
+<ul>
+<li>The <strong>characters</strong> live on the <strong>heap</strong>.</li>
+<li>On the <strong>stack</strong> sits a small fixed-size value with three fields: a <strong>pointer</strong> to the heap data, the current <strong>length</strong>, and the <strong>capacity</strong> (how much heap space is reserved).</li>
+</ul>
+<pre><code> STACK                         HEAP
+┌───────────────┐            ┌───┬───┬───┬───┬───┐
+│ name          │            │ A │ l │ i │ c │ e │
+│  ptr ─────────┼──────────► └───┴───┴───┴───┴───┘
+│  len = 5      │
+│  cap = 5      │
+└───────────────┘
+</code></pre>
+<p>When the string grows past its capacity, Rust asks for a bigger heap block, copies the data over, and updates the pointer. Vectors and hash maps work the same way.</p>
+<div class="callout important"><div class="ctitle">The key insight</div><p>Heap data needs <strong>someone responsible for freeing it</strong>. How a language answers &quot;who frees this, and when?&quot; defines its memory model. Rust&#39;s answer is ownership (next sections).</p>
+</div>
+<hr>
+<h2 id="11-memory-management-in-rust-vs-cc-vs-garbage-collected-languages">11. Memory management in Rust vs C/C++ vs garbage-collected languages</h2>
+<h3 id="the-classic-c-bug-a-memory-leak">The classic C++ bug: a memory leak</h3>
+<pre><code class="language-cpp">#include &lt;iostream&gt;
+#include &lt;cstring&gt;
+
+void create_string() {
+    char* str = new char[30];                 // allocate 30 bytes on the heap
+    std::strcpy(str, &quot;hello from heap&quot;);
+    std::cout &lt;&lt; str &lt;&lt; std::endl;
+    // delete[] str;   // ← forgotten! The heap memory is never freed.
+}
+
+int main() {
+    create_string();
+    return 0;
+}
+</code></pre>
+<p>When <code>create_string</code> ends, its stack frame (holding the pointer <code>str</code>) disappears, but the 30 heap bytes <strong>stay allocated with nothing pointing to them</strong>. That&#39;s a <strong>memory leak</strong>. In C and C++ the programmer must remember every <code>free</code>/<code>delete</code>; people forget, or free twice, or use memory after freeing it.</p>
+<h3 id="common-memory-bugs">Common memory bugs</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Bug</th>
+<th>What happens</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Memory leak</strong></td>
+<td>Heap memory is never freed; usage creeps up</td>
+</tr>
+<tr>
+<td><strong>Dangling pointer</strong></td>
+<td>A pointer refers to memory that was already freed; using it is undefined behaviour</td>
+</tr>
+<tr>
+<td><strong>Double free</strong></td>
+<td>The same memory is freed twice, which can corrupt the heap and is a security hole</td>
+</tr>
+<tr>
+<td><strong>Buffer overflow</strong></td>
+<td>Writing past the end of an allocation</td>
+</tr>
+<tr>
+<td><strong>Data race</strong></td>
+<td>Two threads change the same data at once without coordination</td>
+</tr>
+</tbody></table></div>
+<h3 id="rusts-approach">Rust&#39;s approach</h3>
+<p>The same program in Rust has no leak:</p>
+<pre><code class="language-rust">fn create_string() {
+    let s = String::from(&quot;hello from heap&quot;);
+    println!(&quot;{s}&quot;);
+}   // ← `s` goes out of scope here and Rust frees its heap memory automatically
+
+fn main() {
+    create_string();
+}
+</code></pre>
+<p>Rust inserts the clean-up call for you at the end of the scope (the <code>drop</code>). It does this at <strong>compile time</strong>, with no background garbage collector, so there&#39;s no pause and no extra overhead. The rules that make this safe are called <strong>ownership</strong>.</p>
+<hr>
+<h2 id="12-mutability">12. Mutability</h2>
+<p>By default <strong>every variable is immutable</strong>: once it has a value, it can&#39;t change.</p>
+<pre><code class="language-rust">fn main() {
+    let name = String::from(&quot;hello&quot;);
+    // name.push_str(&quot; world&quot;);   // ✗ error[E0596]: cannot borrow `name` as mutable, as it is not declared as mutable
+
+    let mut name2 = String::from(&quot;hello&quot;);
+    name2.push_str(&quot; world&quot;);     // ✓
+    println!(&quot;{name2}&quot;);          // hello world
+}
+</code></pre>
+<p>The same applies to numbers:</p>
+<pre><code class="language-rust">let a = 1;
+// a = 2;       // ✗ error[E0384]: cannot assign twice to immutable variable `a`
+let mut b = 1;
+b = 2;          // ✓
+</code></pre>
+<h3 id="why-immutable-by-default">Why immutable by default?</h3>
+<ul>
+<li>It tells readers: &quot;this value never changes&quot;, which makes code easier to reason about.</li>
+<li>It enables safe sharing: many parts of the code can read a value at once if nobody can change it (this becomes the borrowing rule in section 15).</li>
+<li>It helps the compiler guarantee thread safety.</li>
+</ul>
+<p>Add <code>mut</code> only where you really need change.</p>
+<div class="callout note"><div class="ctitle">Mutability and the heap</div><p>A <code>String</code> is on the heap whether or not it&#39;s <code>mut</code>. <code>mut</code> doesn&#39;t affect <em>where</em> data lives; it only controls whether you&#39;re allowed to change it. Strings are always heap-allocated because they <em>can</em> grow, even if a particular string never does. The compiler doesn&#39;t try to prove &quot;this one never changes&quot;.</p>
+</div>
+<details class="callout question"><summary>Practice: make this compile</summary>
+<pre><code class="language-rust">fn main() {
+    let count = 0;
+    for _ in 0..3 {
+        count += 1;
+    }
+    println!(&quot;{count}&quot;);
+}
+</code></pre>
+<p>The fix is <code>let mut count = 0;</code>. The error is <code>cannot assign twice to immutable variable</code>.</p>
+</details>
+<hr>
+<h2 id="13-ownership">13. Ownership</h2>
+<p>Ownership is Rust&#39;s central idea. It answers &quot;who frees heap memory, and when?&quot; without a garbage collector.</p>
+<h3 id="the-three-rules">The three rules</h3>
+<ol>
+<li><strong>Each value has exactly one owner</strong> (a variable).</li>
+<li><strong>There can only be one owner at a time.</strong></li>
+<li><strong>When the owner goes out of scope, the value is dropped</strong> (its memory is freed).</li>
+</ol>
+<pre><code class="language-rust">fn main() {
+    {
+        let s = String::from(&quot;hello&quot;);   // `s` owns the String
+        println!(&quot;{s}&quot;);
+    }   // `s` goes out of scope → the String is dropped and its heap memory freed
+    // println!(&quot;{s}&quot;);   // ✗ error: cannot find value `s` in this scope
+}
+</code></pre>
+<p>&quot;Out of scope&quot; means the closing <code>}</code> of the block where the variable was declared (a function body, an <code>if</code>, a loop, or a bare <code>{ }</code> block).</p>
+<h3 id="why-only-one-owner">Why only one owner?</h3>
+<p>If two variables owned the same heap data, both would try to free it when they went out of scope, giving a <strong>double free</strong>. If one freed it early while the other still pointed to it, you&#39;d get a <strong>dangling pointer</strong>. A single owner rules out both bugs by construction.</p>
+<h3 id="its-similar-to-garbage-collection-without-the-collector">It&#39;s similar to garbage collection... without the collector</h3>
+<p>A garbage collector periodically scans memory asking &quot;does anything still point to this?&quot;. Rust answers the question at compile time: &quot;the owner is leaving scope, so free it now&quot;. Result: deterministic clean-up, no pauses, no runtime cost.</p>
+<div class="callout tip"><div class="ctitle">Stack-only types are different</div><p>Simple types that live entirely on the stack (<code>i32</code>, <code>bool</code>, <code>char</code>, <code>f64</code>…) are <strong>copied</strong> instead of moved, because copying them is trivial. Ownership rules matter for heap-backed types like <code>String</code> and <code>Vec</code> (see <strong>Copy</strong> in the next section).</p>
+</div>
+<hr>
+<h2 id="14-moving-values">14. Moving values</h2>
+<p>What happens when you assign one variable to another?</p>
+<pre><code class="language-rust">fn main() {
+    let s1 = String::from(&quot;hello&quot;);
+    let s2 = s1;                 // ownership MOVES from s1 to s2
+    println!(&quot;{s2}&quot;);            // ✓
+    // println!(&quot;{s1}&quot;);         // ✗ error[E0382]: borrow of moved value: `s1`
+}
+</code></pre>
+<p>You might expect a copy, or two pointers to the same data. Rust does neither. It <strong>moves</strong> ownership:</p>
+<pre><code> before `let s2 = s1;`            after
+ s1 ──► &quot;hello&quot; (heap)            s1 (now INVALID)
+                                  s2 ──► &quot;hello&quot; (heap)
+</code></pre>
+<p><code>s1</code> becomes invalid, so there&#39;s still only one owner. When <code>s2</code> goes out of scope, the memory is freed exactly once.</p>
+<p>The compiler error tells you precisely what happened:</p>
+<pre><code>error[E0382]: borrow of moved value: `s1`
+ |     let s1 = String::from(&quot;hello&quot;);
+ |         -- move occurs because `s1` has type `String`, which does not implement the `Copy` trait
+ |     let s2 = s1;
+ |              -- value moved here
+ |     println!(&quot;{s1}&quot;);
+ |               ^^^^ value borrowed here after move
+help: consider cloning the value if the performance cost is acceptable
+</code></pre>
+<h3 id="fix-1-clone">Fix 1: <code>clone()</code></h3>
+<p>If you really want two independent copies, ask for one explicitly:</p>
+<pre><code class="language-rust">fn main() {
+    let s1 = String::from(&quot;hello&quot;);
+    let s2 = s1.clone();         // a full copy on the heap
+    println!(&quot;{s1} {s2}&quot;);       // both valid
+}
+</code></pre>
+<p><code>clone()</code> allocates new heap memory and copies the data. It&#39;s fine for learning and when you truly need a copy, but it costs time and memory, so prefer borrowing (next section) when you can.</p>
+<div class="callout tip"><div class="ctitle">A common beginner path</div><p>New Rustaceans often hit a move error and &quot;just clone it&quot;. That&#39;s fine at first. The goal later is to restructure with references so you don&#39;t copy needlessly.</p>
+</div>
+<h3 id="passing-to-a-function-also-moves">Passing to a function also moves</h3>
+<p>Passing a value as an argument is the same as <code>let param = value;</code>:</p>
+<pre><code class="language-rust">fn takes_ownership(s: String) {
+    println!(&quot;{s}&quot;);
+}   // `s` goes out of scope here → the String is dropped
+
+fn main() {
+    let name = String::from(&quot;Alice&quot;);
+    takes_ownership(name);       // ownership moves INTO the function
+    // println!(&quot;{name}&quot;);       // ✗ error[E0382]: borrow of moved value: `name`
+}
+</code></pre>
+<h3 id="giving-ownership-back">Giving ownership back</h3>
+<p>A function can return the value to hand ownership back:</p>
+<pre><code class="language-rust">fn take_and_give_back(s: String) -&gt; String {
+    println!(&quot;{s}&quot;);
+    s                             // returned: ownership moves back out
+}
+
+fn main() {
+    let mut name = String::from(&quot;Alice&quot;);
+    name = take_and_give_back(name);   // moved in, then moved back
+    println!(&quot;{name}&quot;);                // ✓ valid again
+}
+</code></pre>
+<p>This works but is clumsy. <strong>Borrowing</strong> (next section) is the better tool.</p>
+<h3 id="copy-types-no-move"><code>Copy</code> types: no move</h3>
+<p>Types that live entirely on the stack are cheap to copy, so Rust copies them instead of moving:</p>
+<pre><code class="language-rust">fn main() {
+    let a = 5;
+    let b = a;                   // copied
+    println!(&quot;{a} {b}&quot;);         // ✓ both valid
+}
+</code></pre>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Copied (implement <code>Copy</code>)</th>
+<th>Moved</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>integers, floats, <code>bool</code>, <code>char</code>, tuples/arrays of those</td>
+<td><code>String</code>, <code>Vec&lt;T&gt;</code>, <code>HashMap</code>, <code>Box&lt;T&gt;</code>, structs containing them</td>
+</tr>
+</tbody></table></div>
+<details class="callout question"><summary>Practice: which lines fail to compile, and why?</summary>
+<pre><code class="language-rust">fn main() {
+    let a = String::from(&quot;x&quot;);       // line 1
+    let b = a;                       // line 2
+    let c = 7;                       // line 3
+    let d = c;                       // line 4
+    println!(&quot;{a} {b} {c} {d}&quot;);     // line 5
+}
+</code></pre>
+<p>Line 5 fails because <code>a</code> was moved into <code>b</code> on line 2. <code>c</code> and <code>d</code> are fine: integers are <code>Copy</code>. Fix it with <code>let b = a.clone();</code>.</p>
+</details>
+<hr>
+<h2 id="15-borrowing-and-references">15. Borrowing and references</h2>
+<p>Moving ownership around is awkward. Usually a function just wants to <strong>look at</strong> a value, not own it. That&#39;s what <strong>references</strong> are for.</p>
+<h3 id="shared-references">Shared references: <code>&amp;</code></h3>
+<pre><code class="language-rust">fn print_string(s: &amp;String) {      // takes a REFERENCE to a String
+    println!(&quot;{s}&quot;);
+}
+
+fn main() {
+    let name = String::from(&quot;Alice&quot;);
+    print_string(&amp;name);           // lend `name`; don&#39;t move it
+    print_string(&amp;name);           // ✓ still ours
+    println!(&quot;{name}&quot;);            // ✓
+}
+</code></pre>
+<ul>
+<li><code>&amp;name</code> creates a <strong>reference</strong> to <code>name</code>: a pointer that <strong>borrows</strong> the value.</li>
+<li><code>&amp;String</code> in the parameter says &quot;I take a reference to a String&quot;.</li>
+<li><code>name</code> stays the owner the whole time; the function only borrows it. No clone, no moving, no giving back.</li>
+<li>The value is freed once, when <code>name</code> goes out of scope in <code>main</code>.</li>
+</ul>
+<pre><code class="language-rust">let s1 = String::from(&quot;hi&quot;);
+let s2 = &amp;s1;                      // s2 borrows s1
+println!(&quot;{s1} {s2}&quot;);             // ✓ both valid
+</code></pre>
+<p>Compare with <code>let s2 = s1;</code> (a move) from section 14.</p>
+<h3 id="mutable-references-mut">Mutable references: <code>&amp;mut</code></h3>
+<p>To change what you borrow, you need a <strong>mutable reference</strong>:</p>
+<pre><code class="language-rust">fn add_surname(s: &amp;mut String) {
+    s.push_str(&quot; Smith&quot;);
+}
+
+fn main() {
+    let mut name = String::from(&quot;Alice&quot;);   // 1. the variable must be `mut`
+    add_surname(&amp;mut name);                 // 2. lend it with `&amp;mut`
+    println!(&quot;{name}&quot;);                     // Alice Smith
+}
+</code></pre>
+<p>Three things must line up: the variable is <code>mut</code>, you pass <code>&amp;mut value</code>, and the parameter type is <code>&amp;mut T</code>. Forget any one and the compiler tells you:</p>
+<pre><code>error[E0596]: cannot borrow `*s` as mutable, as it is behind a `&amp;` reference
+</code></pre>
+<h3 id="the-borrowing-rules">The borrowing rules</h3>
+<p>At any one time, you can have <strong>either</strong>:</p>
+<ul>
+<li><strong>any number of shared references (<code>&amp;T</code>)</strong>, <strong>or</strong></li>
+<li><strong>exactly one mutable reference (<code>&amp;mut T</code>)</strong>,</li>
+</ul>
+<p>but <strong>never both at once</strong>.</p>
+<pre><code class="language-rust">fn main() {
+    let s = String::from(&quot;hi&quot;);
+    let r1 = &amp;s;
+    let r2 = &amp;s;                  // ✓ many readers are fine
+    println!(&quot;{r1} {r2}&quot;);
+}
+</code></pre>
+<pre><code class="language-rust">fn main() {
+    let mut s = String::from(&quot;hi&quot;);
+    let r1 = &amp;mut s;
+    let r2 = &amp;mut s;              // does NOT compile: second mutable borrow
+    println!(&quot;{r1} {r2}&quot;);
+}
+</code></pre>
+<pre><code>error[E0499]: cannot borrow `s` as mutable more than once at a time
+</code></pre>
+<pre><code class="language-rust">fn main() {
+    let mut s = String::from(&quot;hi&quot;);
+    let r1 = &amp;s;                  // shared borrow
+    let r2 = &amp;mut s;              // does NOT compile: mutable borrow while shared exists
+    println!(&quot;{r1} {r2}&quot;);
+}
+</code></pre>
+<pre><code>error[E0502]: cannot borrow `s` as mutable because it is also borrowed as immutable
+</code></pre>
+<h3 id="why-these-rules">Why these rules?</h3>
+<p>It&#39;s the same idea as a database read/write lock:</p>
+<ul>
+<li>Many readers at once are safe, because nobody is changing the data.</li>
+<li>If someone is <strong>writing</strong>, nobody else may read <em>or</em> write; otherwise a reader could see half-changed data, or two writers could overwrite each other.</li>
+</ul>
+<p>By enforcing this at compile time, Rust also prevents <strong>data races</strong> (section 23) and &quot;iterator invalidation&quot; bugs (changing a vector while looping over it).</p>
+<h3 id="references-end-at-their-last-use-extra">References end at their last use (Extra)</h3>
+<p>A borrow lasts only until its <strong>last use</strong>, not until the end of the block. This is called non-lexical lifetimes, and it makes many programs that look conflicting compile fine:</p>
+<pre><code class="language-rust">fn main() {
+    let mut s = String::from(&quot;hi&quot;);
+    let r1 = &amp;s;
+    println!(&quot;{r1}&quot;);     // last use of r1
+    let r2 = &amp;mut s;      // ✓ OK: r1 is no longer used
+    r2.push(&#39;!&#39;);
+    println!(&quot;{r2}&quot;);
+}
+</code></pre>
+<h3 id="dangling-references-are-impossible">Dangling references are impossible</h3>
+<pre><code class="language-rust">fn dangle() -&gt; &amp;String {              // does NOT compile
+    let s = String::from(&quot;hi&quot;);
+    &amp;s                                // `s` is dropped at the end of the function...
+}                                     // ...so this reference would point to freed memory
+</code></pre>
+<pre><code>error[E0106]: missing lifetime specifier
+  = help: this function&#39;s return type contains a borrowed value, but there is no value for it to be borrowed from
+</code></pre>
+<p>The fix is to return the owned value (<code>s</code> itself) instead. Section 22 (lifetimes) explains how Rust tracks this in general.</p>
+<div class="callout important"><div class="ctitle">Mental model</div><p>Ownership = &quot;who must clean this up&quot;. Borrowing = &quot;using it temporarily without taking responsibility&quot;. <code>&amp;</code> is a read-only loan; <code>&amp;mut</code> is an exclusive, read-write loan.</p>
+</div>
+<details class="callout question"><summary>Practice: fix both functions</summary>
+<pre><code class="language-rust">fn longer_len(a: String, b: String) -&gt; usize {
+    if a.len() &gt; b.len() { a.len() } else { b.len() }
+}
+fn main() {
+    let x = String::from(&quot;hello&quot;);
+    let y = String::from(&quot;hi&quot;);
+    println!(&quot;{}&quot;, longer_len(x, y));
+    println!(&quot;{x} {y}&quot;);           // fails: moved
+}
+</code></pre>
+<p>Change the parameters to <code>&amp;String</code> (or better <code>&amp;str</code>) and call <code>longer_len(&amp;x, &amp;y)</code>:</p>
+<pre><code class="language-rust">fn longer_len(a: &amp;str, b: &amp;str) -&gt; usize {
+    if a.len() &gt; b.len() { a.len() } else { b.len() }
+}
+fn main() {
+    let x = String::from(&quot;hello&quot;);
+    let y = String::from(&quot;hi&quot;);
+    println!(&quot;{}&quot;, longer_len(&amp;x, &amp;y));
+    println!(&quot;{x} {y}&quot;);           // ✓
+}
+</code></pre>
+</details>
+<details class="callout question"><summary>Practice: write <code>fn shout(s: &amp;mut String)</code> that makes the text uppercase</summary>
+<pre><code class="language-rust">fn shout(s: &amp;mut String) {
+    *s = s.to_uppercase();
+}
+fn main() {
+    let mut msg = String::from(&quot;hello&quot;);
+    shout(&amp;mut msg);
+    println!(&quot;{msg}&quot;);   // HELLO
+}
+</code></pre>
+<p><code>*s</code> (<strong>dereference</strong>) means &quot;the String that <code>s</code> points to&quot;. Assigning to <code>*s</code> replaces the borrowed value.</p>
+</details>
+<hr>
+<h2 id="16-vectors">16. Vectors</h2>
+<p>A <strong><code>Vec&lt;T&gt;</code></strong> is a growable list of values, all of type <code>T</code>. Like a dynamic array: you can push, pop and remove. Its data lives on the <strong>heap</strong> (section 10), with a small pointer-length-capacity record on the stack.</p>
+<h3 id="creating-and-changing">Creating and changing</h3>
+<pre><code class="language-rust">fn main() {
+    let mut v: Vec&lt;i32&gt; = Vec::new();   // empty vector of i32
+    v.push(1);
+    v.push(2);
+    v.push(3);
+    println!(&quot;{:?}&quot;, v);                // [1, 2, 3]
+
+    let w = vec![10, 20, 30];           // the vec! macro: quickest way
+    println!(&quot;{} items&quot;, w.len());      // 3
+}
+</code></pre>
+<ul>
+<li>A vector must be <code>mut</code> to push to it.</li>
+<li>Printing a whole vector needs the Debug format: <code>{:?}</code> (<code>Vec</code> doesn&#39;t implement Display).</li>
+<li>The type is inferred (<code>Vec&lt;i32&gt;</code>); write it out when the compiler asks or for clarity: <code>let v: Vec&lt;i32&gt; = Vec::new();</code>. The <code>&lt;i32&gt;</code> part is a <strong>generic</strong> (section 20).</li>
+</ul>
+<h3 id="reading-elements">Reading elements</h3>
+<pre><code class="language-rust">let v = vec![10, 20, 30];
+
+let first = v[0];                 // 10 (panics if out of range!)
+let maybe = v.get(5);             // None (safe: returns Option&lt;&amp;i32&gt;)
+
+match v.get(1) {
+    Some(n) =&gt; println!(&quot;got {n}&quot;),
+    None =&gt; println!(&quot;no such element&quot;),
+}
+</code></pre>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Access</th>
+<th>If the index is too big</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>v[i]</code></td>
+<td><strong>Panic</strong> (the program stops)</td>
+</tr>
+<tr>
+<td><code>v.get(i)</code></td>
+<td>Returns <code>None</code></td>
+</tr>
+</tbody></table></div>
+<h3 id="common-methods">Common methods</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Does</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>v.push(x)</code></td>
+<td>Add to the end</td>
+</tr>
+<tr>
+<td><code>v.pop()</code></td>
+<td>Remove and return the last item (<code>Option&lt;T&gt;</code>)</td>
+</tr>
+<tr>
+<td><code>v.remove(i)</code></td>
+<td>Remove the item at index <code>i</code>, shifting the rest left</td>
+</tr>
+<tr>
+<td><code>v.insert(i, x)</code></td>
+<td>Insert at index <code>i</code></td>
+</tr>
+<tr>
+<td><code>v.len()</code> / <code>v.is_empty()</code></td>
+<td>Count / emptiness check</td>
+</tr>
+<tr>
+<td><code>v.contains(&amp;x)</code></td>
+<td>Is <code>x</code> in the vector?</td>
+</tr>
+<tr>
+<td><code>v.clear()</code></td>
+<td>Remove everything</td>
+</tr>
+<tr>
+<td><code>v.sort()</code></td>
+<td>Sort in place</td>
+</tr>
+<tr>
+<td><code>v.retain(|x| cond)</code></td>
+<td>Keep only items matching the condition</td>
+</tr>
+</tbody></table></div>
+<h3 id="iterating">Iterating</h3>
+<pre><code class="language-rust">let v = vec![1, 2, 3];
+for n in &amp;v {                // borrow: `v` is still usable afterwards
+    println!(&quot;{n}&quot;);
+}
+</code></pre>
+<p>(Section 18 explains <code>for n in v</code> vs <code>for n in &amp;v</code>.)</p>
+<h3 id="exercise-keep-only-the-even-numbers">Exercise: keep only the even numbers</h3>
+<p><strong>Approach 1: build a new vector from a borrowed one</strong></p>
+<pre><code class="language-rust">fn even_filter(v: &amp;Vec&lt;i32&gt;) -&gt; Vec&lt;i32&gt; {
+    let mut new_v = Vec::new();
+    for val in v {                 // `val` is a &amp;i32
+        if val % 2 == 0 {
+            new_v.push(*val);      // `*val` dereferences the &amp;i32 to an i32
+        }
+    }
+    new_v
+}
+
+fn main() {
+    let v = vec![1, 2, 3, 4, 5, 6];
+    let evens = even_filter(&amp;v);   // borrow `v`: we can still use it
+    println!(&quot;{:?}&quot;, evens);       // [2, 4, 6]
+    println!(&quot;{:?}&quot;, v);           // [1, 2, 3, 4, 5, 6]
+}
+</code></pre>
+<ul>
+<li>If the function took <code>v: Vec&lt;i32&gt;</code> by value, <code>v</code> would be <strong>moved</strong> in and unusable afterwards (section 14). Taking <code>&amp;Vec&lt;i32&gt;</code> borrows it instead.</li>
+<li><code>*val</code> is needed because iterating over a reference gives you references to the items.</li>
+</ul>
+<p><strong>Approach 2: change the original in place (mutable reference)</strong></p>
+<pre><code class="language-rust">fn retain_even(v: &amp;mut Vec&lt;i32&gt;) {
+    let mut i = 0;
+    while i &lt; v.len() {
+        if v[i] % 2 != 0 {
+            v.remove(i);           // don&#39;t advance: the next item slid into index i
+        } else {
+            i += 1;
+        }
+    }
+}
+
+fn main() {
+    let mut v = vec![1, 2, 3, 4, 5, 6];
+    retain_even(&amp;mut v);
+    println!(&quot;{:?}&quot;, v);           // [2, 4, 6]
+}
+</code></pre>
+<p>This uses less memory (no second vector). The built-in way is simply <code>v.retain(|x| x % 2 == 0);</code>.</p>
+<div class="callout tip"><div class="ctitle">Prefer slices for read-only parameters</div><p><code>fn even_filter(v: &amp;[i32]) -&gt; Vec&lt;i32&gt;</code> accepts a <code>&amp;Vec&lt;i32&gt;</code>, an array or any slice (section 19). It&#39;s the idiomatic parameter type for &quot;read some numbers&quot;.</p>
+</div>
+<details class="callout question"><summary>Practice: write <code>fn sum(v: &amp;[i32]) -&gt; i32</code></summary>
+<pre><code class="language-rust">fn sum(v: &amp;[i32]) -&gt; i32 {
+    let mut total = 0;
+    for n in v {
+        total += n;
+    }
+    total
+}
+// sum(&amp;vec![1, 2, 3]) == 6
+</code></pre>
+</details>
+<hr>
+<h2 id="17-hashmaps">17. HashMaps</h2>
+<p>A <strong><code>HashMap&lt;K, V&gt;</code></strong> stores <strong>key → value</strong> pairs with very fast lookup by key (like a JavaScript object/<code>Map</code> or a Python dict). Like vectors, the data lives on the heap.</p>
+<pre><code class="language-rust">use std::collections::HashMap;       // not in the prelude: must import
+
+fn main() {
+    let mut users = HashMap::new();
+    users.insert(String::from(&quot;alice&quot;), 22);
+    users.insert(String::from(&quot;bob&quot;), 32);
+
+    println!(&quot;{}&quot;, users.len());     // 2
+}
+</code></pre>
+<h3 id="getting-values-get-returns-an-option">Getting values: <code>get</code> returns an <code>Option</code></h3>
+<pre><code class="language-rust">match users.get(&quot;alice&quot;) {
+    Some(age) =&gt; println!(&quot;alice is {age}&quot;),
+    None =&gt; println!(&quot;user not found&quot;),
+}
+</code></pre>
+<p><code>get</code> returns <code>Option&lt;&amp;V&gt;</code>, because the key might not exist. That&#39;s the <code>Option</code> from section 7 doing its job: there&#39;s no &quot;undefined&quot; to forget about.</p>
+<h3 id="common-operations">Common operations</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Code</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Insert (overwrites an existing key)</td>
+<td><code>map.insert(key, value)</code></td>
+</tr>
+<tr>
+<td>Look up</td>
+<td><code>map.get(&amp;key)</code> → <code>Option&lt;&amp;V&gt;</code></td>
+</tr>
+<tr>
+<td>Does it exist?</td>
+<td><code>map.contains_key(&amp;key)</code></td>
+</tr>
+<tr>
+<td>Remove</td>
+<td><code>map.remove(&amp;key)</code> → <code>Option&lt;V&gt;</code></td>
+</tr>
+<tr>
+<td>Number of entries</td>
+<td><code>map.len()</code></td>
+</tr>
+<tr>
+<td>Remove everything</td>
+<td><code>map.clear()</code></td>
+</tr>
+<tr>
+<td>Iterate</td>
+<td><code>for (key, value) in &amp;map { ... }</code></td>
+</tr>
+</tbody></table></div>
+<pre><code class="language-rust">for (name, age) in &amp;users {
+    println!(&quot;{name} is {age}&quot;);
+}
+</code></pre>
+<div class="callout note"><div class="ctitle">Order</div><p>A <code>HashMap</code> doesn&#39;t keep insertion order, so iteration order can differ between runs. Use <code>BTreeMap</code> for sorted keys.</p>
+</div>
+<h3 id="the-entry-api-update-or-insert-extra-very-useful">The <code>entry</code> API: update or insert (Extra, very useful)</h3>
+<p>Count how many times each word appears:</p>
+<pre><code class="language-rust">use std::collections::HashMap;
+
+fn main() {
+    let text = &quot;a b a c b a&quot;;
+    let mut counts: HashMap&lt;&amp;str, i32&gt; = HashMap::new();
+
+    for word in text.split_whitespace() {
+        *counts.entry(word).or_insert(0) += 1;
+    }
+
+    println!(&quot;{:?}&quot;, counts.get(&quot;a&quot;));   // Some(3)
+}
+</code></pre>
+<p><code>entry(key).or_insert(0)</code> returns a <strong>mutable reference</strong> to the value (inserting <code>0</code> first if the key was missing), and <code>*... += 1</code> increments it.</p>
+<h3 id="exercise-convert-a-vector-of-pairs-into-a-map">Exercise: convert a vector of pairs into a map</h3>
+<p>A <strong>tuple</strong> holds a few values together, here <code>(String, i32)</code>:</p>
+<pre><code class="language-rust">use std::collections::HashMap;
+
+fn group_values_by_key(pairs: Vec&lt;(String, i32)&gt;) -&gt; HashMap&lt;String, i32&gt; {
+    let mut map = HashMap::new();
+    for (key, value) in pairs {      // destructure each tuple
+        map.insert(key, value);
+    }
+    map
+}
+
+fn main() {
+    let input = vec![
+        (String::from(&quot;alice&quot;), 22),
+        (String::from(&quot;bob&quot;), 32),
+    ];
+    let map = group_values_by_key(input);
+    println!(&quot;{:?}&quot;, map.get(&quot;alice&quot;));   // Some(22)
+}
+</code></pre>
+<p>(Printing the whole map with <code>{:?}</code> also works; the order of the entries may vary.)</p>
+<div class="callout tip"><div class="ctitle">A harder version</div><p>If the same key can appear several times and you want <em>all</em> its values, make the map <code>HashMap&lt;String, Vec&lt;i32&gt;&gt;</code> and use <code>map.entry(key).or_insert_with(Vec::new).push(value);</code>.</p>
+</div>
+<details class="callout question"><summary>Practice: count the letters in a string</summary>
+<pre><code class="language-rust">use std::collections::HashMap;
+
+fn letter_counts(s: &amp;str) -&gt; HashMap&lt;char, usize&gt; {
+    let mut counts = HashMap::new();
+    for c in s.chars() {
+        *counts.entry(c).or_insert(0) += 1;
+    }
+    counts
+}
+// letter_counts(&quot;hello&quot;).get(&amp;&#39;l&#39;) == Some(&amp;2)
+</code></pre>
+</details>
+<hr>
+<h2 id="18-iterators">18. Iterators</h2>
+<p>An <strong>iterator</strong> produces a sequence of items one at a time. Every <code>for</code> loop you&#39;ve written uses one behind the scenes. Iterators take over the fiddly work of walking through a collection&#39;s memory so you don&#39;t have to.</p>
+<h3 id="iterators-are-lazy">Iterators are lazy</h3>
+<p>Creating an iterator does <strong>nothing</strong> until something consumes it:</p>
+<pre><code class="language-rust">let v = vec![1, 2, 3];
+let it = v.iter();     // nothing is processed yet
+</code></pre>
+<h3 id="three-ways-to-iterate">Three ways to iterate</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Item type</th>
+<th>Effect on the vector</th>
+<th>Use when</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>v.iter()</code> (or <code>for x in &amp;v</code>)</td>
+<td><code>&amp;T</code> (shared reference)</td>
+<td>Borrowed; <strong>still usable afterwards</strong>; can&#39;t modify items</td>
+<td>Read-only passes (the usual case)</td>
+</tr>
+<tr>
+<td><code>v.iter_mut()</code> (or <code>for x in &amp;mut v</code>)</td>
+<td><code>&amp;mut T</code></td>
+<td>Borrowed mutably; items can be changed</td>
+<td>Modify items in place</td>
+</tr>
+<tr>
+<td><code>v.into_iter()</code> (or <code>for x in v</code>)</td>
+<td><code>T</code> (owned)</td>
+<td><strong>Consumed/moved</strong>; unusable afterwards</td>
+<td>You&#39;re done with the vector and want ownership of the items</td>
+</tr>
+</tbody></table></div>
+<pre><code class="language-rust">fn main() {
+    let mut v = vec![1, 2, 3];
+
+    for x in v.iter() {            // read-only
+        println!(&quot;{x}&quot;);
+    }
+
+    for x in v.iter_mut() {        // change in place
+        *x += 10;                  // x is &amp;mut i32 → dereference to modify
+    }
+    println!(&quot;{:?}&quot;, v);           // [11, 12, 13]
+
+    for x in v {                   // consumes v (same as v.into_iter())
+        println!(&quot;{x}&quot;);
+    }
+    // println!(&quot;{:?}&quot;, v);        // ✗ error[E0382]: borrow of moved value: `v`
+}
+</code></pre>
+<div class="callout important"><div class="ctitle">A plain <code>for x in v</code> moves the vector</div><p>It&#39;s shorthand for <code>v.into_iter()</code>. If you need <code>v</code> afterwards, loop over <code>&amp;v</code> (or <code>v.iter()</code>).</p>
+</div>
+<h3 id="how-iteration-works-next">How iteration works: <code>next()</code></h3>
+<p>Every iterator has a <code>next()</code> method that returns <code>Some(item)</code> until it&#39;s exhausted, then <code>None</code>. A <code>for</code> loop is just this:</p>
+<pre><code class="language-rust">fn main() {
+    let v = vec![1, 2, 3];
+    let mut it = v.iter();             // must be `mut`: next() advances it
+
+    while let Some(x) = it.next() {    // loop until next() returns None
+        println!(&quot;{x}&quot;);
+    }
+}
+</code></pre>
+<p><code>while let Some(x) = ...</code> repeats while the pattern matches. You rarely write this by hand, but it&#39;s exactly what <code>for</code> does.</p>
+<h3 id="adapters-and-consumers">Adapters and consumers</h3>
+<p>Iterator methods come in two flavours:</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th></th>
+<th>Adapters</th>
+<th>Consumers</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Return</td>
+<td><strong>Another iterator</strong> (lazy)</td>
+<td>A <strong>final value</strong></td>
+</tr>
+<tr>
+<td>Examples</td>
+<td><code>map</code>, <code>filter</code>, <code>enumerate</code>, <code>take</code>, <code>skip</code>, <code>rev</code>, <code>zip</code></td>
+<td><code>sum</code>, <code>count</code>, <code>collect</code>, <code>min</code>, <code>max</code>, <code>fold</code>, <code>any</code>, <code>all</code></td>
+</tr>
+<tr>
+<td>Effect on the iterator</td>
+<td>Wraps it</td>
+<td><strong>Uses it up</strong> (takes ownership: you can&#39;t reuse it)</td>
+</tr>
+</tbody></table></div>
+<pre><code class="language-rust">fn main() {
+    let v = vec![1, 2, 3];
+
+    // map: transform each item
+    let doubled: Vec&lt;i32&gt; = v.iter().map(|x| x * 2).collect();
+    println!(&quot;{:?}&quot;, doubled);   // [2, 4, 6]
+
+    // filter: keep items where the closure returns true
+    let evens: Vec&lt;&amp;i32&gt; = v.iter().filter(|x| *x % 2 == 0).collect();
+    println!(&quot;{:?}&quot;, evens);     // [2]
+
+    // sum: a consuming adapter
+    let total: i32 = v.iter().sum();
+    println!(&quot;{total}&quot;);         // 6
+}
+</code></pre>
+<ul>
+<li><code>|x| x * 2</code> is a <strong>closure</strong>: an inline anonymous function (<code>|parameters| body</code>), like an arrow function in JavaScript.</li>
+<li><code>collect()</code> turns an iterator back into a collection. <strong>You must tell it which one</strong> (<code>Vec&lt;i32&gt;</code> here), because it can build many types.</li>
+<li><code>sum()</code> also needs a type annotation (<code>let total: i32</code>).</li>
+</ul>
+<p>A consuming adapter uses the iterator up:</p>
+<pre><code class="language-rust">let v = vec![1, 2, 3];
+let it = v.iter();
+let total: i32 = it.sum();        // `sum` takes `self` by value → `it` is consumed
+// let n = it.count();            // ✗ error[E0382]: use of moved value: `it`
+</code></pre>
+<p>(How do you know a method consumes? Its signature takes <code>self</code>, not <code>&amp;self</code>.)</p>
+<h3 id="chaining">Chaining</h3>
+<pre><code class="language-rust">fn main() {
+    let v = vec![1, 2, 3, 4, 5];
+
+    // keep the odd numbers, then double them
+    let result: Vec&lt;i32&gt; = v
+        .iter()
+        .filter(|x| *x % 2 == 1)
+        .map(|x| x * 2)
+        .collect();
+
+    println!(&quot;{:?}&quot;, result);   // [2, 6, 10]
+}
+</code></pre>
+<p>Nothing happens until <code>collect()</code>: the pipeline processes one item at a time through every step.</p>
+<h3 id="other-useful-pieces">Other useful pieces</h3>
+<pre><code class="language-rust">let v = vec![10, 20, 30];
+
+for (i, x) in v.iter().enumerate() { println!(&quot;{i}: {x}&quot;); }   // index + item
+let total: i32 = v.iter().map(|x| x / 10).sum();               // 6
+let big = v.iter().any(|&amp;x| x &gt; 25);                           // true
+let pos = v.iter().position(|&amp;x| x == 20);                     // Some(1)
+let rev: Vec&lt;_&gt; = v.iter().rev().collect();                    // [30, 20, 10]
+</code></pre>
+<h3 id="iterating-a-hashmap">Iterating a HashMap</h3>
+<pre><code class="language-rust">use std::collections::HashMap;
+
+fn main() {
+    let mut scores = HashMap::new();
+    scores.insert(&quot;blue&quot;, 10);
+    scores.insert(&quot;red&quot;, 50);
+
+    for (team, score) in &amp;scores {      // borrow: `scores` stays valid
+        println!(&quot;{team}: {score}&quot;);
+    }
+}
+</code></pre>
+<p><code>scores.iter()</code> borrows; <code>scores.into_iter()</code> consumes, exactly as with vectors.</p>
+<h3 id="writing-your-own-iterator-extra">Writing your own iterator (Extra)</h3>
+<p>Any type that implements the <code>Iterator</code> trait (a <code>next</code> method) gets all the adapters for free:</p>
+<pre><code class="language-rust">struct Counter { n: u32 }
+
+impl Iterator for Counter {
+    type Item = u32;
+    fn next(&amp;mut self) -&gt; Option&lt;u32&gt; {
+        if self.n &lt; 3 {
+            self.n += 1;
+            Some(self.n)
+        } else {
+            None
+        }
+    }
+}
+
+fn main() {
+    let total: u32 = Counter { n: 0 }.map(|x| x * 10).sum();
+    println!(&quot;{total}&quot;);   // 60  (10 + 20 + 30)
+}
+</code></pre>
+<details class="callout question"><summary>Practice: square the even numbers of <code>[1, 2, 3, 4, 5, 6]</code> with one iterator chain</summary>
+<pre><code class="language-rust">fn main() {
+    let v = vec![1, 2, 3, 4, 5, 6];
+    let result: Vec&lt;i32&gt; = v
+        .iter()
+        .filter(|x| *x % 2 == 0)
+        .map(|x| x * x)
+        .collect();
+    println!(&quot;{:?}&quot;, result);   // [4, 16, 36]
+}
+</code></pre>
+</details>
+<details class="callout question"><summary>Practice: Vec → HashMap → Vec</summary><p>Build a <code>Vec&lt;(String, i32)&gt;</code>, convert it to a <code>HashMap</code>, then collect the keys into a sorted <code>Vec&lt;String&gt;</code>.</p>
+<pre><code class="language-rust">use std::collections::HashMap;
+
+fn main() {
+    let pairs = vec![(String::from(&quot;bob&quot;), 32), (String::from(&quot;alice&quot;), 22)];
+    let map: HashMap&lt;String, i32&gt; = pairs.into_iter().collect();
+
+    let mut names: Vec&lt;String&gt; = map.keys().cloned().collect();
+    names.sort();
+    println!(&quot;{:?}&quot;, names);   // [&quot;alice&quot;, &quot;bob&quot;]
+}
+</code></pre>
+</details>
+<hr>
+<h2 id="19-strings-vs-string-slices">19. Strings vs string slices</h2>
+<p>Rust has two main string types, and the difference trips up almost everyone.</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th></th>
+<th><strong><code>String</code></strong></th>
+<th><strong><code>&amp;str</code></strong> (string slice)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Owns its data?</td>
+<td><strong>Yes</strong>: it owns heap memory</td>
+<td><strong>No</strong>: it&#39;s a borrowed view</td>
+</tr>
+<tr>
+<td>Growable / mutable?</td>
+<td>Yes (if declared <code>mut</code>)</td>
+<td>No (read-only view)</td>
+</tr>
+<tr>
+<td>Where the data lives</td>
+<td>Heap</td>
+<td>Anywhere: a <code>String</code>&#39;s heap data, or inside your program&#39;s binary (literals)</td>
+</tr>
+<tr>
+<td>Size on the stack</td>
+<td>pointer + length + capacity</td>
+<td>pointer + length</td>
+</tr>
+<tr>
+<td>Typical use</td>
+<td>Building and storing text</td>
+<td><strong>Function parameters</strong> and literals</td>
+</tr>
+</tbody></table></div>
+<p>Both are <strong>UTF-8 encoded</strong>: they can hold any character from any language, not just English letters. (UTF-8 uses 1 to 4 bytes per character.)</p>
+<h3 id="string"><code>String</code></h3>
+<pre><code class="language-rust">fn main() {
+    let mut name = String::from(&quot;Alice&quot;);   // or &quot;Alice&quot;.to_string()
+    println!(&quot;{name}&quot;);
+
+    name.push_str(&quot; Smith&quot;);                // append text
+    name.push(&#39;!&#39;);                         // append one char
+    println!(&quot;{name}&quot;);                     // Alice Smith!
+
+    println!(&quot;{} bytes, {} chars&quot;, name.len(), name.chars().count());
+
+    let mut s = String::from(&quot;Alice Smith&quot;);
+    s.replace_range(5.., &quot;&quot;);               // remove everything from byte 5 onward
+    println!(&quot;{s}&quot;);                        // Alice
+}
+</code></pre>
+<p><code>len()</code> counts <strong>bytes</strong>, not characters. For <code>&quot;héllo&quot;</code> it&#39;s 6 bytes but 5 characters. Use <code>chars().count()</code> for the character count.</p>
+<p>Other helpers: <code>to_uppercase()</code>, <code>trim()</code>, <code>contains(&quot;x&quot;)</code>, <code>replace(&quot;a&quot;, &quot;b&quot;)</code>, <code>split(&#39;,&#39;)</code>, and <code>format!(&quot;{a}-{b}&quot;)</code> to build a new <code>String</code>.</p>
+<h3 id="string-slices-str">String slices: <code>&amp;str</code></h3>
+<p>A <strong>slice</strong> is a reference to a <strong>contiguous part</strong> of a string (or a vector/array). It borrows; it never owns.</p>
+<pre><code class="language-rust">fn main() {
+    let word = String::from(&quot;hello world&quot;);
+
+    let hello = &amp;word[0..5];     // bytes 0..5 → &quot;hello&quot;  (start inclusive, end EXCLUSIVE)
+    let world = &amp;word[6..];      // from 6 to the end → &quot;world&quot;
+    let all = &amp;word[..];         // everything
+    println!(&quot;{hello} {world} {all}&quot;);
+}
+</code></pre>
+<p>Memory picture:</p>
+<pre><code> STACK                        HEAP
+ word:  ptr ──────────────►  h e l l o   w o r l d
+        len = 11             ▲
+ hello: ptr ─────────────────┘
+        len = 5              (points at the same bytes, just 5 of them)
+</code></pre>
+<p><code>hello</code> is a <strong>view</strong> into <code>word</code>&#39;s data: no copy and no new allocation.</p>
+<div class="callout warning"><div class="ctitle">Slice at character boundaries</div><p>Slice indexes are <strong>byte</strong> positions. Cutting in the middle of a multi-byte character panics: <code>byte index 1 is not a char boundary</code>. Safe for plain ASCII; be careful with non-English text.</p>
+</div>
+<h3 id="string-literals-are-str">String literals are <code>&amp;str</code></h3>
+<pre><code class="language-rust">let greeting = &quot;hello world&quot;;    // type: &amp;str  (a slice pointing into the program&#39;s binary)
+</code></pre>
+<p>The text of every literal is baked into your compiled program. <code>greeting</code> is a borrowed view of that data, which lives for the whole run (<code>&amp;&#39;static str</code>, section 22). That&#39;s why you can&#39;t push to a literal: you only have a read-only view.</p>
+<h3 id="the-key-example-the-first-word-of-a-string">The key example: the first word of a string</h3>
+<p>Return a <em>view</em> of the first word instead of copying it:</p>
+<pre><code class="language-rust">fn first_word(s: &amp;str) -&gt; &amp;str {
+    for (i, c) in s.char_indices() {
+        if c == &#39; &#39; {
+            return &amp;s[..i];     // view up to the first space
+        }
+    }
+    s                            // no space → the whole string is one word
+}
+
+fn main() {
+    let text = String::from(&quot;hello world&quot;);
+    let word = first_word(&amp;text);
+    println!(&quot;{word}&quot;);          // hello
+}
+</code></pre>
+<p>No new string is allocated: <code>word</code> points into <code>text</code>.</p>
+<p>Now see why borrowing slices is safe:</p>
+<pre><code class="language-rust">fn main() {
+    let mut text = String::from(&quot;hello world&quot;);
+    let word = first_word(&amp;text);   // `word` borrows `text` (shared)
+    text.clear();                   // does NOT compile: needs a mutable borrow
+    println!(&quot;{word}&quot;);
+}
+</code></pre>
+<pre><code>error[E0502]: cannot borrow `text` as mutable because it is also borrowed as immutable
+</code></pre>
+<p><code>clear()</code> takes <code>&amp;mut self</code>, but <code>word</code> (a shared borrow) is still in use afterwards. If this compiled, <code>word</code> would point at cleared memory: a dangling reference. Rust blocks it. A copy-based version (returning a new <code>String</code>) would silently go out of date instead; the slice version is both cheaper and safer.</p>
+<h3 id="returning-a-reference-to-local-data">Returning a reference to local data</h3>
+<pre><code class="language-rust">fn first_word(s: String) -&gt; &amp;str {      // does NOT compile
+    &amp;s[..1]
+}
+</code></pre>
+<p><code>s</code> is <strong>owned by this function</strong> and dropped when it returns, so a reference into it would dangle. The compiler rejects it (<code>missing lifetime specifier</code> / <code>cannot return reference to local variable</code>). Fix: take a <code>&amp;str</code> parameter, so the data belongs to the <em>caller</em>.</p>
+<h3 id="which-should-i-use-in-a-function-parameter">Which should I use in a function parameter?</h3>
+<pre><code class="language-rust">fn count_vowels(s: &amp;str) -&gt; usize {          // ✓ accepts both!
+    s.chars().filter(|c| &quot;aeiou&quot;.contains(*c)).count()
+}
+
+fn main() {
+    let owned = String::from(&quot;education&quot;);
+    println!(&quot;{}&quot;, count_vowels(&quot;hello&quot;));    // a &amp;str literal
+    println!(&quot;{}&quot;, count_vowels(&amp;owned));     // a &amp;String automatically becomes &amp;str
+}
+</code></pre>
+<div class="callout tip"><div class="ctitle">Rule of thumb</div><p>Take <strong><code>&amp;str</code></strong> for read-only text parameters (it accepts <code>&amp;String</code> too, via deref coercion). Take <strong><code>String</code></strong> when the function needs to <strong>own</strong> the text (store it in a struct, return it). Return <strong><code>String</code></strong> from functions that build new text.</p>
+</div>
+<h3 id="slices-work-on-arrays-and-vectors-too">Slices work on arrays and vectors, too</h3>
+<pre><code class="language-rust">fn main() {
+    let arr = [1, 2, 3, 4, 5];
+    let part: &amp;[i32] = &amp;arr[1..3];       // [2, 3]
+    println!(&quot;{:?}&quot;, part);
+
+    let v = vec![10, 20, 30, 40];
+    let first_two = &amp;v[..2];             // [10, 20]
+    println!(&quot;{:?} {}&quot;, first_two, first_two.len());
+}
+</code></pre>
+<p><code>&amp;[T]</code> is the slice type for &quot;a view of some T values&quot;. The range is <code>start..end</code> with the end <strong>exclusive</strong>.</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Type</th>
+<th>What it is</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>[i32; 3]</code></td>
+<td>array: owns exactly 3 integers (fixed size)</td>
+</tr>
+<tr>
+<td><code>Vec&lt;i32&gt;</code></td>
+<td>vector: owns a growable list on the heap</td>
+</tr>
+<tr>
+<td><code>&amp;[i32]</code></td>
+<td>slice: borrows any run of integers</td>
+</tr>
+<tr>
+<td><code>String</code> / <code>&amp;str</code></td>
+<td>the same idea for text</td>
+</tr>
+</tbody></table></div>
+<details class="callout question"><summary>Practice: write <code>fn last_word(s: &amp;str) -&gt; &amp;str</code></summary>
+<pre><code class="language-rust">fn last_word(s: &amp;str) -&gt; &amp;str {
+    match s.rfind(&#39; &#39;) {
+        Some(i) =&gt; &amp;s[i + 1..],
+        None =&gt; s,
+    }
+}
+// last_word(&quot;the quick fox&quot;) == &quot;fox&quot;
+</code></pre>
+</details>
+<hr>
+<h2 id="20-generics">20. Generics</h2>
+<p><strong>Generics</strong> let one piece of code work for many types while staying fully type-checked (like generics in TypeScript, Java or C#).</p>
+<h3 id="the-problem-repeated-code">The problem: repeated code</h3>
+<pre><code class="language-rust">fn largest_i32(a: i32, b: i32) -&gt; i32 { if a &gt; b { a } else { b } }
+fn largest_char(a: char, b: char) -&gt; char { if a &gt; b { a } else { b } }
+</code></pre>
+<p>Identical bodies, different types. Combine them with a <strong>type parameter</strong> <code>T</code>:</p>
+<pre><code class="language-rust">fn largest&lt;T: PartialOrd&gt;(a: T, b: T) -&gt; T {
+    if a &gt; b { a } else { b }
+}
+
+fn main() {
+    println!(&quot;{}&quot;, largest(3, 7));          // 7        (T = i32)
+    println!(&quot;{}&quot;, largest(&#39;a&#39;, &#39;z&#39;));      // z        (T = char)
+    println!(&quot;{}&quot;, largest(1.5, 0.5));      // 1.5      (T = f64)
+    println!(&quot;{}&quot;, largest(&quot;apple&quot;, &quot;pear&quot;));  // pear  (T = &amp;str)
+}
+</code></pre>
+<ul>
+<li><code>&lt;T&gt;</code> after the function name <strong>declares</strong> a type parameter. Think of it as a <em>variable that holds a type</em>.</li>
+<li><code>a: T, b: T</code> means both arguments must be the <strong>same</strong> type, and the return type is that same type.</li>
+<li>Rust works out <code>T</code> from your arguments.</li>
+</ul>
+<h3 id="trait-bounds-t-partialord">Trait bounds: <code>T: PartialOrd</code></h3>
+<p><code>a &gt; b</code> only makes sense for types that can be compared. A bare <code>T</code> could be anything (even something with no ordering), so the compiler needs a promise:</p>
+<pre><code class="language-rust">fn largest&lt;T&gt;(a: T, b: T) -&gt; T {            // does NOT compile
+    if a &gt; b { a } else { b }
+}
+</code></pre>
+<pre><code>error[E0369]: binary operation `&gt;` cannot be applied to type `T`
+help: consider restricting type parameter `T` with trait `PartialOrd`
+</code></pre>
+<p><code>T: PartialOrd</code> says &quot;T may be any type, <strong>as long as</strong> it implements the <code>PartialOrd</code> trait (it supports <code>&lt;</code>, <code>&gt;</code>)&quot;. That&#39;s a <strong>trait bound</strong> (section 21). It&#39;s stricter than loosely-typed languages: calling <code>largest</code> with two structs that have no ordering is a <em>compile error</em>, instead of returning random results at runtime.</p>
+<h3 id="different-types-more-parameters">Different types: more parameters</h3>
+<pre><code class="language-rust">fn pair&lt;A, B&gt;(first: A, second: B) -&gt; (A, B) {
+    (first, second)
+}
+
+let p = pair(1, &quot;one&quot;);   // (i32, &amp;str)
+</code></pre>
+<p>With one <code>T</code>, both arguments must match: <code>largest(1, &quot;x&quot;)</code> is an error.</p>
+<h3 id="generic-structs-and-enums">Generic structs and enums</h3>
+<pre><code class="language-rust">struct Point&lt;T&gt; {
+    x: T,
+    y: T,
+}
+
+impl&lt;T&gt; Point&lt;T&gt; {
+    fn x(&amp;self) -&gt; &amp;T { &amp;self.x }
+}
+
+fn main() {
+    let int_point = Point { x: 1, y: 2 };          // Point&lt;i32&gt;
+    let float_point = Point { x: 1.0, y: 2.5 };    // Point&lt;f64&gt;
+    println!(&quot;{} {}&quot;, int_point.x(), float_point.x());
+}
+</code></pre>
+<p><code>impl&lt;T&gt; Point&lt;T&gt;</code> means &quot;for every <code>T</code>, here are methods for <code>Point&lt;T&gt;</code>&quot;.</p>
+<p>You&#39;ve already been using generic types all along:</p>
+<pre><code class="language-rust">enum Option&lt;T&gt; { Some(T), None }          // &quot;maybe a T&quot;
+enum Result&lt;T, E&gt; { Ok(T), Err(E) }       // &quot;a T or an error E&quot;
+struct Vec&lt;T&gt; { /* ... */ }               // &quot;a list of T&quot;
+</code></pre>
+<p>That&#39;s what <code>Vec&lt;i32&gt;</code>, <code>Option&lt;usize&gt;</code> and <code>Result&lt;String, io::Error&gt;</code> mean: the type in the angle brackets fills in <code>T</code>. It&#39;s also why <code>collect()</code> needs a type: <code>let v: Vec&lt;i32&gt; = ...</code>.</p>
+<h3 id="where-clauses-extra"><code>where</code> clauses (Extra)</h3>
+<p>When bounds get long, move them:</p>
+<pre><code class="language-rust">use std::fmt::Display;
+
+fn show_largest&lt;T&gt;(a: T, b: T) -&gt; String
+where
+    T: PartialOrd + Display,
+{
+    if a &gt; b { format!(&quot;{a}&quot;) } else { format!(&quot;{b}&quot;) }
+}
+</code></pre>
+<h3 id="performance">Performance</h3>
+<p>Rust compiles a separate, specialised copy for each concrete type used (<strong>monomorphisation</strong>), so generic code is exactly as fast as hand-written code for each type. There&#39;s no runtime cost.</p>
+<details class="callout question"><summary>Practice: write a generic <code>fn first&lt;T: Clone&gt;(items: &amp;[T]) -&gt; Option&lt;T&gt;</code></summary>
+<pre><code class="language-rust">fn first&lt;T: Clone&gt;(items: &amp;[T]) -&gt; Option&lt;T&gt; {
+    items.first().cloned()
+}
+fn main() {
+    println!(&quot;{:?}&quot;, first(&amp;[10, 20, 30]));   // Some(10)
+    println!(&quot;{:?}&quot;, first::&lt;i32&gt;(&amp;[]));      // None
+}
+</code></pre>
+</details>
+<hr>
+<h2 id="21-traits">21. Traits</h2>
+<p>A <strong>trait</strong> defines shared behaviour: a set of methods that different types can implement. It&#39;s like an <strong>interface</strong> in TypeScript/Java (or an abstract class with no data).</p>
+<h3 id="defining-and-implementing">Defining and implementing</h3>
+<pre><code class="language-rust">trait Summary {
+    fn summarize(&amp;self) -&gt; String;     // required: no body, implementors must provide it
+}
+
+struct User {
+    name: String,
+    age: u32,
+}
+
+struct Article {
+    title: String,
+}
+
+impl Summary for User {
+    fn summarize(&amp;self) -&gt; String {
+        format!(&quot;User {} is {} years old&quot;, self.name, self.age)
+    }
+}
+
+impl Summary for Article {
+    fn summarize(&amp;self) -&gt; String {
+        format!(&quot;Article: {}&quot;, self.title)
+    }
+}
+
+fn main() {
+    let u = User { name: String::from(&quot;Alice&quot;), age: 30 };
+    let a = Article { title: String::from(&quot;Learning Rust&quot;) };
+    println!(&quot;{}&quot;, u.summarize());
+    println!(&quot;{}&quot;, a.summarize());
+}
+</code></pre>
+<ul>
+<li><code>trait Summary { ... }</code> is the <strong>blueprint</strong>.</li>
+<li><code>impl Summary for User</code> says &quot;<code>User</code> implements <code>Summary</code>&quot;. The compiler errors (<code>not all trait items implemented, missing: summarize</code>) if you forget a required method.</li>
+<li>Different types give different implementations of the same method.</li>
+</ul>
+<h3 id="default-implementations">Default implementations</h3>
+<p>A trait can supply a default body; implementors may use it or override it:</p>
+<pre><code class="language-rust">trait Summary {
+    fn summarize(&amp;self) -&gt; String {
+        String::from(&quot;(read more...)&quot;)      // default
+    }
+}
+
+struct Tweet;
+struct User { name: String }
+
+impl Summary for Tweet {}                    // empty impl: uses the default
+
+impl Summary for User {                      // overrides it
+    fn summarize(&amp;self) -&gt; String {
+        format!(&quot;User {}&quot;, self.name)
+    }
+}
+
+fn main() {
+    println!(&quot;{}&quot;, Tweet.summarize());                                 // (read more...)
+    println!(&quot;{}&quot;, User { name: String::from(&quot;Bob&quot;) }.summarize());    // User Bob
+}
+</code></pre>
+<h3 id="traits-as-parameters">Traits as parameters</h3>
+<p>Accept <strong>any type that implements a trait</strong>:</p>
+<pre><code class="language-rust">fn notify(item: &amp;impl Summary) {
+    println!(&quot;Breaking news! {}&quot;, item.summarize());
+}
+</code></pre>
+<p>Because <code>item</code> is guaranteed to implement <code>Summary</code>, you can call <code>item.summarize()</code>. Passing something that doesn&#39;t implement it is a compile error:</p>
+<pre><code class="language-rust">notify(&amp;5);
+// error[E0277]: the trait bound `{integer}: Summary` is not satisfied
+</code></pre>
+<p>You can implement your own traits for existing types, too:</p>
+<pre><code class="language-rust">impl Summary for String {
+    fn summarize(&amp;self) -&gt; String {
+        format!(&quot;String of {} bytes&quot;, self.len())
+    }
+}
+</code></pre>
+<p>(You may implement your own trait for any type, or any trait for your own type, but not a foreign trait for a foreign type. This is the &quot;orphan rule&quot;.)</p>
+<h3 id="trait-bounds">Trait bounds</h3>
+<p><code>&amp;impl Summary</code> is shorthand (&quot;syntactic sugar&quot;) for the full <strong>trait bound</strong> form:</p>
+<pre><code class="language-rust">fn notify&lt;T: Summary&gt;(item: &amp;T) {
+    println!(&quot;Breaking news! {}&quot;, item.summarize());
+}
+</code></pre>
+<p>This is the same generics syntax from section 20: <code>T</code> is generic, and <code>: Summary</code> restricts it.</p>
+<h3 id="multiple-bounds-with">Multiple bounds with <code>+</code></h3>
+<pre><code class="language-rust">trait Summary { fn summarize(&amp;self) -&gt; String { String::from(&quot;summary&quot;) } }
+trait Describe { fn describe(&amp;self) -&gt; String { String::from(&quot;description&quot;) } }
+
+struct User;
+impl Summary for User {}
+impl Describe for User {}
+
+fn report&lt;T: Summary + Describe&gt;(item: &amp;T) {
+    println!(&quot;{} / {}&quot;, item.summarize(), item.describe());
+}
+
+fn main() {
+    report(&amp;User);     // ✓ User implements both
+}
+</code></pre>
+<p>If <code>User</code> didn&#39;t implement <code>Describe</code>, you&#39;d get <code>the trait bound &#39;User: Describe&#39; is not satisfied</code>.</p>
+<h3 id="where-clause-and-returning-traits-extra"><code>where</code> clause and returning traits (Extra)</h3>
+<pre><code class="language-rust">fn report&lt;T&gt;(item: &amp;T)
+where
+    T: Summary + Describe,
+{ /* ... */ }
+
+fn make_summary() -&gt; impl Summary {          // &quot;returns some type that implements Summary&quot;
+    User
+}
+</code></pre>
+<h3 id="built-in-traits-youll-meet-constantly">Built-in traits you&#39;ll meet constantly</h3>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Trait</th>
+<th>Gives you</th>
+<th>Typically</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>Debug</code></td>
+<td><code>{:?}</code> printing</td>
+<td><code>#[derive(Debug)]</code></td>
+</tr>
+<tr>
+<td><code>Display</code></td>
+<td><code>{}</code> printing</td>
+<td>implement by hand</td>
+</tr>
+<tr>
+<td><code>Clone</code></td>
+<td><code>.clone()</code></td>
+<td><code>#[derive(Clone)]</code></td>
+</tr>
+<tr>
+<td><code>Copy</code></td>
+<td>copy instead of move (small stack types)</td>
+<td><code>#[derive(Clone, Copy)]</code></td>
+</tr>
+<tr>
+<td><code>PartialEq</code></td>
+<td><code>==</code> and <code>!=</code></td>
+<td><code>#[derive(PartialEq)]</code></td>
+</tr>
+<tr>
+<td><code>PartialOrd</code></td>
+<td><code>&lt;</code>, <code>&gt;</code></td>
+<td><code>#[derive(PartialOrd)]</code></td>
+</tr>
+<tr>
+<td><code>Default</code></td>
+<td><code>Type::default()</code></td>
+<td><code>#[derive(Default)]</code></td>
+</tr>
+<tr>
+<td><code>Iterator</code></td>
+<td><code>next()</code> and all iterator adapters</td>
+<td>implement for your own iterators</td>
+</tr>
+</tbody></table></div>
+<p><code>#[derive(...)]</code> auto-writes the implementation for simple cases. That&#39;s what made <code>println!(&quot;{:?}&quot;, user)</code> work in section 5.</p>
+<pre><code class="language-rust">use std::fmt;
+
+struct Point { x: i32, y: i32 }
+
+impl fmt::Display for Point {
+    fn fmt(&amp;self, f: &amp;mut fmt::Formatter) -&gt; fmt::Result {
+        write!(f, &quot;({}, {})&quot;, self.x, self.y)
+    }
+}
+
+fn main() {
+    let p = Point { x: 3, y: 4 };
+    println!(&quot;{p}&quot;);        // (3, 4): now `{}` works for Point
+}
+</code></pre>
+<h3 id="trait-objects-different-types-in-one-collection-extra">Trait objects: different types in one collection (Extra)</h3>
+<p>Generics fix one concrete type per use. To store <em>different</em> types together, use <strong><code>dyn Trait</code></strong>:</p>
+<pre><code class="language-rust">trait Shape { fn area(&amp;self) -&gt; f64; }
+struct Circle(f64);
+struct Square(f64);
+impl Shape for Circle { fn area(&amp;self) -&gt; f64 { 3.14 * self.0 * self.0 } }
+impl Shape for Square { fn area(&amp;self) -&gt; f64 { self.0 * self.0 } }
+
+fn main() {
+    let shapes: Vec&lt;Box&lt;dyn Shape&gt;&gt; = vec![Box::new(Circle(1.0)), Box::new(Square(2.0))];
+    for s in &amp;shapes {
+        println!(&quot;{:.2}&quot;, s.area());
+    }
+}
+</code></pre>
+<p><code>Box&lt;dyn Shape&gt;</code> is an owned pointer to &quot;some type that implements <code>Shape</code>&quot;, chosen at runtime.</p>
+<details class="callout question"><summary>Practice: define <code>trait Animal { fn name(&amp;self) -&gt; String; fn speak(&amp;self) -&gt; String; }</code></summary><p>Implement it for <code>Dog</code> and <code>Cat</code>, then write <code>fn introduce(a: &amp;impl Animal)</code>.</p>
+<pre><code class="language-rust">trait Animal {
+    fn name(&amp;self) -&gt; String;
+    fn speak(&amp;self) -&gt; String;
+}
+struct Dog;
+struct Cat;
+impl Animal for Dog {
+    fn name(&amp;self) -&gt; String { String::from(&quot;Dog&quot;) }
+    fn speak(&amp;self) -&gt; String { String::from(&quot;Woof&quot;) }
+}
+impl Animal for Cat {
+    fn name(&amp;self) -&gt; String { String::from(&quot;Cat&quot;) }
+    fn speak(&amp;self) -&gt; String { String::from(&quot;Meow&quot;) }
+}
+fn introduce(a: &amp;impl Animal) {
+    println!(&quot;{} says {}&quot;, a.name(), a.speak());
+}
+fn main() {
+    introduce(&amp;Dog);
+    introduce(&amp;Cat);
+}
+</code></pre>
+</details>
+<hr>
+<h2 id="22-lifetimes">22. Lifetimes</h2>
+<div class="callout warning"><div class="ctitle">The hardest topic</div><p>Lifetimes confuse almost everyone at first. You&#39;ll often be guided by compiler errors, so a second reading later is normal. The goal here is to understand <strong>what problem lifetimes solve</strong>; the syntax then makes sense.</p>
+</div>
+<h3 id="the-one-sentence-idea">The one-sentence idea</h3>
+<p>A <strong>lifetime</strong> is how long a reference stays valid. Rust uses lifetimes to guarantee <strong>a reference never outlives the data it points to</strong> (which would be a dangling reference).</p>
+<h3 id="the-longest-function">The &quot;longest&quot; function</h3>
+<p>Start with a version that takes ownership, which compiles fine:</p>
+<pre><code class="language-rust">fn longest(a: String, b: String) -&gt; String {
+    if a.len() &gt; b.len() { a } else { b }
+}
+
+fn main() {
+    let s1 = String::from(&quot;small&quot;);
+    let answer;
+    {
+        let s2 = String::from(&quot;longer&quot;);
+        answer = longest(s1, s2);        // both are MOVED in; the winner moves out to `answer`
+    }
+    println!(&quot;{answer}&quot;);                // ✓ `answer` owns its data
+}
+</code></pre>
+<p>Everything is owned, so there&#39;s nothing to dangle. Now switch to <strong>references</strong> (so we don&#39;t take ownership):</p>
+<pre><code class="language-rust">fn longest(a: &amp;str, b: &amp;str) -&gt; &amp;str {   // does NOT compile
+    if a.len() &gt; b.len() { a } else { b }
+}
+</code></pre>
+<pre><code>error[E0106]: missing lifetime specifier
+ | fn longest(a: &amp;str, b: &amp;str) -&gt; &amp;str {
+ |               ----     ----     ^ expected named lifetime parameter
+ = help: this function&#39;s return type contains a borrowed value, but the signature does not say whether it is borrowed from `a` or `b`
+</code></pre>
+<h3 id="why-the-compiler-complains">Why the compiler complains</h3>
+<p>The function returns <strong>either</strong> <code>a</code> <strong>or</strong> <code>b</code>, depending on runtime data. The compiler can&#39;t know which, and so it can&#39;t know how long the returned reference stays valid. Imagine this caller:</p>
+<pre><code class="language-rust">// (uses the same `longest` as above)
+fn main() {
+    let s1 = String::from(&quot;small&quot;);
+    let answer;
+    {
+        let s2 = String::from(&quot;longer&quot;);
+        answer = longest(&amp;s1, &amp;s2);   // answer may point to s2...
+    }                                 // ...but s2 is dropped here!
+    println!(&quot;{answer}&quot;);             // would read freed memory → dangling reference
+}
+</code></pre>
+<p>If <code>s2</code> is the longer one, <code>answer</code> points at <code>s2</code>&#39;s data, which is freed at the inner <code>}</code>. The compiler wants you to describe the relationship so it can reject exactly this case.</p>
+<h3 id="lifetime-annotations">Lifetime annotations</h3>
+<pre><code class="language-rust">fn longest&lt;&#39;a&gt;(a: &amp;&#39;a str, b: &amp;&#39;a str) -&gt; &amp;&#39;a str {
+    if a.len() &gt; b.len() { a } else { b }
+}
+</code></pre>
+<ul>
+<li><code>&#39;a</code> (a tick followed by a name) is a <strong>lifetime parameter</strong>: a generic, declared in <code>&lt;...&gt;</code> just like <code>&lt;T&gt;</code>.</li>
+<li><code>a: &amp;&#39;a str</code> means &quot;<code>a</code> is a reference that is valid for at least <code>&#39;a</code>&quot;.</li>
+<li><code>-&gt; &amp;&#39;a str</code> means &quot;the returned reference is valid for <code>&#39;a</code> too&quot;.</li>
+</ul>
+<p>Reading it in plain English: <strong>&quot;The returned reference lives no longer than the shorter-lived of the two inputs.&quot;</strong> <code>&#39;a</code> gets filled in as the <strong>overlap</strong> (intersection) of the regions where both <code>a</code> and <code>b</code> are valid.</p>
+<div class="callout important"><div class="ctitle">Annotations don&#39;t change how long anything lives</div><p>They <em>describe</em> relationships to the compiler. <code>&#39;a</code> doesn&#39;t make <code>s1</code> and <code>s2</code> live equally long; it just says the result is only guaranteed valid where <strong>both</strong> inputs are.</p>
+</div>
+<p>Now the dangling example is correctly rejected:</p>
+<pre><code class="language-rust">fn longest&lt;&#39;a&gt;(a: &amp;&#39;a str, b: &amp;&#39;a str) -&gt; &amp;&#39;a str {
+    if a.len() &gt; b.len() { a } else { b }
+}
+
+fn main() {
+    let s1 = String::from(&quot;small&quot;);
+    let answer;
+    {
+        let s2 = String::from(&quot;longer&quot;);
+        answer = longest(&amp;s1, &amp;s2);     // does NOT compile
+    }
+    println!(&quot;{answer}&quot;);
+}
+</code></pre>
+<pre><code>error[E0597]: `s2` does not live long enough
+  |         answer = longest(&amp;s1, &amp;s2);
+  |                                ^^^ borrowed value does not live long enough
+  |     }
+  |     - `s2` dropped here while still borrowed
+  |     println!(&quot;{answer}&quot;);
+  |               -------- borrow later used here
+</code></pre>
+<p>The compiler reasons: <code>answer</code> is valid only where both <code>s1</code> and <code>s2</code> are valid; <code>s2</code> ends at the inner <code>}</code>, but you use <code>answer</code> after it. Even if <code>s1</code> were the longer string in practice, the compiler can&#39;t know that, and it rejects the code to be safe.</p>
+<p>The fix is to use the result <strong>inside</strong> the shorter scope (or keep both strings alive):</p>
+<pre><code class="language-rust">fn longest&lt;&#39;a&gt;(a: &amp;&#39;a str, b: &amp;&#39;a str) -&gt; &amp;&#39;a str {
+    if a.len() &gt; b.len() { a } else { b }
+}
+
+fn main() {
+    let s1 = String::from(&quot;small&quot;);
+    let s2 = String::from(&quot;longer&quot;);
+    let answer = longest(&amp;s1, &amp;s2);
+    println!(&quot;{answer}&quot;);               // ✓ both inputs outlive every use
+}
+</code></pre>
+<h3 id="lifetimes-in-structs">Lifetimes in structs</h3>
+<p>A struct that <strong>holds a reference</strong> must say how long that reference lasts:</p>
+<pre><code class="language-rust">struct User&lt;&#39;a&gt; {
+    name: &amp;&#39;a str,
+}
+
+fn main() {
+    let name = String::from(&quot;Alice&quot;);
+    let user = User { name: &amp;name };
+    println!(&quot;{}&quot;, user.name);          // ✓
+}
+</code></pre>
+<p><code>User&lt;&#39;a&gt;</code> means &quot;a <code>User</code> can&#39;t outlive the string its <code>name</code> borrows&quot;. The compiler enforces it:</p>
+<pre><code class="language-rust">fn main() {
+    let user;
+    {
+        let name = String::from(&quot;Alice&quot;);
+        user = User { name: &amp;name };    // does NOT compile
+    }
+    println!(&quot;{}&quot;, user.name);
+}
+</code></pre>
+<pre><code>error[E0597]: `name` does not live long enough
+</code></pre>
+<p>If your struct instead <strong>owns</strong> its data (<code>name: String</code>), no lifetime is needed. This is the simplest fix when lifetimes get annoying: <strong>own the data instead of borrowing it.</strong></p>
+<h3 id="when-do-you-need-to-write-lifetimes">When do you need to write lifetimes?</h3>
+<p>Rarely, thanks to <strong>lifetime elision</strong>: the compiler fills them in for common patterns.</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Situation</th>
+<th>Lifetimes needed?</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>One reference parameter, returning a reference (<code>fn first(s: &amp;str) -&gt; &amp;str</code>)</td>
+<td>No: the output borrows from the single input automatically</td>
+</tr>
+<tr>
+<td>A <code>&amp;self</code> method returning a reference</td>
+<td>No: the output borrows from <code>self</code></td>
+</tr>
+<tr>
+<td>Two or more reference parameters and you return a reference (<code>longest</code>)</td>
+<td><strong>Yes</strong>: the compiler can&#39;t guess which one you mean</td>
+</tr>
+<tr>
+<td>A struct holding a reference</td>
+<td><strong>Yes</strong></td>
+</tr>
+<tr>
+<td>A function that returns a reference with <em>no</em> reference input</td>
+<td>Impossible (it would dangle), except <code>&#39;static</code></td>
+</tr>
+</tbody></table></div>
+<h3 id="static"><code>&#39;static</code></h3>
+<p><code>&#39;static</code> is the longest lifetime: valid for the whole program. All string literals are <code>&amp;&#39;static str</code>:</p>
+<pre><code class="language-rust">let s: &amp;&#39;static str = &quot;I live in the binary, forever&quot;;
+</code></pre>
+<h3 id="combining-lifetimes-generics-and-traits">Combining lifetimes, generics and traits</h3>
+<pre><code class="language-rust">use std::fmt::Display;
+
+fn longest_with_announcement&lt;&#39;a, T&gt;(x: &amp;&#39;a str, y: &amp;&#39;a str, ann: T) -&gt; &amp;&#39;a str
+where
+    T: Display,
+{
+    println!(&quot;Announcement! {ann}&quot;);
+    if x.len() &gt; y.len() { x } else { y }
+}
+
+fn main() {
+    println!(&quot;{}&quot;, longest_with_announcement(&quot;abc&quot;, &quot;de&quot;, &quot;heads up&quot;));
+}
+</code></pre>
+<p>Lifetimes and type parameters share the angle brackets (lifetimes first). Here <code>x</code> and <code>y</code> are tied together by <code>&#39;a</code>; <code>ann</code> is any type that implements <code>Display</code>.</p>
+<div class="callout tip"><div class="ctitle">Practical advice</div><p>Follow the compiler&#39;s suggestions (&quot;consider introducing a named lifetime parameter&quot;). When a lifetime error feels impossible to fix, <strong>clone or own the data</strong>, or restructure so the data&#39;s owner lives in an outer scope. Understanding deepens with practice.</p>
+</div>
+<details class="callout question"><summary>Practice: why does this fail, and how do you fix it?</summary>
+<pre><code class="language-rust">fn pick&lt;&#39;a&gt;(a: &amp;&#39;a str, b: &amp;str) -&gt; &amp;&#39;a str {
+    if a.len() &gt; b.len() { a } else { b }
+}
+</code></pre>
+<p>It fails because <code>b</code> has a different (unrelated) lifetime but is returned as <code>&amp;&#39;a str</code>. Either give <code>b</code> the same lifetime (<code>b: &amp;&#39;a str</code>), or only ever return <code>a</code>.</p>
+</details>
+<hr>
+<h2 id="23-threads">23. Threads</h2>
+<p>A <strong>thread</strong> is an independent flow of execution inside a program. Computers have several CPU <strong>cores</strong>; threads let you use more than one at the same time (<strong>parallelism</strong>). All the code so far ran on a <strong>single thread</strong>, so it used only one core, even though Rust supports many.</p>
+<h3 id="spawning-a-thread">Spawning a thread</h3>
+<pre><code class="language-rust">use std::thread;
+use std::time::Duration;
+
+fn main() {
+    thread::spawn(|| {
+        for i in 1..5 {
+            println!(&quot;hi number {i} from the spawned thread&quot;);
+            thread::sleep(Duration::from_millis(1));
+        }
+    });
+
+    for i in 1..3 {
+        println!(&quot;hi number {i} from the main thread&quot;);
+        thread::sleep(Duration::from_millis(1));
+    }
+}
+</code></pre>
+<ul>
+<li><code>thread::spawn(closure)</code> starts a new thread running the closure.</li>
+<li>The output from the two threads <strong>interleaves</strong>, and the order can change each run.</li>
+<li>When <code>main</code> ends, the <strong>whole program exits</strong>, even if spawned threads haven&#39;t finished, so the spawned thread&#39;s output may be cut off.</li>
+</ul>
+<h3 id="waiting-for-a-thread-join">Waiting for a thread: <code>join</code></h3>
+<p><code>spawn</code> returns a <strong><code>JoinHandle</code></strong>. Call <code>.join()</code> to wait for that thread to finish:</p>
+<pre><code class="language-rust">use std::thread;
+
+fn main() {
+    let handle = thread::spawn(|| {
+        for i in 1..5 {
+            println!(&quot;spawned: {i}&quot;);
+        }
+    });
+
+    handle.join().unwrap();      // wait here until the spawned thread is done
+
+    for i in 1..3 {
+        println!(&quot;main: {i}&quot;);   // runs only after the spawned thread finishes
+    }
+}
+</code></pre>
+<p><code>join()</code> returns a <code>Result</code> (it&#39;s <code>Err</code> if the thread panicked), hence <code>.unwrap()</code>.</p>
+<h3 id="returning-a-value-from-a-thread">Returning a value from a thread</h3>
+<pre><code class="language-rust">use std::thread;
+
+fn main() {
+    let handle = thread::spawn(|| 2 + 2);
+    let result = handle.join().unwrap();
+    println!(&quot;{result}&quot;);        // 4
+}
+</code></pre>
+<h3 id="move-closures"><code>move</code> closures</h3>
+<p>A thread can outlive the function that created it, so it can&#39;t just <em>borrow</em> variables from the surrounding scope: they might be freed first (a dangling reference). The compiler stops you:</p>
+<pre><code class="language-rust">use std::thread;
+
+fn main() {
+    let v = vec![1, 2, 3];
+    let handle = thread::spawn(|| {              // does NOT compile
+        println!(&quot;{:?}&quot;, v);
+    });
+    handle.join().unwrap();
+}
+</code></pre>
+<pre><code>error[E0373]: closure may outlive the current function, but it borrows `v`, which is owned by the current function
+help: to force the closure to take ownership of `v`, use the `move` keyword
+</code></pre>
+<p>Add <code>move</code> so the closure <strong>takes ownership</strong> of the values it uses:</p>
+<pre><code class="language-rust">use std::thread;
+
+fn main() {
+    let v = vec![1, 2, 3];
+    let handle = thread::spawn(move || {         // `v` is moved into the closure
+        println!(&quot;{:?}&quot;, v);
+    });
+    handle.join().unwrap();
+    // println!(&quot;{:?}&quot;, v);   // ✗ error[E0382]: borrow of moved value: `v`
+}
+</code></pre>
+<p>This is ownership working as usual: <code>v</code> now belongs to the new thread.</p>
+<h3 id="proving-it-uses-multiple-cores-try-it">Proving it uses multiple cores (try it!)</h3>
+<p>Run a CPU-heavy loop on the main thread and on one spawned thread, then watch CPU use in <code>top</code>/Activity Monitor/Task Manager. You&#39;ll see the process at <strong>about 200%</strong> (two cores). Add a second spawned thread and it climbs towards 300%. With no spawned threads, a Rust program stays near 100%.</p>
+<pre><code class="language-rust">use std::thread;
+
+fn busy() {
+    let mut c: u64 = 0;
+    loop {
+        c = c.wrapping_add(1);
+        if c &gt; 1_000 { c = 0; }
+    }
+}
+
+fn main() {
+    thread::spawn(busy);
+    busy();                      // runs forever: press Ctrl+C to stop
+}
+</code></pre>
+<h3 id="sharing-data-between-threads-extra">Sharing data between threads (Extra)</h3>
+<p>To share <strong>mutable</strong> data safely you need two helpers:</p>
+<pre><code class="language-rust">use std::sync::{Arc, Mutex};
+use std::thread;
+
+fn main() {
+    let counter = Arc::new(Mutex::new(0));   // Arc: shared ownership; Mutex: one-at-a-time access
+    let mut handles = vec![];
+
+    for _ in 0..4 {
+        let counter = Arc::clone(&amp;counter);
+        handles.push(thread::spawn(move || {
+            for _ in 0..1000 {
+                *counter.lock().unwrap() += 1;
+            }
+        }));
+    }
+    for h in handles {
+        h.join().unwrap();
+    }
+    println!(&quot;{}&quot;, *counter.lock().unwrap());   // 4000
+}
+</code></pre>
+<ul>
+<li><code>Arc</code> (atomic reference counting) gives <strong>several owners</strong> safely across threads. (Plain ownership allows only one.)</li>
+<li><code>Mutex</code> lets <strong>one thread at a time</strong> change the data via <code>lock()</code>.</li>
+</ul>
+<div class="callout note"><div class="ctitle">Data races are impossible in safe Rust</div><p>The ownership and borrowing rules, extended by two traits (<code>Send</code> and <code>Sync</code>), mean Rust won&#39;t compile code that could race. The compiler is checking your concurrency, too.</p>
+</div>
+<details class="callout question"><summary>Practice: spawn 3 threads that each print their number</summary>
+<pre><code class="language-rust">use std::thread;
+
+fn main() {
+    let mut handles = Vec::new();
+    for id in 1..=3 {
+        handles.push(thread::spawn(move || {
+            println!(&quot;thread {id} says hi&quot;);
+        }));
+    }
+    for h in handles {
+        h.join().unwrap();
+    }
+}
+</code></pre>
+</details>
+<hr>
+<h2 id="24-message-passing-with-channels">24. Message passing with channels</h2>
+<p>Threads need to send results to each other. Rust&#39;s standard library provides <strong>channels</strong> for this (&quot;share memory by communicating&quot;).</p>
+<p>A channel has two halves:</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Half</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Transmitter</strong> (<code>tx</code>)</td>
+<td>Sends values into the channel</td>
+</tr>
+<tr>
+<td><strong>Receiver</strong> (<code>rx</code>)</td>
+<td>Takes values out of the channel</td>
+</tr>
+</tbody></table></div>
+<p><code>mpsc</code> stands for <strong>m</strong>ultiple <strong>p</strong>roducer, <strong>s</strong>ingle <strong>c</strong>onsumer: you can clone <code>tx</code> for many sending threads, but there&#39;s one receiver.</p>
+<h3 id="basic-send-and-receive">Basic send and receive</h3>
+<pre><code class="language-rust">use std::sync::mpsc;
+use std::thread;
+
+fn main() {
+    let (tx, rx) = mpsc::channel();
+
+    thread::spawn(move || {
+        let msg = String::from(&quot;hello from the spawned thread&quot;);
+        tx.send(msg).unwrap();         // send moves `msg` into the channel
+    });
+
+    let received = rx.recv().unwrap(); // blocks until a message arrives
+    println!(&quot;Got: {received}&quot;);
+}
+</code></pre>
+<ul>
+<li><code>mpsc::channel()</code> returns the <code>(tx, rx)</code> pair.</li>
+<li><code>tx</code> is <strong>moved</strong> into the thread (<code>move</code>).</li>
+<li><code>tx.send(value)</code> returns a <code>Result</code> (it fails if the receiver is gone). <code>rx.recv()</code> also returns a <code>Result</code> (it fails if all senders are gone and the channel is empty).</li>
+<li>Sending <strong>moves</strong> the value: you can&#39;t use <code>msg</code> after <code>send</code>. That&#39;s ownership preventing two threads from touching the same data.</li>
+</ul>
+<h3 id="handling-the-results-properly">Handling the Results properly</h3>
+<pre><code class="language-rust">match rx.recv() {
+    Ok(value) =&gt; println!(&quot;got {value}&quot;),
+    Err(e) =&gt; println!(&quot;error while receiving: {e}&quot;),
+}
+</code></pre>
+<p><code>.unwrap()</code> is fine in small examples; in real code, match on the <code>Result</code> so a failure doesn&#39;t crash the thread.</p>
+<h3 id="receiving-many-messages">Receiving many messages</h3>
+<p>Treat <code>rx</code> like an iterator; the loop ends when every sender has been dropped:</p>
+<pre><code class="language-rust">use std::sync::mpsc;
+use std::thread;
+
+fn main() {
+    let (tx, rx) = mpsc::channel();
+
+    thread::spawn(move || {
+        for i in 1..=3 {
+            tx.send(i).unwrap();
+        }
+    });   // `tx` is dropped here, so the receiver loop will end
+
+    for value in rx {
+        println!(&quot;got {value}&quot;);
+    }
+}
+</code></pre>
+<h3 id="multiple-producers-split-a-big-job-across-threads">Multiple producers: split a big job across threads</h3>
+<p>Sum the numbers <code>0</code> to <code>99,999,999</code> using 10 threads, each summing a 10-million-number slice, all sending partial results to one receiver:</p>
+<pre><code class="language-rust">use std::sync::mpsc;
+use std::thread;
+
+fn main() {
+    let (tx, rx) = mpsc::channel();
+
+    for i in 0..10u64 {
+        let producer = tx.clone();                 // one producer per thread
+        thread::spawn(move || {
+            let start = i * 10_000_000;
+            let end = (i + 1) * 10_000_000;        // exclusive
+            let mut sum: u64 = 0;
+            for n in start..end {
+                sum += n;
+            }
+            producer.send(sum).unwrap();           // report this thread&#39;s partial sum
+        });
+    }
+
+    drop(tx);                                      // IMPORTANT: drop the original sender
+
+    let mut final_sum: u64 = 0;
+    for partial in rx {                            // ends when ALL senders are dropped
+        final_sum += partial;
+    }
+    println!(&quot;{final_sum}&quot;);                       // 4999999950000000
+}
+</code></pre>
+<p>Check the maths: the sum of <code>0..N</code> is <code>N(N-1)/2</code>; with <code>N = 100,000,000</code> that&#39;s <strong>4,999,999,950,000,000</strong> ✓.</p>
+<p>Points to understand:</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Detail</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>u64</code></td>
+<td>The total is far bigger than an <code>i32</code>/<code>u32</code> can hold (otherwise: <code>attempt to add with overflow</code> panic)</td>
+</tr>
+<tr>
+<td><code>tx.clone()</code></td>
+<td>Each thread gets its own sender (multiple <strong>producers</strong>)</td>
+</tr>
+<tr>
+<td><code>move</code></td>
+<td>Each thread takes ownership of its <code>producer</code></td>
+</tr>
+<tr>
+<td><code>drop(tx)</code></td>
+<td>The original <code>tx</code> is never moved into a thread. While it&#39;s alive, the receiver keeps waiting for it, so <code>for partial in rx</code> <strong>never ends</strong>. Dropping it signals &quot;no more senders from <code>main</code>&quot;</td>
+</tr>
+<tr>
+<td><code>0..10u64</code></td>
+<td>Makes <code>i</code> a <code>u64</code> so the arithmetic matches</td>
+</tr>
+</tbody></table></div>
+<div class="callout warning"><div class="ctitle">The &quot;program hangs forever&quot; bug</div><p>If your receiver loop never finishes after all workers are done, you still have a live sender somewhere: forgetting <code>drop(tx)</code> is the classic cause.</p>
+</div>
+<details class="callout question"><summary>Practice: send <code>(thread_id, message)</code> pairs from 3 threads and print them as they arrive</summary>
+<pre><code class="language-rust">use std::sync::mpsc;
+use std::thread;
+
+fn main() {
+    let (tx, rx) = mpsc::channel();
+    for id in 1..=3 {
+        let tx = tx.clone();
+        thread::spawn(move || {
+            tx.send((id, format!(&quot;hello from {id}&quot;))).unwrap();
+        });
+    }
+    drop(tx);
+    for (id, msg) in rx {
+        println!(&quot;{id}: {msg}&quot;);
+    }
+}
+</code></pre>
+</details>
+<hr>
+<h2 id="25-macros">25. Macros</h2>
+<p>A <strong>macro</strong> is code that <strong>writes other code</strong> at compile time. Anything ending in <code>!</code> is a macro:</p>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Macro</th>
+<th>What it expands to</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>println!(&quot;x = {x}&quot;)</code></td>
+<td>Code that formats and prints</td>
+</tr>
+<tr>
+<td><code>vec![1, 2, 3]</code></td>
+<td>Code that creates a <code>Vec</code> and pushes three items</td>
+</tr>
+<tr>
+<td><code>format!(&quot;{a}-{b}&quot;)</code></td>
+<td>Code that builds a <code>String</code></td>
+</tr>
+<tr>
+<td><code>panic!(&quot;boom&quot;)</code></td>
+<td>Code that stops the thread with a message</td>
+</tr>
+<tr>
+<td><code>assert_eq!(a, b)</code></td>
+<td>A test that panics if <code>a != b</code></td>
+</tr>
+</tbody></table></div>
+<p>Why macros instead of functions? A function takes a fixed number of typed arguments; a macro can take <strong>any number of arguments</strong> (<code>println!(&quot;{} {}&quot;, a, b)</code>) and generate code from them.</p>
+<h3 id="a-tiny-custom-macro-extra">A tiny custom macro (Extra)</h3>
+<pre><code class="language-rust">macro_rules! say_hello {
+    () =&gt; {
+        println!(&quot;Hello!&quot;);
+    };
+}
+
+macro_rules! square {
+    ($x:expr) =&gt; {
+        $x * $x
+    };
+}
+
+fn main() {
+    say_hello!();
+    println!(&quot;{}&quot;, square!(2 + 3));   // 25
+}
+</code></pre>
+<p><code>macro_rules!</code> matches <strong>patterns</strong> of code and substitutes them into templates. (<code>$x:expr</code> captures any expression.) Writing complex macros requires understanding how a compiler parses code (syntax trees), so most developers use macros far more than they write them. Start by <strong>using</strong> macros confidently.</p>
+<hr>
+<h2 id="26-what-comes-next-async-rust">26. What comes next: async Rust</h2>
+<p>You now have the foundation. The next big topic is <strong>asynchronous Rust</strong>: <code>async</code>/<code>await</code>, <strong>futures</strong>, and a runtime such as <strong>Tokio</strong>. It&#39;s how Rust web servers handle thousands of simultaneous connections without one thread per connection. It builds directly on everything above (especially ownership, lifetimes and traits), which is why it comes last.</p>
+<hr>
+<h2 id="27-common-compiler-errors-and-what-they-mean">27. Common compiler errors and what they mean</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Error</th>
+<th>Meaning</th>
+<th>Typical fix</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>E0384</code> cannot assign twice to immutable variable</td>
+<td>You changed a non-<code>mut</code> variable</td>
+<td>Declare it <code>let mut</code></td>
+</tr>
+<tr>
+<td><code>E0596</code> cannot borrow as mutable</td>
+<td>Called a <code>&amp;mut</code> method on a non-<code>mut</code> variable (or through a <code>&amp;</code> reference)</td>
+<td><code>let mut</code>, and pass <code>&amp;mut</code></td>
+</tr>
+<tr>
+<td><code>E0382</code> borrow of moved value</td>
+<td>Used a value after moving it</td>
+<td>Borrow with <code>&amp;</code>, <code>.clone()</code>, or restructure</td>
+</tr>
+<tr>
+<td><code>E0499</code> cannot borrow as mutable more than once</td>
+<td>Two <code>&amp;mut</code> to the same value alive at once</td>
+<td>Finish using the first, or restructure</td>
+</tr>
+<tr>
+<td><code>E0502</code> cannot borrow as mutable because also borrowed as immutable</td>
+<td>A <code>&amp;</code> is still in use while you take a <code>&amp;mut</code></td>
+<td>Use the shared reference first, or clone</td>
+</tr>
+<tr>
+<td><code>E0505</code> cannot move out while borrowed</td>
+<td>You moved a value that is still borrowed</td>
+<td>End the borrow first</td>
+</tr>
+<tr>
+<td><code>E0106</code> missing lifetime specifier</td>
+<td>A returned reference has an ambiguous source</td>
+<td>Add lifetime parameters, or return an owned value</td>
+</tr>
+<tr>
+<td><code>E0597</code> does not live long enough</td>
+<td>A reference outlives the value it points to</td>
+<td>Keep the owner in a longer scope; own instead of borrow</td>
+</tr>
+<tr>
+<td><code>E0308</code> mismatched types</td>
+<td>The value&#39;s type isn&#39;t what&#39;s expected (often a stray <code>;</code>)</td>
+<td>Fix the type / remove the semicolon</td>
+</tr>
+<tr>
+<td><code>E0277</code> trait bound not satisfied</td>
+<td>The type doesn&#39;t implement a required trait</td>
+<td><code>#[derive(...)]</code> or <code>impl</code> the trait</td>
+</tr>
+<tr>
+<td><code>E0004</code> non-exhaustive patterns</td>
+<td>A <code>match</code> doesn&#39;t cover every case</td>
+<td>Add the missing arms or a <code>_</code> catch-all</td>
+</tr>
+<tr>
+<td><code>E0373</code> closure may outlive the current function</td>
+<td>A thread closure borrows local data</td>
+<td>Use <code>move</code></td>
+</tr>
+<tr>
+<td><code>E0425</code> cannot find value</td>
+<td>Typo or out-of-scope variable</td>
+<td>Fix the name / scope</td>
+</tr>
+<tr>
+<td><code>E0599</code> no method named … found</td>
+<td>The method doesn&#39;t exist on that type, or the trait isn&#39;t in scope</td>
+<td>Check the type; <code>use</code> the trait</td>
+</tr>
+</tbody></table></div>
+<div class="callout tip"><div class="ctitle">Read the whole error</div><p>Rust errors are unusually good: they point at the exact code, explain <em>why</em>, and often show a <code>help:</code> line with the suggested fix. Read them fully before changing anything.</p>
+</div>
+<hr>
+<h2 id="28-cheat-sheet">28. Cheat sheet</h2>
+<div class="tw"><table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>Syntax</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>New project / run</td>
+<td><code>cargo new app</code> · <code>cargo run</code> · <code>cargo check</code> · <code>cargo add crate</code></td>
+</tr>
+<tr>
+<td>Variable</td>
+<td><code>let x = 5;</code> · <code>let mut y = 5;</code> · <code>const MAX: u32 = 10;</code></td>
+</tr>
+<tr>
+<td>Types</td>
+<td><code>i32 u32 i64 u64 usize f64 bool char &amp;str String</code></td>
+</tr>
+<tr>
+<td>Function</td>
+<td><code>fn add(a: i32, b: i32) -&gt; i32 { a + b }</code></td>
+</tr>
+<tr>
+<td>Return</td>
+<td>last expression (no <code>;</code>) or <code>return value;</code></td>
+</tr>
+<tr>
+<td>If / loops</td>
+<td><code>if c { } else { }</code> · <code>for i in 0..n { }</code> · <code>while c { }</code> · <code>loop { break; }</code></td>
+</tr>
+<tr>
+<td>Print</td>
+<td><code>println!(&quot;{x} {:?} {:.2}&quot;, v, f)</code></td>
+</tr>
+<tr>
+<td>Struct</td>
+<td><code>struct P { x: i32 }</code> · <code>P { x: 1 }</code> · <code>p.x</code></td>
+</tr>
+<tr>
+<td>Methods</td>
+<td><code>impl P { fn m(&amp;self) {} fn new() -&gt; P {} }</code> · <code>p.m()</code> · <code>P::new()</code></td>
+</tr>
+<tr>
+<td>Enum</td>
+<td><code>enum E { A, B(i32) }</code> · <code>E::B(5)</code></td>
+</tr>
+<tr>
+<td>Match</td>
+<td><code>match v { E::A =&gt; 1, E::B(n) =&gt; n, _ =&gt; 0 }</code></td>
+</tr>
+<tr>
+<td>Option</td>
+<td><code>Some(x)</code> · <code>None</code> · <code>.unwrap_or(d)</code> · <code>if let Some(x) = o {}</code></td>
+</tr>
+<tr>
+<td>Result</td>
+<td><code>Ok(v)</code> · <code>Err(e)</code> · <code>?</code> · <code>.unwrap()</code> · <code>.expect(&quot;msg&quot;)</code></td>
+</tr>
+<tr>
+<td>Move / clone</td>
+<td><code>let b = a;</code> (moves) · <code>let b = a.clone();</code></td>
+</tr>
+<tr>
+<td>Reference</td>
+<td><code>&amp;x</code> (shared) · <code>&amp;mut x</code> (exclusive) · <code>*r</code> (dereference)</td>
+</tr>
+<tr>
+<td>Borrow rule</td>
+<td>many <code>&amp;</code> <strong>or</strong> one <code>&amp;mut</code>, never both</td>
+</tr>
+<tr>
+<td>Vec</td>
+<td><code>vec![1,2]</code> · <code>v.push(3)</code> · <code>v[0]</code> · <code>v.get(0)</code> · <code>v.len()</code></td>
+</tr>
+<tr>
+<td>HashMap</td>
+<td><code>m.insert(k,v)</code> · <code>m.get(&amp;k)</code> · <code>m.remove(&amp;k)</code> · <code>m.entry(k).or_insert(0)</code></td>
+</tr>
+<tr>
+<td>Iterators</td>
+<td><code>.iter()</code> <code>.iter_mut()</code> <code>.into_iter()</code> · <code>.map</code> <code>.filter</code> <code>.collect()</code> <code>.sum()</code></td>
+</tr>
+<tr>
+<td>Strings</td>
+<td><code>String::from(&quot;a&quot;)</code> · <code>s.push_str(&quot;b&quot;)</code> · <code>&amp;s[0..2]</code> · <code>&amp;str</code> for parameters</td>
+</tr>
+<tr>
+<td>Generic</td>
+<td><code>fn f&lt;T: PartialOrd&gt;(a: T, b: T) -&gt; T</code> · <code>struct P&lt;T&gt; { x: T }</code></td>
+</tr>
+<tr>
+<td>Trait</td>
+<td><code>trait T { fn f(&amp;self); }</code> · <code>impl T for X { }</code> · <code>fn g(x: &amp;impl T)</code></td>
+</tr>
+<tr>
+<td>Derive</td>
+<td><code>#[derive(Debug, Clone, PartialEq)]</code></td>
+</tr>
+<tr>
+<td>Lifetimes</td>
+<td><code>fn f&lt;&#39;a&gt;(a: &amp;&#39;a str, b: &amp;&#39;a str) -&gt; &amp;&#39;a str</code> · <code>struct S&lt;&#39;a&gt; { r: &amp;&#39;a str }</code></td>
+</tr>
+<tr>
+<td>Thread</td>
+<td><code>thread::spawn(move || { })</code> · <code>handle.join().unwrap()</code></td>
+</tr>
+<tr>
+<td>Channel</td>
+<td><code>let (tx, rx) = mpsc::channel();</code> · <code>tx.send(v)</code> · <code>rx.recv()</code> · <code>tx.clone()</code> · <code>drop(tx)</code></td>
+</tr>
+<tr>
+<td>Shared state</td>
+<td><code>Arc::new(Mutex::new(0))</code> · <code>*m.lock().unwrap() += 1</code></td>
+</tr>
+<tr>
+<td>Macros</td>
+<td><code>println!</code> <code>vec!</code> <code>format!</code> <code>panic!</code> <code>assert_eq!</code></td>
+</tr>
+</tbody></table></div>
+<hr>
+<h2 id="29-self-check-quiz">29. Self-check quiz</h2>
+<details class="callout question"><summary>What makes Rust memory-safe without a garbage collector?</summary><p>Compile-time <strong>ownership</strong> rules: each value has one owner; when the owner leaves scope the value is dropped. Borrowing rules prevent dangling references and data races.</p>
+</details>
+<details class="callout question"><summary>What&#39;s the difference between binary and library crates?</summary><p>A binary (<code>src/main.rs</code>) builds an executable with a <code>main</code> function. A library (<code>src/lib.rs</code>) is reusable code other crates depend on.</p>
+</details>
+<details class="callout question"><summary>Why are variables immutable by default?</summary><p>It makes code easier to reason about and enables safe sharing; you opt in to change with <code>mut</code>.</p>
+</details>
+<details class="callout question"><summary>What does an <code>i32</code> vs a <code>u32</code> differ in?</summary><p><code>i32</code> is signed (negative and positive, roughly ±2.1 billion); <code>u32</code> is unsigned (0 to roughly 4.29 billion).</p>
+</details>
+<details class="callout question"><summary>What does the last expression without a semicolon do?</summary><p>It becomes the value of the block/function (implicit return). Adding <code>;</code> turns it into a statement returning <code>()</code>.</p>
+</details>
+<details class="callout question"><summary>What&#39;s the difference between a method and an associated function?</summary><p>A method takes <code>self</code> (<code>&amp;self</code>, <code>&amp;mut self</code>, <code>self</code>) and is called with <code>value.method()</code>. An associated function has no <code>self</code> and is called with <code>Type::function()</code>.</p>
+</details>
+<details class="callout question"><summary>Why use an enum instead of a string for a fixed set of options?</summary><p>The compiler guarantees only valid variants exist, it&#39;s smaller and faster, and <code>match</code> forces you to handle every case.</p>
+</details>
+<details class="callout question"><summary>What does <code>match</code> require?</summary><p>Every possible case must be handled (exhaustiveness); use <code>_</code> as a catch-all.</p>
+</details>
+<details class="callout question"><summary>Why does Rust have <code>Option</code> instead of null?</summary><p>It makes &quot;might be missing&quot; part of the type, so you&#39;re forced to handle the missing case and can&#39;t forget a null check.</p>
+</details>
+<details class="callout question"><summary>Why does Rust have <code>Result</code> instead of exceptions?</summary><p>Errors are ordinary return values visible in the function signature, and the caller chooses how to handle them (<code>match</code>, <code>?</code>, <code>unwrap_or</code>).</p>
+</details>
+<details class="callout question"><summary>What does the <code>?</code> operator do?</summary><p>On <code>Ok(v)</code> it yields <code>v</code>; on <code>Err(e)</code> it returns that error from the current function immediately.</p>
+</details>
+<details class="callout question"><summary>What&#39;s stored on the stack vs the heap for a <code>String</code>?</summary><p>The stack holds a pointer, length and capacity; the characters live on the heap, because the size can change at runtime.</p>
+</details>
+<details class="callout question"><summary>State the three ownership rules.</summary><p>Each value has an owner; there&#39;s only one owner at a time; when the owner goes out of scope the value is dropped.</p>
+</details>
+<details class="callout question"><summary>Why does <code>let s2 = s1;</code> invalidate <code>s1</code> for a <code>String</code>?</summary><p>Ownership <strong>moves</strong> to <code>s2</code>. Two owners would lead to a double free, so <code>s1</code> can no longer be used. (Integers are <code>Copy</code>, so they aren&#39;t moved.)</p>
+</details>
+<details class="callout question"><summary>What does passing a <code>String</code> to a function do?</summary><p>It moves ownership into the function, which drops it at the end, unless you pass a reference (<code>&amp;</code>) or return it.</p>
+</details>
+<details class="callout question"><summary>What are the borrowing rules?</summary><p>Any number of <code>&amp;</code> shared references <strong>or</strong> exactly one <code>&amp;mut</code>; never both at once. References must always be valid.</p>
+</details>
+<details class="callout question"><summary>What does the <code>mut</code> keyword need on each of three places to pass a mutable reference?</summary><p>The variable is <code>let mut</code>, the call passes <code>&amp;mut value</code>, and the parameter type is <code>&amp;mut T</code>.</p>
+</details>
+<details class="callout question"><summary>What does <code>v[10]</code> do on a 3-item vector? What about <code>v.get(10)</code>?</summary><p><code>v[10]</code> panics; <code>v.get(10)</code> returns <code>None</code>.</p>
+</details>
+<details class="callout question"><summary><code>iter()</code> vs <code>iter_mut()</code> vs <code>into_iter()</code>?</summary><p><code>iter</code> yields <code>&amp;T</code> (read-only borrow); <code>iter_mut</code> yields <code>&amp;mut T</code> (can modify); <code>into_iter</code> yields <code>T</code> and consumes the collection. A plain <code>for x in v</code> uses <code>into_iter</code>.</p>
+</details>
+<details class="callout question"><summary>Adapter vs consumer?</summary><p>An adapter (<code>map</code>, <code>filter</code>) returns another lazy iterator. A consumer (<code>sum</code>, <code>collect</code>, <code>count</code>) uses the iterator up and produces a value.</p>
+</details>
+<details class="callout question"><summary>Why does <code>collect()</code> need a type?</summary><p>It can build many collection types, so it needs to know which one (<code>Vec&lt;i32&gt;</code>, <code>HashMap</code>, <code>String</code>…).</p>
+</details>
+<details class="callout question"><summary><code>String</code> vs <code>&amp;str</code>?</summary><p><code>String</code> owns growable heap text. <code>&amp;str</code> is a borrowed view of text stored elsewhere (including literals). Prefer <code>&amp;str</code> for read-only parameters.</p>
+</details>
+<details class="callout question"><summary>Why does <code>s.clear()</code> fail while a <code>first_word(&amp;s)</code> result is alive?</summary><p>The slice holds a shared borrow of <code>s</code>; <code>clear</code> needs <code>&amp;mut s</code>. Rust forbids it so the slice can&#39;t dangle.</p>
+</details>
+<details class="callout question"><summary>What does <code>T: PartialOrd</code> mean?</summary><p><code>T</code> can be any type that implements <code>PartialOrd</code> (supports <code>&lt;</code>, <code>&gt;</code>). It&#39;s a trait bound on a generic.</p>
+</details>
+<details class="callout question"><summary>What does <code>impl Trait for Type</code> do, and what if you omit a required method?</summary><p>It declares that <code>Type</code> implements the trait. A missing required method is a compile error.</p>
+</details>
+<details class="callout question"><summary>What is <code>#[derive(Debug)]</code>?</summary><p>A shortcut that auto-generates a <code>Debug</code> implementation so <code>{:?}</code> works.</p>
+</details>
+<details class="callout question"><summary>Why does <code>longest(a: &amp;str, b: &amp;str) -&gt; &amp;str</code> need lifetimes?</summary><p>The function returns one of two references, so the compiler needs to be told the result is valid only as long as both inputs: <code>fn longest&lt;&#39;a&gt;(a: &amp;&#39;a str, b: &amp;&#39;a str) -&gt; &amp;&#39;a str</code>.</p>
+</details>
+<details class="callout question"><summary>Do lifetime annotations change how long values live?</summary><p>No. They only describe relationships so the compiler can verify references never outlive their data.</p>
+</details>
+<details class="callout question"><summary>Why does a struct holding a <code>&amp;str</code> need <code>&lt;&#39;a&gt;</code>?</summary><p>The struct can&#39;t outlive the string it borrows, and the lifetime parameter expresses that.</p>
+</details>
+<details class="callout question"><summary>What does <code>thread::spawn</code> return and how do you wait for the thread?</summary><p>A <code>JoinHandle</code>; call <code>.join()</code> (which returns a <code>Result</code>).</p>
+</details>
+<details class="callout question"><summary>Why is <code>move</code> needed on thread closures?</summary><p>The thread may outlive the current scope, so the closure must own the values it uses rather than borrow them.</p>
+</details>
+<details class="callout question"><summary>What does <code>mpsc</code> stand for and why <code>drop(tx)</code>?</summary><p>Multiple producer, single consumer. The original sender must be dropped, or the receiver loop never sees &quot;all senders gone&quot; and hangs.</p>
+</details>
+<details class="callout question"><summary>What is a macro, and how can you tell one apart from a function?</summary><p>Code that generates code at compile time; macro names end with <code>!</code> (<code>println!</code>, <code>vec!</code>).</p>
+</details>
+
+</main>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script>
+// syntax highlighting when online; plain code otherwise
+if (window.hljs) document.querySelectorAll('pre code').forEach(el => hljs.highlightElement(el));
+
+document.querySelectorAll('pre').forEach(pre => {
+  const b = document.createElement('button');
+  b.className = 'copy'; b.textContent = 'Copy';
+  b.onclick = () => navigator.clipboard.writeText(pre.querySelector('code').innerText)
+    .then(() => { b.textContent = 'Copied'; setTimeout(() => b.textContent = 'Copy', 1200); });
+  pre.appendChild(b);
+});
+
+const root = document.documentElement;
+try { const t = localStorage.getItem('theme'); if (t) root.dataset.theme = t; } catch {}
+document.getElementById('themeBtn').onclick = () => {
+  const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  root.dataset.theme = dark ? 'light' : 'dark';
+  try { localStorage.setItem('theme', root.dataset.theme); } catch {}
+};
+
+const nav = document.getElementById('nav');
+document.getElementById('menuBtn').onclick = () => nav.classList.toggle('open');
+nav.addEventListener('click', e => { if (e.target.tagName === 'A') nav.classList.remove('open'); });
+
+document.getElementById('search').oninput = e => {
+  const q = e.target.value.toLowerCase();
+  nav.querySelectorAll('a').forEach(a => a.style.display = a.textContent.toLowerCase().includes(q) ? '' : 'none');
+};
+
+const links = [...nav.querySelectorAll('a')];
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(en => {
+    if (en.isIntersecting) links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + en.target.id));
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+document.querySelectorAll('main h2[id]').forEach(h => obs.observe(h));
+
+const bar = document.getElementById('progress');
+addEventListener('scroll', () => {
+  const h = document.documentElement;
+  bar.style.width = (h.scrollTop / (h.scrollHeight - h.clientHeight) * 100) + '%';
+}, { passive: true });
+</script>
+</body>
+</html>
